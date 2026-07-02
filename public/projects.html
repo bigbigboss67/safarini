@@ -226,7 +226,7 @@
     border-radius: 50%;
     border: 2.5px solid rgba(255,255,255,0.75);
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
     position: relative;
   }
   .map-pin::after {
@@ -234,7 +234,7 @@
     position: absolute; inset: -4px;
     border-radius: 50%;
   }
-  .map-pin:hover { transform: scale(1.5); border-color: #fff; }
+  .map-pin:hover { box-shadow: 0 0 0 6px rgba(232,125,30,.3), 0 0 14px rgba(232,125,30,.5); border-color: #fff; }
   .map-pin.status-complete { background: #4caf50; box-shadow: 0 0 8px rgba(76,175,80,0.55); }
   .map-pin.status-dev      { background: var(--orange); box-shadow: 0 0 10px rgba(232,125,30,0.65); }
   .map-pin.status-cancel   { background: #484848; box-shadow: none; }
@@ -933,20 +933,22 @@ function makeSlug(name) {
 }
 
 const BUILDING_IMAGES = {
-  "princess-tower":            "https://static.propsearch.ae/photos/dubai/buildings/princess-tower-326_xl.jpg",
-  "ocean-heights":             "https://static.propsearch.ae/photos/dubai/buildings/ocean-heights-472_xl.jpg",
-  "marina-view-towers":        "https://static.propsearch.ae/photos/dubai/buildings/marina-view-towers-654_xl.jpg",
-  "elite-residence":           "https://static.propsearch.ae/photos/dubai/buildings/elite-residence-378_xl.jpg",
-  "escan-marina":              "https://static.propsearch.ae/photos/dubai/buildings/escan-marina-936_xl.jpg",
-  "sit-tower":                 "https://static.propsearch.ae/photos/dubai/buildings/sit-tower-4724_xl.jpg",
-  "the-torch":                 "https://static.propsearch.ae/photos/dubai/buildings/the-torch-410_xl.jpg",
-  "mag-218-tower":             "https://static.propsearch.ae/photos/dubai/buildings/mag-218-tower-439_xl.jpg",
-  "arabian-gate":              "https://static.propsearch.ae/dubai-locations/arabian-gate-23525_xl.jpg",
-  "cambridge-business-centre": "https://static.propsearch.ae/dubai-locations/cambridge-business-centre_TVu1R_xl.jpg",
-  "binghatti-horizons":        "https://static.propsearch.ae/dubai-locations/binghatti-horizons_FP2rJ_xl.jpg",
-  "binghatti-terraces":        "https://static.propsearch.ae/dubai-locations/binghatti-terraces_MMglf_xl.jpg",
-  "carlton-downtown-hotel":    "https://static.propsearch.ae/photos/dubai/buildings/warwick-hotel-1983_xl.jpg",
-  "millennium-executive-tower":"https://static.propsearch.ae/photos/dubai/buildings/al-manal-tower-2020_xl.jpg"
+  /* ── Real Saffarini project photos from saffarinidxb.com ── */
+  "princess-tower":            "https://www.saffarinidxb.com/MediaFiles/Projects/39edc245-f84b-415f-a572-4a0adbfef837.jpg",
+  "sit-tower":                 "https://www.saffarinidxb.com/MediaFiles/Projects/025ba518-5caa-4d94-b372-30372060875d.jpg",
+  "al-hawai-tower":            "https://www.saffarinidxb.com/MediaFiles/Projects/af0554e6-9986-4a91-b256-821435881c71.jpg",
+  "aspin-commercial-tower":    "https://www.saffarinidxb.com/MediaFiles/Projects/2bc4da1d-5cd1-45f1-a699-5b87cc96cfbc.jpeg",
+  "marina-view-towers":        "https://www.saffarinidxb.com/MediaFiles/Projects/b5a53539-62a0-4373-b4ae-f4c590ceac37.jpg",
+  "carlton-downtown-hotel":    "https://www.saffarinidxb.com/MediaFiles/Projects/7fd06185-8f4e-4805-af59-62a9f0edc5a0.jpg",
+  "millennium-executive-tower":"https://www.saffarinidxb.com/MediaFiles/Projects/dd9fa999-4236-48d1-a23d-05cfa17ebaac.jpg",
+  /* ── Slider fallbacks for remaining named projects ── */
+  "ocean-heights":             "https://www.saffarinidxb.com/MediaFiles/Slider/f509384d-78b7-4fdf-b9dc-e1b65323cb90.jpg",
+  "elite-residence":           "https://www.saffarinidxb.com/MediaFiles/Slider/9930e80e-6291-4272-bce7-ee1a42083ca6.jpg",
+  "escan-marina":              "https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg",
+  "arabian-gate":              "https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg",
+  "cambridge-business-centre": "https://www.saffarinidxb.com/MediaFiles/Slider/071e372a-28e6-4ae2-9e9a-bab182fb5cfb.jpg",
+  "binghatti-horizons":        "https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg",
+  "binghatti-terraces":        "https://www.saffarinidxb.com/MediaFiles/Slider/f509384d-78b7-4fdf-b9dc-e1b65323cb90.jpg",
 };
 
 const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260'%3E%3Crect width='400' height='260' fill='%230a0a0a'/%3E%3Crect x='155' y='55' width='90' height='150' fill='%231c1c1c' rx='2'/%3E%3Crect x='135' y='85' width='130' height='120' fill='%23141414' rx='2'/%3E%3Crect x='148' y='98' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='181' y='98' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='214' y='98' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='148' y='143' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='181' y='143' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='214' y='143' width='22' height='28' fill='%23242424' rx='1'/%3E%3Crect x='178' y='171' width='44' height='34' fill='%23e87d1e' opacity='0.15' rx='1'/%3E%3Ctext x='200' y='225' font-family='sans-serif' font-size='11' fill='%237a7a7a' text-anchor='middle'%3ENo image available%3C/text%3E%3C/svg%3E";
@@ -1180,15 +1182,108 @@ function renderCards() {
 }
 
 // ═══════════════════════════════════════
-// OPEN PROJECT
+// OPEN PROJECT MODAL
 // ═══════════════════════════════════════
 function openProject(id) {
   const p = PROJECTS.find(x => x.id === id);
   if (!p) return;
-  // Future: navigate to dedicated project page
-  // window.location.href = `project.html?id=${id}`;
+  const sb = statusBadge(p.status);
+  const ti = typeIcon(p.type || 'Mixed-Use');
+
+  // Image
+  document.getElementById('projModalImg').src = imgUrl(p);
+  document.getElementById('projModalImg').alt = p.name;
+
+  // Status badge
+  const badgeStyles = {
+    'badge-complete': 'background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.3)',
+    'badge-dev':      'background:rgba(232,125,30,.15);color:#e87d1e;border:1px solid rgba(232,125,30,.3)',
+    'badge-cancel':   'background:rgba(72,72,72,.2);color:#888;border:1px solid rgba(255,255,255,.1)',
+    'badge-planned':  'background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.3)'
+  };
+  const badge = document.getElementById('projModalBadge');
+  badge.textContent = sb.label;
+  badge.style.cssText = 'display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:16px;' + (badgeStyles[sb.cls] || badgeStyles['badge-cancel']);
+
+  // Name, meta, desc
+  document.getElementById('projModalName').textContent = p.name;
+  document.getElementById('projModalMeta').innerHTML =
+    '<span style="display:flex;align-items:center;gap:5px;font-size:12.5px;">' +
+      '<i class="ti ti-map-pin" style="color:#e87d1e;font-size:14px;"></i>' +
+      '<span style="color:#c8c8c8">' + (p.area || 'UAE') + '</span></span>' +
+    '<span style="display:flex;align-items:center;gap:5px;font-size:12.5px;">' +
+      '<i class="' + ti.icon + '" style="color:#e87d1e;font-size:14px;"></i>' +
+      '<span style="color:#c8c8c8">' + ti.label + '</span></span>';
+  document.getElementById('projModalDesc').textContent =
+    p.desc || 'A landmark project by Eng. Adnan Saffarini — delivering engineering excellence and architectural vision across the UAE and the Gulf region.';
+
+  // Show modal
+  document.getElementById('projModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
+
+function closeProjModal() {
+  document.getElementById('projModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeProjModal();
+});
 </script>
+
+<!-- ── PROJECT DETAIL MODAL ────────────────────────────────────── -->
+<div id="projModal"
+     style="display:none;position:fixed;inset:0;z-index:2000;
+            background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+            align-items:center;justify-content:center;padding:20px;"
+     onclick="if(event.target===this)closeProjModal()">
+  <div style="background:#141414;border:1px solid rgba(255,255,255,.12);
+              border-radius:18px;width:min(94vw,620px);
+              max-height:88vh;overflow-y:auto;position:relative;
+              scrollbar-width:thin;scrollbar-color:#242424 transparent;">
+
+    <!-- Close button -->
+    <button onclick="closeProjModal()"
+      style="position:absolute;top:14px;right:14px;width:36px;height:36px;
+             border-radius:50%;background:#242424;border:1px solid rgba(255,255,255,.12);
+             color:#7a7a7a;font-size:18px;cursor:pointer;
+             display:flex;align-items:center;justify-content:center;
+             z-index:10;line-height:1;transition:color .18s,background .18s;"
+      onmouseover="this.style.color='#f2f2f2';this.style.background='#2e2e2e'"
+      onmouseout="this.style.color='#7a7a7a';this.style.background='#242424'">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <!-- Hero image -->
+    <img id="projModalImg" src="" alt=""
+         style="width:100%;height:240px;object-fit:cover;
+                border-radius:18px 18px 0 0;background:#0a0a0a;display:block;">
+
+    <!-- Content -->
+    <div style="padding:26px 28px 32px;">
+      <div id="projModalBadge"></div>
+      <h2 id="projModalName"
+          style="font-size:1.45rem;font-weight:700;color:#f2f2f2;
+                 margin:0 0 12px;line-height:1.25;"></h2>
+      <div id="projModalMeta"
+           style="display:flex;flex-wrap:wrap;gap:18px;
+                  margin-bottom:18px;color:#7a7a7a;"></div>
+      <p id="projModalDesc"
+         style="color:#c8c8c8;font-size:14px;line-height:1.8;
+                margin-bottom:24px;"></p>
+      <button onclick="closeProjModal()"
+        style="display:inline-flex;align-items:center;gap:8px;
+               background:#e87d1e;color:#fff;border:none;
+               padding:11px 24px;border-radius:8px;
+               font-size:13.5px;font-weight:600;cursor:pointer;
+               transition:background .18s;"
+        onmouseover="this.style.background='#c96810'"
+        onmouseout="this.style.background='#e87d1e'">
+        <i class="ti ti-check"></i> Close
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

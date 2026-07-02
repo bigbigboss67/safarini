@@ -191,7 +191,31 @@
       #ai-chat-panel{width:calc(100vw - 2rem);right:1rem}
       .hero-stats{grid-template-columns:1fr}
     }
-  </style>
+  
+  /* ── Showcase Portfolio Grid (dark section on light page) ── */
+  .pf-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px}
+  .pf-tab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:500;background:#242424;color:#a0a0a0;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:background .18s,color .18s,border-color .18s;}
+  .pf-tab:hover{color:#f2f2f2;border-color:rgba(255,255,255,.25)}
+  .pf-tab.active{background:#e87d1e;color:#fff;border-color:#e87d1e;}
+  .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+  .port-card{background:#141414;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;transition:border-color .22s,transform .22s;}
+  .port-card:hover{border-color:rgba(232,125,30,.4);transform:translateY(-4px)}
+  .port-img-wrap{position:relative;overflow:hidden;aspect-ratio:16/9}
+  .port-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+  .port-card:hover .port-img-wrap img{transform:scale(1.04)}
+  .port-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .22s;text-decoration:none;cursor:pointer;}
+  .port-card:hover .port-overlay{opacity:1}
+  .port-overlay-text{color:#fff;font-size:14px;font-weight:600;border:1.5px solid rgba(255,255,255,.7);padding:9px 20px;border-radius:6px;}
+  .port-badge{position:absolute;top:12px;left:12px;background:#e87d1e;color:#fff;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+  .port-year{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.85);font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;}
+  .port-body{padding:18px 20px}
+  .port-title{font-size:14.5px;font-weight:700;color:#f2f2f2;margin-bottom:8px}
+  .port-meta{display:flex;flex-wrap:wrap;gap:10px}
+  .port-meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#7a7a7a;}
+  .portfolio-section{background:#0a0a0a;padding:80px 40px;}
+  @media(max-width:768px){.portfolio-section{padding:60px 20px}}
+
+</style>
 </head>
 <body>
 
@@ -283,17 +307,184 @@
   </div>
 </section>
 
-<section class="section bg-white" id="projects">
-  <div class="section-inner">
-    <div class="section-header">
-      <div class="section-tag"><i class="ti ti-building-skyscraper"></i> Portfolio</div>
-      <h2 class="section-title">Landmark Projects</h2>
-      <p class="section-sub">A selection of Saffarini's most iconic completed and in-progress developments.</p>
-      <div class="divider"></div>
+<section class="portfolio-section" id="projects">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:44px;">
+      <div style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e87d1e;background:rgba(232,125,30,.1);border:1px solid rgba(232,125,30,.25);padding:5px 16px;border-radius:20px;margin-bottom:16px;">
+        <i class="ti ti-building-skyscraper" style="margin-right:6px;"></i>Portfolio
+      </div>
+      <h2 style="font-size:2rem;font-weight:700;color:#f2f2f2;margin:0 0 14px;line-height:1.25;">Portfolio of <em style="color:#e87d1e;font-style:normal;">Excellence</em></h2>
+      <p style="color:#7a7a7a;font-size:15px;max-width:580px;margin:0 auto;line-height:1.7;">Landmark projects across the Gulf — from iconic shopping destinations to sacred mosques, universities, and residential towers.</p>
     </div>
-    <div class="projects-grid" id="projects-grid"></div>
-    <div class="projects-show-more">
-      <button class="btn-primary" id="show-more-btn" onclick="showMoreProjects()"><i class="ti ti-chevron-down"></i> Show More Projects</button>
+
+    <div class="pf-tabs">
+      <button class="pf-tab active" onclick="filterPortfolio('all',this)">All Projects</button>
+      <button class="pf-tab" onclick="filterPortfolio('commercial',this)">Commercial</button>
+      <button class="pf-tab" onclick="filterPortfolio('residential',this)">Residential</button>
+      <button class="pf-tab" onclick="filterPortfolio('civic',this)">Education</button>
+      <button class="pf-tab" onclick="filterPortfolio('religious',this)">Religious</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolioGrid">
+
+      <!-- RAK Mall -->
+      <div class="port-card" data-cat="commercial">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg" alt="RAK Mall" loading="lazy">
+          <div class="port-badge">Commercial</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">RAK Mall</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Ras Al Khaimah, UAE</span>
+            <span class="port-meta-item"><i class="ti ti-building-store"></i> Retail Mall</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mercato Mall -->
+      <div class="port-card" data-cat="commercial">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg" alt="Mercato Mall" loading="lazy">
+          <div class="port-badge">Commercial</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Mercato Mall</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Jumeirah, Dubai</span>
+            <span class="port-meta-item"><i class="ti ti-building-store"></i> Retail Mall</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Princess Tower -->
+      <div class="port-card" data-cat="residential">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/39edc245-f84b-415f-a572-4a0adbfef837.jpg" alt="Princess Tower" loading="lazy">
+          <div class="port-badge">Residential</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Princess Tower</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Dubai Marina</span>
+            <span class="port-meta-item"><i class="ti ti-building"></i> 101 Floors</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ajman University -->
+      <div class="port-card" data-cat="civic">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg" alt="Ajman University" loading="lazy">
+          <div class="port-badge">Education</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Ajman University</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Ajman, UAE</span>
+            <span class="port-meta-item"><i class="ti ti-school"></i> University</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Belshalat Mosque -->
+      <div class="port-card" data-cat="religious">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg" alt="Belshalat Mosque" loading="lazy">
+          <div class="port-badge">Religious</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Belshalat Mosque</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Dubai, UAE</span>
+            <span class="port-meta-item"><i class="ti ti-building-mosque"></i> Mosque</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- New Grand Mosque -->
+      <div class="port-card" data-cat="religious">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg" alt="New Grand Mosque" loading="lazy">
+          <div class="port-badge">Religious</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">New Grand Mosque</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> UAE</span>
+            <span class="port-meta-item"><i class="ti ti-building-mosque"></i> Grand Mosque</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emirates Grand Hotel -->
+      <div class="port-card" data-cat="commercial">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/a96a13a9-2756-4c29-a8a1-8ed7794e23cb.jpg" alt="Emirates Grand Hotel" loading="lazy">
+          <div class="port-badge">Hospitality</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Emirates Grand Hotel</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Dubai, UAE</span>
+            <span class="port-meta-item"><i class="ti ti-building-hotel"></i> Hotel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marina Towers -->
+      <div class="port-card" data-cat="residential">
+        <div class="port-img-wrap">
+          <img src="https://www.saffarinidxb.com/MediaFiles/Projects/b5a53539-62a0-4373-b4ae-f4c590ceac37.jpg" alt="Marina Towers" loading="lazy">
+          <div class="port-badge">Residential</div>
+          <div class="port-year">Completed</div>
+          <a class="port-overlay" href="showcase.html#portfolio">
+            <span class="port-overlay-text">View Project</span>
+          </a>
+        </div>
+        <div class="port-body">
+          <div class="port-title">Marina Towers</div>
+          <div class="port-meta">
+            <span class="port-meta-item"><i class="ti ti-map-pin"></i> Dubai Marina</span>
+            <span class="port-meta-item"><i class="ti ti-building"></i> Residential Tower</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /portfolio-grid -->
+
+    <div style="text-align:center;margin-top:40px;">
+      <a href="showcase.html" style="display:inline-flex;align-items:center;gap:8px;background:#e87d1e;color:#fff;text-decoration:none;padding:13px 32px;border-radius:8px;font-size:14px;font-weight:600;transition:background .18s;" onmouseover="this.style.background='#c96810'" onmouseout="this.style.background='#e87d1e'">
+        <i class="ti ti-building-skyscraper"></i> View Full Portfolio
+      </a>
     </div>
   </div>
 </section>
@@ -689,7 +880,14 @@ function addBotMessage(t){var m=document.getElementById('chat-messages');var d=d
 function addUserMessage(t){var m=document.getElementById('chat-messages');var d=document.createElement('div');d.className='chat-bubble user';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
 function sendChat(){var inp=document.getElementById('chat-input');var msg=inp.value.trim();if(!msg)return;inp.value='';addUserMessage(msg);document.getElementById('quick-replies').style.display='none';setTimeout(function(){addBotMessage(getResponse(msg));},600);}
 function sendQuick(msg){addUserMessage(msg);document.getElementById('quick-replies').style.display='none';setTimeout(function(){addBotMessage(getResponse(msg));},600);}
+
+function filterPortfolio(cat, btn) {
+  document.querySelectorAll('.pf-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#portfolioGrid .port-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+}
 </script>
 </body>
 </html>
-                                                                                       
