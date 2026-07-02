@@ -592,6 +592,29 @@ ul{list-style:none}
   .footer-grid{grid-template-columns:1fr}
   .footer{padding:40px 20px 24px}
 }
+
+  /* ── Showcase Project Modal ──────────────────── */
+  #scModal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.85);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+  #scModal.open{opacity:1;pointer-events:all}
+  .scm-box{background:#141414;border:1px solid #2a2a2a;border-radius:14px;max-width:640px;width:90%;
+    max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.8);
+    transform:translateY(24px);transition:transform .3s}
+  #scModal.open .scm-box{transform:translateY(0)}
+  .scm-img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  .scm-body{padding:24px 28px;overflow-y:auto;flex:1}
+  .scm-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;
+    color:#fff}
+  .scm-title{font-size:22px;font-weight:700;color:#f2f2f2;margin-bottom:14px;line-height:1.3}
+  .scm-meta{display:flex;flex-wrap:wrap;gap:10px 20px;margin-bottom:16px}
+  .scm-meta-item{display:flex;align-items:center;gap:7px;font-size:13px;color:#b0b0b0}
+  .scm-meta-item i{color:#e87d1e;font-size:15px}
+  .scm-desc{font-size:14px;color:#a0a0a0;line-height:1.7;border-top:1px solid #242424;padding-top:16px}
+  .scm-close{position:absolute;top:14px;right:16px;background:rgba(0,0,0,.5);border:none;
+    color:#fff;font-size:20px;cursor:pointer;padding:4px 10px;border-radius:6px;z-index:1}
+  .scm-header{position:relative}
+
 </style>
 </head>
 <body>
@@ -617,6 +640,7 @@ ul{list-style:none}
     <a class="nav-link" href="index.html">Home</a>
     <a class="nav-link active" href="showcase.html">Showcase</a>
     <a class="nav-link" href="projects.html">Projects</a>
+    <a class="nav-link" href="map.html"><i class="ti ti-map"></i> 3D Map</a>
     <a class="nav-link nav-cta" href="index.html#contact">Contact</a>
   </div>
 </nav>
@@ -799,7 +823,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=600&height=350" alt="RAK Mall">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(0);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2002</div>
         </div>
@@ -815,7 +839,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=600&height=350" alt="Mercato Shopping Mall">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(1);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2002</div>
         </div>
@@ -831,7 +855,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="civic">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=600&height=350" alt="Ajman University">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(2);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Education</div>
           <div class="port-year">1998</div>
         </div>
@@ -847,7 +871,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="religious">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg.ashx?width=600&height=350" alt="Belshalat Mosque">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(3);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Religious</div>
           <div class="port-year">2001</div>
         </div>
@@ -863,7 +887,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="religious">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg.ashx?width=600&height=350" alt="New Grand Mosque">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(4);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Religious</div>
           <div class="port-year">2004</div>
         </div>
@@ -879,7 +903,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="residential">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg" alt="Princess Tower">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(5);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Residential</div>
           <div class="port-year">2012</div>
         </div>
@@ -895,7 +919,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="residential">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg" alt="Marina Heights II">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(6);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Residential</div>
           <div class="port-year">2010</div>
         </div>
@@ -911,7 +935,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg" alt="Sheikh Zayed Road Development">
-          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
+          <a class="port-overlay" href="#" onclick="openShowcaseModal(7);return false;"><span class="port-overlay-text"><i class="ti ti-eye" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2008</div>
         </div>
@@ -1155,6 +1179,7 @@ ul{list-style:none}
       <a href="index.html">Home</a>
       <a href="showcase.html">Showcase</a>
       <a href="projects.html">Projects</a>
+      <a href="map.html">3D Map</a>
       <a href="#tools">Safarini Junior</a>
       <a href="index.html#contact">Contact</a>
     </div>
@@ -1514,5 +1539,92 @@ document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
   });
 })();
 </script>
+
+<!-- Showcase Project Modal -->
+<div id="scModal">
+  <div class="scm-box">
+    <div class="scm-header">
+      <img id="scmImg" class="scm-img" src="" alt="">
+      <button class="scm-close" id="scmClose"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="scm-body">
+      <div id="scmBadge" class="scm-badge"></div>
+      <div id="scmTitle" class="scm-title"></div>
+      <div class="scm-meta">
+        <div class="scm-meta-item"><i class="ti ti-map-pin"></i><span id="scmLoc"></span></div>
+        <div class="scm-meta-item"><i class="ti ti-calendar"></i><span id="scmYr"></span></div>
+        <div class="scm-meta-item"><i class="ti ti-ruler-measure"></i><span id="scmGfa"></span></div>
+      </div>
+      <div id="scmDesc" class="scm-desc"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var SHOWCASE = [
+    {n:'RAK Mall', cat:'Commercial', catColor:'#e87d1e', loc:'Ras Al Khaimah, UAE', yr:2002, gfa:'85,000 sq m',
+     desc:'A landmark commercial mall in Ras Al Khaimah, designed by Eng. Adnan Saffarini Office as a premier retail destination serving the emirate.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=800&height=450'},
+    {n:'Mercato Shopping Mall', cat:'Commercial', catColor:'#e87d1e', loc:'Jumeirah, Dubai, UAE', yr:2002, gfa:'65,000 sq m',
+     desc:'An iconic Italian-Renaissance-inspired shopping centre in Jumeirah, Dubai — one of the most recognisable retail landmarks in the city.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=800&height=450'},
+    {n:'Ajman University of Science & Technology', cat:'Education', catColor:'#3bad8a', loc:'Ajman, UAE', yr:1998, gfa:'120,000 sq m',
+     desc:'A comprehensive university campus master-planned and designed by Eng. Adnan Saffarini Office, one of the largest educational complexes in the UAE.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=800&height=450'},
+    {n:'Belshalat Mosque', cat:'Religious', catColor:'#9b59b6', loc:'Dubai, UAE', yr:2001, gfa:'3,500 sq m',
+     desc:'A beautifully crafted mosque in Dubai blending traditional Islamic architecture with contemporary construction techniques.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg.ashx?width=800&height=450'},
+    {n:'New Grand Mosque', cat:'Religious', catColor:'#9b59b6', loc:'UAE', yr:2004, gfa:'12,000 sq m',
+     desc:"A grand-scale mosque project showcasing Saffarini's expertise in Islamic architectural design and sacred space planning.",
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg.ashx?width=800&height=450'},
+    {n:'Princess Tower', cat:'Residential', catColor:'#4a9fd9', loc:'Dubai Marina, UAE', yr:2012, gfa:'200,000 sq m',
+     desc:"One of the world's tallest residential towers at 414 m, a defining landmark of the Dubai Marina skyline with 101 floors of luxury residences.",
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg'},
+    {n:'Marina Heights II', cat:'Residential', catColor:'#4a9fd9', loc:'Dubai Marina, UAE', yr:2010, gfa:'42,000 sq m',
+     desc:'A prestigious high-rise residential tower in Dubai Marina offering panoramic views and premium lifestyle amenities.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg'},
+    {n:'Sheikh Zayed Road Development', cat:'Commercial', catColor:'#e87d1e', loc:'Dubai, UAE', yr:2008, gfa:'55,000 sq m',
+     desc:'A premium commercial development along the iconic Sheikh Zayed Road corridor — the backbone of Dubai\'s modern business district.',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg'}
+  ];
+
+  var scModal = document.getElementById('scModal');
+  var scmImg  = document.getElementById('scmImg');
+  var scmBadge= document.getElementById('scmBadge');
+  var scmTitle= document.getElementById('scmTitle');
+  var scmLoc  = document.getElementById('scmLoc');
+  var scmYr   = document.getElementById('scmYr');
+  var scmGfa  = document.getElementById('scmGfa');
+  var scmDesc = document.getElementById('scmDesc');
+
+  window.openShowcaseModal = function(idx) {
+    var p = SHOWCASE[idx];
+    if (!p) return;
+    scmImg.src        = p.img;
+    scmImg.alt        = p.n;
+    scmBadge.textContent = p.cat;
+    scmBadge.style.background = p.catColor + '22';
+    scmBadge.style.border = '1px solid ' + p.catColor + '55';
+    scmBadge.style.color  = p.catColor;
+    scmTitle.textContent  = p.n;
+    scmLoc.textContent    = p.loc;
+    scmYr.textContent     = p.yr;
+    scmGfa.textContent    = p.gfa;
+    scmDesc.textContent   = p.desc;
+    scModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function closeScModal() {
+    scModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('scmClose').addEventListener('click', closeScModal);
+  scModal.addEventListener('click', function(e){ if(e.target===scModal) closeScModal(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && scModal.classList.contains('open')) closeScModal(); });
+})();
+</script>
+
 </body>
 </html>
