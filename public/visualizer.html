@@ -7,19 +7,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 :root{
-  --bg:#080b10;--bg2:#0c1018;--surface:#141a24;
-  --accent:#00e5ff;--accent2:#00b8d4;
-  --gold:#c9963a;--gold2:#e8c84a;
-  --red:#cc2222;--green:#22cc66;--orange:#e89830;
-  --text:#e8eef4;--muted:#7a96b0;--dim:#3e5570;
-  --border:rgba(255,255,255,0.08);--glass:rgba(12,16,24,0.82);
+  --bg:#ffffff;--bg2:#f5f5f0;--surface:#f0ede8;
+  --accent:#e87d1e;--accent2:#c46a10;
+  --gold:#b87a28;--gold2:#d4953c;
+  --red:#cc2222;--green:#22a855;--orange:#e87d1e;
+  --text:#0a0a0a;--muted:#666666;--dim:#999999;
+  --border:rgba(0,0,0,0.10);--glass:rgba(255,255,255,0.96);
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(0,229,255,0.08)}50%{box-shadow:0 0 40px rgba(0,229,255,0.16)}}
+@keyframes glow{0%,100%{box-shadow:0 0 16px rgba(232,125,30,0.06)}50%{box-shadow:0 0 28px rgba(232,125,30,0.12)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Viewport ── */
@@ -30,14 +30,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
 /* ── Header ── */
 .header{position:fixed;top:0;left:0;right:0;z-index:20;height:52px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px}
 .header-brand{display:flex;align-items:center;gap:10px}
-.h-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--red),#e63333);border-radius:7px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.h-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:7px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
 .h-logo::after{content:'';position:absolute;top:50%;left:50%;width:12px;height:12px;border:2px solid rgba(255,255,255,0.85);transform:translate(-50%,-50%) rotate(45deg)}
 .header-brand .title{font-size:13px;font-weight:700;letter-spacing:.3px}
 .header-brand .sub{font-size:9px;color:var(--dim)}
 .header-actions{display:flex;gap:6px}
-.h-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;font-weight:600;display:flex;align-items:center;gap:5px}
-.h-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,0.04)}
-.h-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,0.08)}
+.h-btn{background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;font-weight:600;display:flex;align-items:center;gap:5px}
+.h-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(232,125,30,0.06)}
+.h-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(232,125,30,0.10)}
 
 /* ── Floating Panels ── */
 .panel{position:fixed;z-index:15;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:14px;padding:20px;overflow-y:auto;animation:fadeUp .5s ease both,glow 6s ease-in-out 2s infinite}
@@ -50,14 +50,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
 /* ── Controls ── */
 .ctrl{margin-bottom:10px}
 .ctrl label{display:block;font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
-.ctrl input[type="number"],.ctrl select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;transition:border-color .2s;font-family:inherit}
+.ctrl input[type="number"],.ctrl select{width:100%;background:#f8f7f5;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;transition:border-color .2s;font-family:inherit}
 .ctrl input:focus,.ctrl select:focus{border-color:var(--accent)}
-.ctrl select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%233e5570'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.ctrl select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23888888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
 .ctrl select option{background:var(--bg2);color:var(--text)}
 .ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .ctrl .unit{font-size:9px;color:var(--dim);margin-top:2px}
-.ctrl input[type="range"]{width:100%;-webkit-appearance:none;background:rgba(255,255,255,0.06);height:4px;border-radius:2px;outline:none;margin:6px 0 2px}
-.ctrl input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.ctrl input[type="range"]{width:100%;-webkit-appearance:none;background:rgba(0,0,0,0.10);height:4px;border-radius:2px;outline:none;margin:6px 0 2px}
+.ctrl input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #ffffff;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
 .range-val{font-size:11px;color:var(--accent);font-weight:700}
 
 /* ── Stats ── */
@@ -68,19 +68,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
 .stat-value.cyan{color:var(--accent)}.stat-value.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .stat-value.green{color:var(--green)}.stat-value.white{color:var(--text)}
 .stat-sub{font-size:10px;color:var(--dim);margin-top:1px}
-.stat-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:6px;overflow:hidden}
+.stat-bar{height:4px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:6px;overflow:hidden}
 .stat-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease}
 
 /* ── Generate Button ── */
 .gen-bar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:8px;animation:fadeUp .6s ease .3s both}
 .btn-gen{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);border:none;padding:12px 32px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:all .2s;display:flex;align-items:center;gap:8px}
-.btn-gen:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,229,255,0.25)}
+.btn-gen:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(232,125,30,0.35)}
 .btn-gen:active{transform:translateY(0)}
 .btn-cta{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 24px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
 .btn-cta:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ── Design Narrative ── */
-.narrative{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:10px;margin-top:12px}
+.narrative{background:rgba(232,125,30,0.05);border:1px solid rgba(232,125,30,0.18);border-radius:8px;padding:10px;margin-top:12px}
 .narrative p{font-size:10px;color:var(--muted);line-height:1.6;font-style:italic}
 
 /* ── Mobile ── */
@@ -181,10 +181,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
    ═══════════════════════════════════════════════════════════════════════ */
 const container=document.getElementById('viewport');
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x080b10,0.008);
+scene.fog=new THREE.FogExp2(0xd0e8f5,0.005);
 
 const camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.5,500);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+renderer.setClearColor(0x87ceeb,1);
 renderer.setSize(window.innerWidth,window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.shadowMap.enabled=true;
@@ -195,7 +196,7 @@ renderer.outputEncoding=THREE.sRGBEncoding;
 container.appendChild(renderer.domElement);
 
 /* ── Lights ── */
-const ambientLight=new THREE.HemisphereLight(0x88bbff,0x443322,0.5);
+const ambientLight=new THREE.HemisphereLight(0xeef4ff,0x556644,0.9);
 scene.add(ambientLight);
 
 const sunLight=new THREE.DirectionalLight(0xfff5e0,1.8);
@@ -208,7 +209,7 @@ sunLight.shadow.camera.near=1;sunLight.shadow.camera.far=200;
 sunLight.shadow.bias=-0.001;
 scene.add(sunLight);
 
-const fillLight=new THREE.PointLight(0x00e5ff,0.3,100);
+const fillLight=new THREE.PointLight(0xffd4a0,0.3,100);
 fillLight.position.set(-20,15,-10);
 scene.add(fillLight);
 
@@ -219,7 +220,7 @@ scene.add(warmLight);
 /* ── Sky ── */
 const skyGeo=new THREE.SphereGeometry(200,32,16);
 const skyMat=new THREE.MeshBasicMaterial({
-  color:0x080b10,side:THREE.BackSide,
+  color:0x87ceeb,side:THREE.BackSide,
   vertexColors:false
 });
 const sky=new THREE.Mesh(skyGeo,skyMat);
@@ -227,16 +228,16 @@ scene.add(sky);
 
 function updateSky(isNight){
   if(isNight){
-    skyMat.color.setHex(0x040608);
-    scene.fog.color.setHex(0x040608);
-    sunLight.intensity=0.3;sunLight.color.setHex(0x4466aa);
-    ambientLight.intensity=0.15;
-    renderer.toneMappingExposure=0.5;
+    skyMat.color.setHex(0x0a1a3e);
+    scene.fog.color.setHex(0x0a1a3e);
+    sunLight.intensity=0.3;sunLight.color.setHex(0x6688cc);
+    ambientLight.intensity=0.25;
+    renderer.toneMappingExposure=0.6;
   }else{
-    skyMat.color.setHex(0x1a2a44);
-    scene.fog.color.setHex(0x080b10);
+    skyMat.color.setHex(0x87ceeb);
+    scene.fog.color.setHex(0xd0e8f5);
     sunLight.intensity=1.8;sunLight.color.setHex(0xfff5e0);
-    ambientLight.intensity=0.5;
+    ambientLight.intensity=0.9;
     renderer.toneMappingExposure=1.0;
   }
 }
@@ -614,7 +615,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
   const g=new THREE.Group();
 
   // Large ground
-  const gnd=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshPhysicalMaterial({color:0x2a3328,roughness:1}));
+  const gnd=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshPhysicalMaterial({color:0x4a7a35,roughness:1}));
   gnd.rotation.x=-Math.PI/2;gnd.position.y=-0.05;gnd.receiveShadow=true;g.add(gnd);
 
   // Plot area (lighter)
@@ -622,7 +623,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
   plot.rotation.x=-Math.PI/2;plot.position.y=0.01;plot.receiveShadow=true;g.add(plot);
 
   // Plot boundary lines
-  const bMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.25});
+  const bMat=new THREE.MeshBasicMaterial({color:0xe87d1e,transparent:true,opacity:0.55});
   const bw=0.08;
   const bn=new THREE.Mesh(new THREE.BoxGeometry(plotW,0.02,bw),bMat);bn.position.set(0,0.05,plotD/2);g.add(bn);
   const bs=bn.clone();bs.position.z=-plotD/2;g.add(bs);
@@ -630,7 +631,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
   const bww=be.clone();bww.position.x=-plotW/2;g.add(bww);
 
   // Corner markers
-  const cMat=new THREE.MeshBasicMaterial({color:0x00e5ff,transparent:true,opacity:0.6});
+  const cMat=new THREE.MeshBasicMaterial({color:0xe87d1e,transparent:true,opacity:0.85});
   [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(([sx,sz])=>{
     const c=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,0.3,8),cMat);
     c.position.set(sx*plotW/2,0.15,sz*plotD/2);g.add(c);
@@ -638,7 +639,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
 
   // Road
   if(opts.road){
-    const road=new THREE.Mesh(new THREE.PlaneGeometry(plotW+20,8),new THREE.MeshPhysicalMaterial({color:0x333338,roughness:0.95}));
+    const road=new THREE.Mesh(new THREE.PlaneGeometry(plotW+20,8),new THREE.MeshPhysicalMaterial({color:0x8a8a8a,roughness:0.95}));
     road.rotation.x=-Math.PI/2;road.position.set(0,0.02,plotD/2+5);road.receiveShadow=true;g.add(road);
     // Road markings
     for(let i=-Math.floor(plotW/6);i<=Math.floor(plotW/6);i++){
@@ -646,7 +647,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
       mark.position.set(i*4,0.04,plotD/2+5);g.add(mark);
     }
     // Sidewalk
-    const sw=new THREE.Mesh(new THREE.BoxGeometry(plotW+20,0.12,2),new THREE.MeshPhysicalMaterial({color:0x666666,roughness:0.9}));
+    const sw=new THREE.Mesh(new THREE.BoxGeometry(plotW+20,0.12,2),new THREE.MeshPhysicalMaterial({color:0xcccccc,roughness:0.9}));
     sw.position.set(0,0.06,plotD/2+0.5);g.add(sw);
   }
 
@@ -670,7 +671,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
 
   // Context buildings (neighbors)
   if(opts.context){
-    const ctxMat=new THREE.MeshPhysicalMaterial({color:0x2a2a35,roughness:0.8,metalness:0.1});
+    const ctxMat=new THREE.MeshPhysicalMaterial({color:0xc8d0d8,roughness:0.75,metalness:0.08});
     const positions=[
       [-plotW/2-15,0,-plotD/2+10,8,12,10],
       [plotW/2+12,0,0,10,18,12],
@@ -682,7 +683,7 @@ function buildEnvironment(plotW,plotD,mat,opts){
       ctx.position.set(x,h/2,z);ctx.castShadow=true;ctx.receiveShadow=true;g.add(ctx);
       // windows glow
       const ctxG=new THREE.Mesh(new THREE.BoxGeometry(w+0.02,h,d+0.02),
-        new THREE.MeshPhysicalMaterial({color:0xffee99,transparent:true,opacity:0.03}));
+        new THREE.MeshPhysicalMaterial({color:0x99bbdd,transparent:true,opacity:0.06}));
       ctxG.position.copy(ctx.position);g.add(ctxG);
     });
   }
