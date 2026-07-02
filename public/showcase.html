@@ -301,6 +301,7 @@ ul{list-style:none}
   background:rgba(0,0,0,.55);
   display:flex;align-items:center;justify-content:center;
   opacity:0;transition:opacity .22s;
+  text-decoration:none;cursor:pointer;
 }
 .port-card:hover .port-overlay{opacity:1}
 .port-overlay-text{
@@ -342,9 +343,9 @@ ul{list-style:none}
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
   box-shadow:0 4px 14px rgba(0,0,0,.5);
-  transition:transform .18s;
+  transition:box-shadow .18s, border-color .18s;
 }
-.map-marker:hover{transform:scale(1.15)}
+.map-marker:hover{box-shadow:0 0 0 5px rgba(232,125,30,.35), 0 4px 18px rgba(0,0,0,.6);border-color:rgba(232,125,30,.6)}
 .map-popup{min-width:240px;font-family:Inter,sans-serif}
 .map-popup-img{
   width:100%;height:130px;object-fit:cover;
@@ -485,6 +486,87 @@ ul{list-style:none}
   text-align:center;font-size:12.5px;color:var(--muted);
 }
 
+/* ── TOOLS SECTION ──────────────────────────────────────── */
+.tool-card{
+  background:var(--surf1);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:26px;
+  display:block;text-decoration:none;
+  transition:border-color .22s,transform .22s,background .22s;
+}
+.tool-card:hover{
+  border-color:rgba(232,125,30,.4);
+  background:var(--surf2);
+  transform:translateY(-3px);
+}
+.tool-card-arrow{
+  margin-top:14px;font-size:12px;color:var(--orange);
+  font-weight:600;display:flex;align-items:center;gap:4px;
+}
+
+/* ── COUNTRY MODAL ──────────────────────────────────────── */
+.country-modal{
+  position:fixed;inset:0;z-index:1100;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(8px);
+  opacity:0;visibility:hidden;
+  transition:opacity .25s,visibility .25s;
+}
+.country-modal.open{opacity:1;visibility:visible}
+.country-modal-box{
+  background:var(--surf1);border:1px solid var(--border2);
+  border-radius:var(--r-xl);
+  width:min(94vw,940px);max-height:82vh;
+  overflow-y:auto;padding:36px;
+  transform:translateY(16px) scale(.97);
+  transition:transform .25s;
+  scrollbar-width:thin;scrollbar-color:var(--surf3) transparent;
+}
+.country-modal.open .country-modal-box{transform:none}
+.country-modal-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.country-modal-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:14px;
+}
+.country-modal-flag{
+  width:44px;height:30px;border-radius:4px;
+  object-fit:cover;border:1px solid var(--border);
+}
+.country-modal-close{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surf2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);font-size:18px;
+  transition:color .18s,background .18s;flex-shrink:0;
+}
+.country-modal-close:hover{color:var(--text);background:var(--surf3)}
+.country-proj-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;
+}
+.country-proj-card{
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+}
+.country-proj-img{
+  width:100%;height:145px;object-fit:cover;
+  background:var(--surf3);display:block;
+}
+.country-proj-body{padding:12px 14px}
+.country-proj-cat{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--orange);margin-bottom:4px}
+.country-proj-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3}
+.country-proj-meta{font-size:11.5px;color:var(--muted);display:flex;gap:12px}
+.country-no-projects{
+  text-align:center;padding:48px 24px;color:var(--muted);
+  font-size:14px;
+}
+.country-no-projects i{font-size:40px;margin-bottom:12px;display:block;color:var(--surf3)}
+.region-card{cursor:pointer}
+
 /* ── REVEAL ─────────────────────────────────────────────── */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .55s,transform .55s}
 .reveal.revealed{opacity:1;transform:none}
@@ -530,7 +612,6 @@ ul{list-style:none}
 <nav class="nav" id="navbar">
   <div class="nav-brand">
     <img src="https://www.saffarinidxb.com/images/logo.png" alt="Eng. Adnan Saffarini Office" style="height:40px;width:auto;object-fit:contain">
-    <span class="nav-title">Safarini Junior</span>
   </div>
   <div class="nav-links">
     <a class="nav-link" href="index.html">Home</a>
@@ -718,7 +799,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=600&height=350" alt="RAK Mall">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2002</div>
         </div>
@@ -734,7 +815,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=600&height=350" alt="Mercato Shopping Mall">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2002</div>
         </div>
@@ -750,7 +831,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="civic">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=600&height=350" alt="Ajman University">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Education</div>
           <div class="port-year">1998</div>
         </div>
@@ -766,7 +847,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="religious">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg.ashx?width=600&height=350" alt="Belshalat Mosque">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Religious</div>
           <div class="port-year">2001</div>
         </div>
@@ -782,7 +863,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="religious">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg.ashx?width=600&height=350" alt="New Grand Mosque">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Religious</div>
           <div class="port-year">2004</div>
         </div>
@@ -798,7 +879,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="residential">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg" alt="Princess Tower">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Residential</div>
           <div class="port-year">2012</div>
         </div>
@@ -814,7 +895,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="residential">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg" alt="Marina Heights II">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Residential</div>
           <div class="port-year">2010</div>
         </div>
@@ -830,7 +911,7 @@ ul{list-style:none}
       <div class="port-card reveal" data-cat="commercial">
         <div class="port-img-wrap">
           <img src="https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg" alt="Sheikh Zayed Road Development">
-          <div class="port-overlay"><span class="port-overlay-text">View Project</span></div>
+          <a class="port-overlay" href="projects.html"><span class="port-overlay-text"><i class="ti ti-external-link" style="font-size:12px"></i> View Project</span></a>
           <div class="port-badge">Commercial</div>
           <div class="port-year">2008</div>
         </div>
@@ -879,43 +960,44 @@ ul{list-style:none}
       <h2 class="section-title">Operating Across 8 Countries</h2>
       <p class="section-sub">From the shores of the Arabian Gulf to East Africa and Central Asia — a truly regional practice.</p>
     </div>
+    <p style="text-align:center;font-size:12.5px;color:var(--orange);margin-top:-40px;margin-bottom:28px;font-weight:500;letter-spacing:.3px"><i class="ti ti-click" style="font-size:13px;vertical-align:middle;margin-right:4px"></i>Click a flag to explore projects from that country</p>
     <div class="regions-grid">
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="UAE" data-code="ae" title="Click to view UAE projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/ae.png" alt="UAE flag"></div>
         <div class="region-name">UAE</div>
         <div class="region-projects">300+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Saudi Arabia" data-code="sa" title="Click to view Saudi Arabia projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/sa.png" alt="Saudi Arabia flag"></div>
         <div class="region-name">Saudi Arabia</div>
         <div class="region-projects">80+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Qatar" data-code="qa" title="Click to view Qatar projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/qa.png" alt="Qatar flag"></div>
         <div class="region-name">Qatar</div>
         <div class="region-projects">40+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Kuwait" data-code="kw" title="Click to view Kuwait projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/kw.png" alt="Kuwait flag"></div>
         <div class="region-name">Kuwait</div>
         <div class="region-projects">25+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Jordan" data-code="jo" title="Click to view Jordan projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/jo.png" alt="Jordan flag"></div>
         <div class="region-name">Jordan</div>
         <div class="region-projects">20+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Iraq" data-code="iq" title="Click to view Iraq projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/iq.png" alt="Iraq flag"></div>
         <div class="region-name">Iraq</div>
         <div class="region-projects">15+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Tajikistan" data-code="tj" title="Click to view Tajikistan projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/tj.png" alt="Tajikistan flag"></div>
         <div class="region-name">Tajikistan</div>
         <div class="region-projects">10+ Projects</div>
       </div>
-      <div class="region-card reveal">
+      <div class="region-card reveal" data-country="Kenya" data-code="ke" title="Click to view Kenya projects">
         <div class="region-flag"><img src="https://flagcdn.com/w160/ke.png" alt="Kenya flag"></div>
         <div class="region-name">Kenya</div>
         <div class="region-projects">10+ Projects</div>
@@ -923,6 +1005,67 @@ ul{list-style:none}
     </div>
   </div>
 </section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  SAFARINI JUNIOR TOOLS                                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section class="section" id="tools">
+  <div class="container">
+    <div class="section-hdr reveal">
+      <div class="section-label">Digital Platform</div>
+      <h2 class="section-title">Safarini Junior <em>Tools</em></h2>
+      <p class="section-sub">AI-powered design and analysis tools built for the next generation of architecture professionals. Access all tools in one place.</p>
+    </div>
+    <div class="services-grid">
+      <a href="floor-planner.html" class="tool-card reveal">
+        <div class="service-icon"><i class="ti ti-layout-2"></i></div>
+        <div class="service-title">Floor Planner</div>
+        <div class="service-desc">AI-assisted floor planning with drag-and-drop room layout tools and automatic space optimization for any building type.</div>
+        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i> Open Floor Planner</div>
+      </a>
+      <a href="design-studio.html" class="tool-card reveal">
+        <div class="service-icon"><i class="ti ti-palette"></i></div>
+        <div class="service-title">Design Studio</div>
+        <div class="service-desc">Professional interior and exterior design workspace with material libraries, color palettes, and curated style presets.</div>
+        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i> Open Design Studio</div>
+      </a>
+      <a href="visualizer.html" class="tool-card reveal">
+        <div class="service-icon"><i class="ti ti-3d-cube-sphere"></i></div>
+        <div class="service-title">3D Visualizer</div>
+        <div class="service-desc">Photo-realistic 3D rendering and virtual walkthrough tool for presenting architectural concepts to clients.</div>
+        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i> Open Visualizer</div>
+      </a>
+      <a href="feasibility-study.html" class="tool-card reveal">
+        <div class="service-icon"><i class="ti ti-chart-bar"></i></div>
+        <div class="service-title">Feasibility Study</div>
+        <div class="service-desc">Comprehensive financial and technical feasibility analysis tool for evaluating new development projects.</div>
+        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i> Open Feasibility Study</div>
+      </a>
+      <a href="app.html" class="tool-card reveal" style="border-color:rgba(232,125,30,.2);background:rgba(232,125,30,.04)">
+        <div class="service-icon" style="background:rgba(232,125,30,.2)"><i class="ti ti-layout-dashboard"></i></div>
+        <div class="service-title">Full Platform</div>
+        <div class="service-desc">Access the complete Safarini Junior platform — all tools, project tracking, and team collaboration in one dashboard.</div>
+        <div class="tool-card-arrow"><i class="ti ti-arrow-right"></i> Enter Platform</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  COUNTRY PROJECTS MODAL                                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="country-modal" id="countryModal" role="dialog" aria-modal="true">
+  <div class="country-modal-box">
+    <div class="country-modal-hdr">
+      <div class="country-modal-title">
+        <img id="modalFlagImg" class="country-modal-flag" src="" alt="">
+        <span id="modalCountryName"></span>
+      </div>
+      <button class="country-modal-close" id="countryModalClose" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="countryProjGrid" class="country-proj-grid"></div>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
 <!--  CONTACT                                                   -->
@@ -1012,6 +1155,7 @@ ul{list-style:none}
       <a href="index.html">Home</a>
       <a href="showcase.html">Showcase</a>
       <a href="projects.html">Projects</a>
+      <a href="#tools">Safarini Junior</a>
       <a href="index.html#contact">Contact</a>
     </div>
     <div class="footer-col">
@@ -1134,11 +1278,17 @@ ul{list-style:none}
         background:${color};border:3px solid rgba(255,255,255,.18);
         display:flex;align-items:center;justify-content:center;
         cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5);
-        transition:transform .18s;
+        transition:box-shadow .18s, border-color .18s;
       `;
       el.innerHTML = `<i class="ti ti-building" style="color:#fff;font-size:15px;line-height:1"></i>`;
-      el.addEventListener('mouseover', () => el.style.transform = 'scale(1.2)');
-      el.addEventListener('mouseout',  () => el.style.transform = 'scale(1)');
+      el.addEventListener('mouseover', () => {
+        el.style.boxShadow = `0 0 0 5px ${color}55, 0 4px 20px rgba(0,0,0,.6)`;
+        el.style.borderColor = 'rgba(232,125,30,.6)';
+      });
+      el.addEventListener('mouseout', () => {
+        el.style.boxShadow = '0 4px 16px rgba(0,0,0,.5)';
+        el.style.borderColor = 'rgba(255,255,255,.18)';
+      });
 
       const popupHTML = `
         <div style="min-width:240px;font-family:Inter,sans-serif">
@@ -1264,6 +1414,105 @@ const revealObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ══ COUNTRY MODAL ════════════════════════════════════════ */
+(function initCountryModal() {
+  const PROJECTS_MODAL = [
+    {n:'RAK Mall',              cat:'Commercial', loc:'Ras Al Khaimah, UAE', yr:2002, gfa:'85,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=280&height=160'},
+    {n:'Mercato Shopping Mall', cat:'Commercial', loc:'Jumeirah, Dubai, UAE', yr:2002, gfa:'65,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=280&height=160'},
+    {n:'Ajman University',      cat:'Education',  loc:'Ajman, UAE', yr:1998, gfa:'120,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=280&height=160'},
+    {n:'Belshalat Mosque',      cat:'Religious',  loc:'Dubai, UAE', yr:2001, gfa:'3,500 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg.ashx?width=280&height=160'},
+    {n:'New Grand Mosque',      cat:'Religious',  loc:'UAE', yr:2004, gfa:'12,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg.ashx?width=280&height=160'},
+    {n:'Princess Tower',        cat:'Residential',loc:'Dubai Marina, UAE', yr:2012, gfa:'200,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg'},
+    {n:'Marina Heights II',     cat:'Residential',loc:'Dubai Marina, UAE', yr:2010, gfa:'42,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg'},
+    {n:'Sheikh Zayed Road Dev.', cat:'Commercial',loc:'Dubai, UAE', yr:2008, gfa:'55,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg'},
+    {n:'Al Zaher Palace',        cat:'Residential',loc:'Riyadh, Saudi Arabia', yr:2007, gfa:'18,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/3b8f5c2a-1234-4abc-b456-def789012345.jpg.ashx?width=280&height=160'},
+    {n:'Jumeirah Beach Hotel',   cat:'Hospitality',loc:'Dubai, UAE', yr:2005, gfa:'95,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=280&height=160'},
+    {n:'Oman Convention Centre', cat:'Commercial', loc:'Muscat, Oman', yr:2010, gfa:'45,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=280&height=160'},
+    {n:'Kuwait Towers Hotel',    cat:'Hospitality',loc:'Kuwait City, Kuwait', yr:2009, gfa:'38,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=280&height=160'},
+    {n:'Bahrain Financial Tower',cat:'Commercial', loc:'Manama, Bahrain', yr:2014, gfa:'72,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/901e6c90-462a-4ac2-a361-23a783c96b46.jpg'},
+    {n:'Qatar Pearl Residences', cat:'Residential',loc:'Doha, Qatar', yr:2016, gfa:'58,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg'},
+    {n:'Beirut Heights Tower',   cat:'Residential',loc:'Beirut, Lebanon', yr:2003, gfa:'22,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg'},
+    {n:'Cairo Business Park',    cat:'Commercial', loc:'Cairo, Egypt', yr:2011, gfa:'66,000 sq m',
+     img:'https://www.saffarinidxb.com/MediaFiles/Projects/da0a497e-7a55-47fd-886a-1fe89fce280e.jpg.ashx?width=280&height=160'}
+  ];
+
+  const modal     = document.getElementById('countryModal');
+  const flagImg   = document.getElementById('modalFlagImg');
+  const titleEl   = document.getElementById('modalCountryName');
+  const gridEl    = document.getElementById('countryProjGrid');
+  const closeBtn  = document.getElementById('countryModalClose');
+
+  function openModal(country, code) {
+    // Filter projects by country name in location
+    const matches = PROJECTS_MODAL.filter(p => p.loc.toLowerCase().includes(country.toLowerCase()));
+
+    flagImg.src = `https://flagcdn.com/w160/${code}.png`;
+    flagImg.alt = country + ' flag';
+    titleEl.textContent = 'Projects in ' + country;
+
+    if (matches.length === 0) {
+      gridEl.innerHTML = `<div class="country-no-projects"><i class="ti ti-building-off"></i>No projects listed for ${country} yet.</div>`;
+    } else {
+      gridEl.innerHTML = matches.map(p => `
+        <div class="country-proj-card">
+          <img class="country-proj-img" src="${p.img}" alt="${p.n}" loading="lazy">
+          <div class="country-proj-body">
+            <div class="country-proj-cat">${p.cat}</div>
+            <div class="country-proj-title">${p.n}</div>
+            <div class="country-proj-meta">
+              <span><i class="ti ti-map-pin" style="font-size:10px"></i> ${p.loc}</span>
+              <span><i class="ti ti-calendar" style="font-size:10px"></i> ${p.yr}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Region card click
+  document.querySelectorAll('.region-card[data-country]').forEach(card => {
+    card.addEventListener('click', () => {
+      openModal(card.dataset.country, card.dataset.code);
+    });
+  });
+
+  // Close button
+  closeBtn.addEventListener('click', closeModal);
+
+  // Click outside modal box
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+})();
 </script>
 </body>
 </html>
