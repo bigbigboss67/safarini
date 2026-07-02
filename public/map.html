@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>Project Map — Eng. Adnan Saffarini Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root {
+    --bg:      #0a0a0a;
+    --surf1:   #141414;
+    --surf2:   #1c1c1c;
+    --surf3:   #242424;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text:    #f2f2f2;
+    --text2:   #c8c8c8;
+    --muted:   #7a7a7a;
+    --orange:  #e87d1e;
+    --orange-d:#c96810;
+    --radius:  6px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+
+  /* ── NAV ── */
+  .nav {
+    background: rgba(10,10,10,0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    flex-shrink: 0;
+    padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px; z-index: 200;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .nav-brand img { height: 36px; width: auto; object-fit: contain; }
+  .nav-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
+  .nav-links { display: flex; align-items: center; gap: 20px; }
+  .nav-links a {
+    text-decoration: none; color: var(--muted);
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 10px; border-radius: var(--radius);
+    transition: color 0.18s, background 0.18s;
+  }
+  .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .nav-links a.active { color: var(--orange); }
+  .nav-pin-count {
+    font-size: 12px; color: var(--muted);
+    background: var(--surf2); padding: 4px 12px;
+    border-radius: 20px; border: 1px solid var(--border2);
+  }
+  .nav-pin-count span { color: var(--orange); font-weight: 600; }
+
+  /* ── LAYOUT ── */
+  .map-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 280px; flex-shrink: 0;
+    background: var(--surf1);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden; z-index: 100;
+  }
+  .sidebar-head {
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .sidebar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .sidebar-sub { font-size: 11px; color: var(--muted); }
+
+  .sidebar-body { flex: 1; overflow-y: auto; padding: 0; }
+  .sidebar-body::-webkit-scrollbar { width: 4px; }
+  .sidebar-body::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-body::-webkit-scrollbar-thumb { background: var(--surf3); border-radius: 4px; }
+
+  .filter-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .filter-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* Status filters */
+  .status-pills { display: flex; flex-direction: column; gap: 5px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 12px; border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer; font-size: 13px; color: var(--text2);
+    transition: all 0.16s; background: transparent;
+    font-family: 'Inter', sans-serif;
+    width: 100%; text-align: left;
+  }
+  .status-pill:hover { background: var(--surf2); border-color: var(--border2); }
+  .status-pill.active { border-color: var(--orange); color: var(--text); background: rgba(232,125,30,0.09); }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot-all      { background: var(--muted); }
+  .dot-complete { background: #4caf50; box-shadow: 0 0 5px rgba(76,175,80,0.5); }
+  .dot-dev      { background: var(--orange); box-shadow: 0 0 5px rgba(232,125,30,0.5); }
+  .dot-cancel   { background: #484848; }
+  .dot-planned  { background: #2196f3; box-shadow: 0 0 5px rgba(33,150,243,0.5); }
+  .pill-count {
+    margin-left: auto; font-size: 11px; font-weight: 600;
+    background: var(--surf3); color: var(--muted);
+    padding: 1px 7px; border-radius: 10px;
+  }
+  .status-pill.active .pill-count { background: rgba(232,125,30,0.18); color: var(--orange); }
+
+  /* Type filters */
+  .type-pills { display: flex; flex-direction: column; gap: 5px; }
+  .type-pill {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 12px; border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer; font-size: 13px; color: var(--text2);
+    transition: all 0.16s; background: transparent;
+    font-family: 'Inter', sans-serif;
+    width: 100%; text-align: left;
+  }
+  .type-pill:hover { background: var(--surf2); border-color: var(--border2); }
+  .type-pill.active { border-color: rgba(255,255,255,0.15); color: var(--text); background: rgba(255,255,255,0.04); }
+  .type-pill i { font-size: 14px; color: var(--orange); width: 16px; text-align: center; }
+
+  /* Stats */
+  .stats-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-box {
+    background: var(--surf2); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 10px 12px;
+    text-align: center;
+  }
+  .stat-num { font-size: 20px; font-weight: 700; color: var(--orange); line-height: 1.1; }
+  .stat-lbl { font-size: 10px; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Map controls hint */
+  .map-hint {
+    padding: 14px 18px;
+    font-size: 11px; color: var(--muted); line-height: 1.65;
+  }
+  .map-hint i { color: var(--orange); }
+
+  /* ── MAP ── */
+  #map { flex: 1; }
+  .maplibregl-popup-content {
+    background: var(--surf1) !important;
+    border: 1px solid var(--border2) !important;
+    border-radius: 10px !important;
+    padding: 14px 16px 12px !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7) !important;
+    color: var(--text) !important;
+    font-family: 'Inter', sans-serif !important;
+    min-width: 200px !important;
+  }
+  .maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--border2) !important; }
+  .maplibregl-popup-close-button { color: var(--muted) !important; font-size: 18px !important; }
+  .maplibregl-ctrl-attrib { background: rgba(10,10,10,0.7) !important; color: var(--muted) !important; font-size: 10px !important; }
+  .maplibregl-ctrl-attrib a { color: var(--muted) !important; }
+
+  .popup-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .popup-area { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+  .popup-type { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .popup-badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 9px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .popup-detail-btn {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    margin-top: 10px; padding: 6px 12px; border-radius: 5px;
+    background: rgba(232,125,30,0.14); border: 1px solid rgba(232,125,30,0.3);
+    color: var(--orange); font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    width: 100%; transition: background 0.15s;
+  }
+  .popup-detail-btn:hover { background: rgba(232,125,30,0.24); }
+
+  .badge-complete { background: rgba(76,175,80,0.18);  color: #81c784; border: 1px solid rgba(76,175,80,0.3); }
+  .badge-dev      { background: rgba(232,125,30,0.18); color: var(--orange); border: 1px solid rgba(232,125,30,0.3); }
+  .badge-cancel   { background: rgba(100,100,100,0.15); color: #888; border: 1px solid rgba(100,100,100,0.2); }
+  .badge-planned  { background: rgba(33,150,243,0.18); color: #64b5f6; border: 1px solid rgba(33,150,243,0.3); }
+
+  /* Map pins */
+  .map-pin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.6); cursor: pointer; transition: all 0.15s; }
+  .map-pin:hover { width: 18px; height: 18px; border-width: 2.5px; border-color: #fff; }
+  .map-pin.status-complete { background: #4caf50; box-shadow: 0 0 7px rgba(76,175,80,0.6); }
+  .map-pin.status-dev      { background: var(--orange); box-shadow: 0 0 9px rgba(232,125,30,0.65); }
+  .map-pin.status-cancel   { background: #484848; }
+  .map-pin.status-planned  { background: #2196f3; box-shadow: 0 0 7px rgba(33,150,243,0.6); }
+
+  /* ── DETAIL PANEL ── */
+  #detailPanel {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 320px; background: var(--surf1);
+    border-left: 1px solid var(--border2);
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 150;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.6);
+  }
+  #detailPanel.open { transform: translateX(0); }
+  .dp-close {
+    position: absolute; top: 12px; right: 14px;
+    background: var(--surf3); border: 1px solid var(--border2);
+    color: var(--muted); font-size: 16px;
+    cursor: pointer; padding: 3px 8px; border-radius: 5px;
+    z-index: 1;
+  }
+  .dp-close:hover { color: var(--text); background: var(--border2); }
+  .dp-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--surf2); }
+  .dp-body { padding: 18px 20px; overflow-y: auto; flex: 1; }
+  .dp-body::-webkit-scrollbar { width: 4px; }
+  .dp-body::-webkit-scrollbar-thumb { background: var(--surf3); border-radius: 4px; }
+  .dp-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600;
+    padding: 3px 11px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .dp-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
+  .dp-meta { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .dp-meta-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
+  .dp-meta-row i { color: var(--orange); font-size: 14px; width: 16px; }
+  .dp-desc { font-size: 13px; color: var(--muted); line-height: 1.7; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+  .dp-link {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 16px; padding: 10px; border-radius: 6px;
+    background: rgba(232,125,30,0.1); border: 1px solid rgba(232,125,30,0.28);
+    color: var(--orange); font-size: 13px; font-weight: 600;
+    text-decoration: none; transition: background 0.15s;
+  }
+  .dp-link:hover { background: rgba(232,125,30,0.2); }
+
+  /* Loading overlay */
+  #mapLoading {
+    position: absolute; inset: 0; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; z-index: 50; pointer-events: none;
+    transition: opacity 0.5s;
+  }
+  #mapLoading.hidden { opacity: 0; pointer-events: none; }
+  .loading-ring {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 3px solid var(--surf3);
+    border-top-color: var(--orange);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--muted); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { width: 0; overflow: hidden; }
+    .nav-links { display: none; }
+    #detailPanel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <img src="https://www.saffarinidxb.com/images/logo.png" alt="Eng. Adnan Saffarini Office">
+    <span class="nav-title">Safarini Junior</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html"><i class="ti ti-home"></i> Home</a>
+    <a href="showcase.html"><i class="ti ti-layout-grid"></i> Showcase</a>
+    <a href="projects.html"><i class="ti ti-list"></i> Projects List</a>
+    <a href="map.html" class="active"><i class="ti ti-map"></i> 3D Map</a>
+  </div>
+  <div class="nav-pin-count">
+    <i class="ti ti-map-pin"></i> <span id="visibleCount">137</span> of 137 projects
+  </div>
+</nav>
+
+<div class="map-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-title"><i class="ti ti-adjustments-horizontal" style="color:var(--orange)"></i> Map Filters</div>
+      <div class="sidebar-sub">Toggle to show/hide project types</div>
+    </div>
+    <div class="sidebar-body">
+
+      <!-- Stats -->
+      <div class="stats-section">
+        <div class="filter-label">Project Stats</div>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-num" id="sTotal">137</div><div class="stat-lbl">Total</div></div>
+          <div class="stat-box"><div class="stat-num" id="sComplete">0</div><div class="stat-lbl">Completed</div></div>
+          <div class="stat-box"><div class="stat-num" id="sDev">0</div><div class="stat-lbl">Active</div></div>
+          <div class="stat-box"><div class="stat-num" id="sPlanned">0</div><div class="stat-lbl">Planned</div></div>
+        </div>
+      </div>
+
+      <!-- Status filter -->
+      <div class="filter-section">
+        <div class="filter-label">Filter by Status</div>
+        <div class="status-pills">
+          <button class="status-pill active" data-status="all" onclick="setStatusFilter('all',this)">
+            <span class="status-dot dot-all"></span> All Projects
+            <span class="pill-count" id="pcAll">137</span>
+          </button>
+          <button class="status-pill" data-status="complete" onclick="setStatusFilter('complete',this)">
+            <span class="status-dot dot-complete"></span> Completed
+            <span class="pill-count" id="pcComplete">0</span>
+          </button>
+          <button class="status-pill" data-status="dev" onclick="setStatusFilter('dev',this)">
+            <span class="status-dot dot-dev"></span> Under Development
+            <span class="pill-count" id="pcDev">0</span>
+          </button>
+          <button class="status-pill" data-status="cancel" onclick="setStatusFilter('cancel',this)">
+            <span class="status-dot dot-cancel"></span> Cancelled / On Hold
+            <span class="pill-count" id="pcCancel">0</span>
+          </button>
+          <button class="status-pill" data-status="planned" onclick="setStatusFilter('planned',this)">
+            <span class="status-dot dot-planned"></span> Planned
+            <span class="pill-count" id="pcPlanned">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Type filter -->
+      <div class="filter-section">
+        <div class="filter-label">Filter by Type</div>
+        <div class="type-pills">
+          <button class="type-pill active" data-type="all" onclick="setTypeFilter('all',this)">
+            <i class="ti ti-building-community"></i> All Types
+            <span class="pill-count" style="margin-left:auto" id="ptAll">137</span>
+          </button>
+          <button class="type-pill" data-type="Residential" onclick="setTypeFilter('Residential',this)">
+            <i class="ti ti-building"></i> Residential
+            <span class="pill-count" style="margin-left:auto" id="ptRes">0</span>
+          </button>
+          <button class="type-pill" data-type="Commercial" onclick="setTypeFilter('Commercial',this)">
+            <i class="ti ti-building-skyscraper"></i> Commercial
+            <span class="pill-count" style="margin-left:auto" id="ptCom">0</span>
+          </button>
+          <button class="type-pill" data-type="Hospitality" onclick="setTypeFilter('Hospitality',this)">
+            <i class="ti ti-building-hotel"></i> Hospitality
+            <span class="pill-count" style="margin-left:auto" id="ptHos">0</span>
+          </button>
+          <button class="type-pill" data-type="Mixed-Use" onclick="setTypeFilter('Mixed-Use',this)">
+            <i class="ti ti-layout-columns"></i> Mixed-Use
+            <span class="pill-count" style="margin-left:auto" id="ptMix">0</span>
+          </button>
+          <button class="type-pill" data-type="Industrial" onclick="setTypeFilter('Industrial',this)">
+            <i class="ti ti-building-factory"></i> Industrial
+            <span class="pill-count" style="margin-left:auto" id="ptInd">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hints -->
+      <div class="map-hint">
+        <p><i class="ti ti-mouse"></i> Click a pin to view project details</p>
+        <p style="margin-top:5px"><i class="ti ti-hand-grab"></i> Drag to pan · Scroll to zoom</p>
+        <p style="margin-top:5px"><i class="ti ti-3d-cube-sphere"></i> 3D buildings appear at zoom 13+</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAP -->
+  <div id="map" style="position:relative">
+    <div id="mapLoading">
+      <div class="loading-ring"></div>
+      <div class="loading-text">Loading 3D map…</div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div id="detailPanel">
+    <button class="dp-close" id="dpClose"><i class="ti ti-x"></i></button>
+    <img id="dpImg" class="dp-img" src="" alt="">
+    <div class="dp-body">
+      <div id="dpBadge" class="dp-badge"></div>
+      <div id="dpName" class="dp-name"></div>
+      <div class="dp-meta">
+        <div class="dp-meta-row"><i class="ti ti-map-pin"></i><span id="dpArea"></span></div>
+        <div class="dp-meta-row"><i class="ti ti-building"></i><span id="dpType"></span></div>
+        <div class="dp-meta-row"><i class="ti ti-circle-check"></i><span id="dpStatus"></span></div>
+      </div>
+      <div id="dpDesc" class="dp-desc"></div>
+      <a href="projects.html" class="dp-link"><i class="ti ti-list"></i> View Full Projects List</a>
+    </div>
+  </div>
+
+</div><!-- .map-layout -->
+
+<script>
+// ══════════════════════════════════════════════════
+// PROJECT DATA — 137 Eng. Adnan Saffarini Projects
+// ══════════════════════════════════════════════════
+const PROJECTS = [
+  { id:1,  name:"Princess Tower",       area:"Dubai Marina",        status:"complete", lat:25.0792, lng:55.1404, type:"Residential",  desc:"One of the world's tallest residential towers, a landmark of Dubai Marina skyline." },
+  { id:2,  name:"Elite Residence",      area:"Dubai Marina",        status:"complete", lat:25.0802, lng:55.1414, type:"Residential",  desc:"Luxury high-rise residential tower in the heart of Dubai Marina." },
+  { id:3,  name:"Marina View Towers",   area:"Dubai Marina",        status:"complete", lat:25.0775, lng:55.1388, type:"Residential",  desc:"Twin residential towers with panoramic marina views." },
+  { id:4,  name:"Escan Marina",         area:"Dubai Marina",        status:"complete", lat:25.0768, lng:55.1378, type:"Residential",  desc:"Contemporary residential tower offering modern living in Dubai Marina." },
+  { id:5,  name:"Al Salam Tower",       area:"Dubai Marina",        status:"complete", lat:25.0810, lng:55.1422, type:"Mixed-Use",    desc:"Mixed-use tower combining residential and commercial spaces." },
+  { id:6,  name:"Botanica Tower",       area:"Dubai Marina",        status:"complete", lat:25.0758, lng:55.1365, type:"Residential",  desc:"Elegant residential tower with green-themed interiors and marina views." },
+  { id:7,  name:"SIT Tower",            area:"Dubai Silicon Oasis", status:"complete", lat:25.1190, lng:55.3785, type:"Commercial",   desc:"Silicon Oasis Information Technology Tower — a landmark commercial development." },
+  { id:8,  name:"Arabian Gate",         area:"Dubai Silicon Oasis", status:"complete", lat:25.1176, lng:55.3770, type:"Residential",  desc:"Gated residential community in Dubai Silicon Oasis." },
+  { id:9,  name:"Cambridge Business Centre", area:"Dubai Silicon Oasis", status:"complete", lat:25.1165, lng:55.3760, type:"Commercial", desc:"Modern commercial business centre serving the tech hub of Silicon Oasis." },
+  { id:10, name:"Binghatti Horizons",   area:"Dubai Silicon Oasis", status:"complete", lat:25.1155, lng:55.3748, type:"Residential",  desc:"Contemporary residential development with distinctive architectural design." },
+  { id:11, name:"La Vista Residence 1", area:"Dubai Silicon Oasis", status:"complete", lat:25.1182, lng:55.3792, type:"Residential",  desc:"First phase of the premium La Vista Residence series in Silicon Oasis." },
+  { id:12, name:"La Vista Residence 2", area:"Dubai Silicon Oasis", status:"complete", lat:25.1186, lng:55.3798, type:"Residential",  desc:"Second phase of La Vista Residence offering elevated lifestyle amenities." },
+  { id:13, name:"La Vista Residence 3", area:"Dubai Silicon Oasis", status:"complete", lat:25.1190, lng:55.3802, type:"Residential",  desc:"Third phase completing the La Vista Residence trilogy." },
+  { id:14, name:"Al Manal 1",           area:"Dubai Silicon Oasis", status:"complete", lat:25.1160, lng:55.3755, type:"Residential",  desc:"Residential tower providing quality homes in Silicon Oasis." },
+  { id:15, name:"Al Manal 2",           area:"Dubai Silicon Oasis", status:"complete", lat:25.1158, lng:55.3758, type:"Residential",  desc:"Second phase of Al Manal residential development." },
+  { id:16, name:"Silicon Central",      area:"Dubai Silicon Oasis", status:"complete", lat:25.1172, lng:55.3780, type:"Mixed-Use",    desc:"Central mixed-use hub for the Silicon Oasis community." },
+  { id:17, name:"MBK Tower",            area:"Business Bay",        status:"complete", lat:25.1850, lng:55.2680, type:"Commercial",   desc:"Prominent commercial tower strategically located in Business Bay." },
+  { id:18, name:"Millennium Binghatti Residences", area:"Business Bay", status:"complete", lat:25.1835, lng:55.2660, type:"Residential", desc:"Luxury residential tower combining Millennium hospitality with Binghatti design." },
+  { id:19, name:"Al Habtoor Business Tower", area:"Business Bay",   status:"complete", lat:25.1842, lng:55.2672, type:"Commercial",   desc:"Grade A office tower in the prestigious Business Bay district." },
+  { id:20, name:"Churchill Executive Tower", area:"Business Bay",   status:"complete", lat:25.1825, lng:55.2648, type:"Commercial",   desc:"Executive commercial tower designed for modern business operations." },
+  { id:21, name:"Dhow Palace Hotel",    area:"Bur Dubai",           status:"complete", lat:25.2573, lng:55.2961, type:"Hospitality",  desc:"Heritage-inspired boutique hotel in the historic Bur Dubai district." },
+  { id:22, name:"Al Seef Heritage Hotel", area:"Bur Dubai",         status:"complete", lat:25.2560, lng:55.2952, type:"Hospitality",  desc:"Traditional-style hotel celebrating Emirati heritage along Dubai Creek." },
+  { id:23, name:"Carlton Downtown Hotel", area:"Trade Centre Second", status:"complete", lat:25.2248, lng:55.2820, type:"Hospitality", desc:"Upscale hotel in the heart of the Trade Centre district." },
+  { id:24, name:"Residence Inn by Marriott", area:"Trade Centre Second", status:"complete", lat:25.2240, lng:55.2810, type:"Hospitality", desc:"Extended-stay hotel by Marriott featuring modern apartment-style suites." },
+  { id:25, name:"The Tower Plaza Hotel", area:"Trade Centre First", status:"complete", lat:25.2235, lng:55.2800, type:"Hospitality",  desc:"Full-service hotel tower with sweeping views of the Dubai skyline." },
+  { id:26, name:"Aspin Commercial Tower", area:"Trade Centre First", status:"complete", lat:25.2228, lng:55.2794, type:"Commercial",  desc:"Premier Grade A office tower in the central business district." },
+  { id:27, name:"White Crown Tower",    area:"Trade Centre First",  status:"complete", lat:25.2222, lng:55.2788, type:"Mixed-Use",    desc:"Distinctive mixed-use tower with signature crown architectural element." },
+  { id:28, name:"Millennium Executive Tower", area:"Trade Centre First", status:"complete", lat:25.2215, lng:55.2782, type:"Commercial", desc:"Executive commercial tower operated under the Millennium brand." },
+  { id:29, name:"Al Hawai Tower",       area:"Trade Centre First",  status:"complete", lat:25.2230, lng:55.2798, type:"Residential",  desc:"Residential tower in a prime central Dubai location." },
+  { id:30, name:"Champions Tower 1",    area:"Dubai Sports City",   status:"complete", lat:25.0405, lng:55.2152, type:"Residential",  desc:"Residential tower catering to sports enthusiasts within Dubai Sports City." },
+  { id:31, name:"Hamza Tower",          area:"Dubai Sports City",   status:"complete", lat:25.0398, lng:55.2145, type:"Residential",  desc:"Modern residential tower in the vibrant Sports City community." },
+  { id:32, name:"Arena Apartments",     area:"Dubai Sports City",   status:"complete", lat:25.0390, lng:55.2138, type:"Residential",  desc:"Contemporary apartment complex with sports-themed amenities." },
+  { id:33, name:"Roma by Giovanni Boutique Suites", area:"Dubai Sports City", status:"complete", lat:25.0385, lng:55.2130, type:"Hospitality", desc:"Boutique hotel suites with Italian-inspired design and lifestyle." },
+  { id:34, name:"Preatoni Tower",       area:"JLT Cluster L",       status:"complete", lat:25.0758, lng:55.1340, type:"Residential",  desc:"Elegant residential tower in Jumeirah Lakes Towers Cluster L." },
+  { id:35, name:"Lake City Tower",      area:"JLT Cluster D",       status:"complete", lat:25.0720, lng:55.1360, type:"Mixed-Use",    desc:"Mixed-use development with stunning lake views in JLT." },
+  { id:36, name:"Al Waleed Paradise",   area:"JLT Cluster R",       status:"complete", lat:25.0680, lng:55.1370, type:"Residential",  desc:"Luxury residential complex in JLT with premium amenities." },
+  { id:37, name:"Indigo Tower",         area:"JLT Cluster D",       status:"complete", lat:25.0728, lng:55.1368, type:"Residential",  desc:"Residential high-rise with contemporary design in JLT." },
+  { id:38, name:"Sofitel Residences Downtown", area:"Downtown Dubai", status:"dev",  lat:25.1990, lng:55.2750, type:"Hospitality",    desc:"Ultra-luxury branded residences in partnership with Sofitel, Downtown Dubai." },
+  { id:39, name:"Downtown Views",       area:"Downtown Dubai",      status:"complete", lat:25.1972, lng:55.2744, type:"Residential",  desc:"Premium residential tower with iconic Burj Khalifa views." },
+  { id:40, name:"Sea Coral",            area:"Dubai Islands",       status:"dev",      lat:25.3215, lng:55.3268, type:"Residential",  desc:"Waterfront residential development on Dubai's premier island destination." },
+  { id:41, name:"Sea Legend One",       area:"Dubai Islands",       status:"dev",      lat:25.3222, lng:55.3275, type:"Residential",  desc:"Iconic seafront residential tower, Dubai Islands' signature development." },
+  { id:42, name:"Dreamlife Residences", area:"Dubai Islands",       status:"dev",      lat:25.3230, lng:55.3282, type:"Residential",  desc:"Aspirational waterfront living with world-class beach access." },
+  { id:43, name:"Sea Legend Two",       area:"Dubai Islands",       status:"dev",      lat:25.3218, lng:55.3270, type:"Residential",  desc:"Second phase of the Sea Legend series on Dubai Islands." },
+  { id:44, name:"Elo 1",               area:"Damac Hills 2",        status:"dev",      lat:24.9762, lng:55.3983, type:"Residential",  desc:"First phase of Elo — affordable luxury townhouses in Damac Hills 2." },
+  { id:45, name:"Elo 2",               area:"Damac Hills 2",        status:"dev",      lat:24.9758, lng:55.3978, type:"Residential",  desc:"Second phase of Elo with expanded amenities and green spaces." },
+  { id:46, name:"Barari Gardens 1",    area:"Majan",                status:"dev",      lat:25.1100, lng:55.3402, type:"Residential",  desc:"Lush garden residential community in Majan, Dubailand." },
+  { id:47, name:"Barari Gardens 2",    area:"Majan",                status:"dev",      lat:25.1095, lng:55.3396, type:"Residential",  desc:"Second phase of Barari Gardens expanding the verdant community." },
+  { id:48, name:"Haven Views 1",       area:"DubaiLand",            status:"dev",      lat:25.0500, lng:55.3800, type:"Residential",  desc:"Serene residential community with panoramic haven views." },
+  { id:49, name:"Haven Views 2",       area:"DubaiLand",            status:"dev",      lat:25.0495, lng:55.3795, type:"Residential",  desc:"Second phase of Haven Views offering expanded residential options." },
+  { id:50, name:"Rose Mirage 1",       area:"Dubai South",          status:"dev",      lat:24.8974, lng:55.1622, type:"Residential",  desc:"Elegant residential community near Al Maktoum International Airport." },
+  { id:51, name:"Rose Mirage 2",       area:"Dubai South",          status:"dev",      lat:24.8970, lng:55.1618, type:"Residential",  desc:"Second phase of Rose Mirage, expanding Dubai South's premium residential offering." },
+  { id:52, name:"Al Shera'a",          area:"Al Jaddaf",            status:"dev",      lat:25.2202, lng:55.3241, type:"Mixed-Use",    desc:"Large-scale mixed-use mega-development transforming Al Jaddaf waterfront." },
+  { id:53, name:"Ocean Heights",       area:"Dubai Marina",         status:"complete", lat:25.0783, lng:55.1398, type:"Residential",  desc:"Luxurious waterfront residential tower in Dubai Marina." },
+  { id:54, name:"Al Bateen Residence", area:"Jumeirah Beach Residence", status:"complete", lat:25.0833, lng:55.1342, type:"Residential", desc:"Premium beachside residential complex at JBR." },
+  { id:55, name:"Al Noor Tower",       area:"Business Bay",         status:"complete", lat:25.1828, lng:55.2655, type:"Commercial",   desc:"Commercial tower offering premium Grade A office spaces in Business Bay." },
+  { id:56, name:"Regent Business Centre", area:"Jumeirah Lake Towers", status:"complete", lat:25.0740, lng:55.1352, type:"Commercial", desc:"Contemporary business centre in JLT serving corporate clients." },
+  { id:57, name:"Al Fahad Tower 1",    area:"Trade Centre First",   status:"complete", lat:25.2210, lng:55.2777, type:"Residential",  desc:"First of twin residential towers in the central business district." },
+  { id:58, name:"Al Fahad Tower 2",    area:"Trade Centre First",   status:"complete", lat:25.2208, lng:55.2774, type:"Residential",  desc:"Second of the Al Fahad twin towers development." },
+  { id:59, name:"Majestic Hotel Tower", area:"Bur Dubai",           status:"complete", lat:25.2580, lng:55.2968, type:"Hospitality",  desc:"Full-service hotel tower in the heart of historic Bur Dubai." },
+  { id:60, name:"Byblos Hotel",        area:"Barsha Heights",       status:"complete", lat:25.0978, lng:55.1809, type:"Hospitality",  desc:"Contemporary hotel in Barsha Heights (TECOM) tech district." },
+  { id:61, name:"Monarch Office Tower", area:"Business Bay",        status:"complete", lat:25.1840, lng:55.2665, type:"Commercial",   desc:"Prestigious office tower for corporate headquarters in Business Bay." },
+  { id:62, name:"Saeed Tower 2",       area:"Trade Centre First",   status:"complete", lat:25.2220, lng:55.2790, type:"Commercial",   desc:"Landmark commercial tower in the Sheikh Zayed Road corridor." },
+  { id:63, name:"Al Burj Tower",       area:"Dubai Marina",         status:"cancel",   lat:25.0820, lng:55.1430, type:"Mixed-Use",    desc:"Ambitious mixed-use skyscraper project; suspended due to market conditions." },
+  { id:64, name:"Lagoon Tower",        area:"Business Bay",         status:"cancel",   lat:25.1818, lng:55.2638, type:"Residential",  desc:"Residential tower with lagoon views; project placed on hold." },
+  { id:65, name:"Palm Gateway Tower",  area:"Palm Jumeirah",        status:"cancel",   lat:25.1124, lng:55.1390, type:"Residential",  desc:"Planned residential tower at Palm Jumeirah gateway; cancelled." },
+  { id:66, name:"Dubai Frame Residences", area:"Zabeel",            status:"cancel",   lat:25.2357, lng:55.3005, type:"Residential",  desc:"Residential project near Dubai Frame; suspended." },
+  { id:67, name:"Creek Tower Annex",   area:"Dubai Festival City",  status:"cancel",   lat:25.2285, lng:55.3490, type:"Mixed-Use",    desc:"Adjacent mixed-use development to the creek area; on hold." },
+  { id:68, name:"Sports City Arena Tower", area:"Dubai Sports City", status:"cancel",  lat:25.0380, lng:55.2122, type:"Commercial",   desc:"Commercial tower adjacent to ICC cricket stadium; cancelled." },
+  { id:69, name:"Island Heights",      area:"Dubai Islands",        status:"cancel",   lat:25.3208, lng:55.3260, type:"Residential",  desc:"High-rise residential tower on Dubai Islands; project suspended." },
+  { id:70, name:"Jumeirah Central Towers", area:"Jumeirah",         status:"cancel",   lat:25.2048, lng:55.2708, type:"Mixed-Use",    desc:"Ambitious mixed-use twin tower project; cancelled." },
+  { id:71, name:"Al Jaddaf Waterfront Tower", area:"Al Jaddaf",     status:"planned",  lat:25.2195, lng:55.3230, type:"Mixed-Use",    desc:"Planned waterfront tower as part of the Al Jaddaf development masterplan." },
+  { id:72, name:"Creek Harbour Residences", area:"Dubai Creek Harbour", status:"planned", lat:25.2000, lng:55.3608, type:"Residential", desc:"Future residential development in the new Creek Harbour mega-district." },
+  { id:73, name:"Dubai South Tower A", area:"Dubai South",          status:"planned",  lat:24.8980, lng:55.1630, type:"Commercial",   desc:"Planned commercial tower near Expo City Dubai." },
+  { id:74, name:"Jumeirah Village Triangle Villas", area:"JVT",     status:"complete", lat:25.0572, lng:55.1872, type:"Residential",  desc:"Villa community project in Jumeirah Village Triangle." },
+  { id:75, name:"Oud Metha Offices",   area:"Oud Metha",            status:"complete", lat:25.2320, lng:55.3125, type:"Commercial",   desc:"Office complex in the Oud Metha mixed-use precinct." },
+  { id:76, name:"Al Karama Commercial Centre", area:"Al Karama",    status:"complete", lat:25.2390, lng:55.3070, type:"Commercial",   desc:"Retail and commercial centre in the vibrant Al Karama district." },
+  { id:77, name:"Deira Waterfront Hotel", area:"Deira",             status:"complete", lat:25.2710, lng:55.3260, type:"Hospitality",  desc:"Boutique waterfront hotel in historic Deira overlooking the Creek." },
+  { id:78, name:"Al Muraqabat Apartments", area:"Deira",            status:"complete", lat:25.2650, lng:55.3200, type:"Residential",  desc:"Residential apartment complex in central Deira." },
+  { id:79, name:"Silicon Park",        area:"Dubai Silicon Oasis",  status:"complete", lat:25.1195, lng:55.3810, type:"Commercial",   desc:"Tech-focused business park designed for IT and innovation companies." },
+  { id:80, name:"Oasis Tower",         area:"Dubai Media City",     status:"complete", lat:25.1038, lng:55.1592, type:"Commercial",   desc:"Commercial tower in Dubai Media City serving the creative economy." },
+  { id:81, name:"Al Waha Villas",      area:"Mirdif",               status:"complete", lat:25.2218, lng:55.4145, type:"Residential",  desc:"Premium villa community in the family-friendly Mirdif suburb." },
+  { id:82, name:"Discovery Gardens Tower", area:"Discovery Gardens", status:"complete", lat:25.0350, lng:55.1242, type:"Residential", desc:"Affordable residential tower in Dubai's Discovery Gardens." },
+  { id:83, name:"Al Qusais Industrial Complex", area:"Al Qusais",   status:"complete", lat:25.2720, lng:55.3960, type:"Industrial",   desc:"Industrial complex with warehousing and light manufacturing facilities." },
+  { id:84, name:"International City Towers", area:"International City", status:"complete", lat:25.1605, lng:55.4150, type:"Residential", desc:"Affordable residential cluster in Dubai's International City." },
+  { id:85, name:"Jumeirah Golf Estates Villas", area:"Jumeirah Golf Estates", status:"complete", lat:25.0255, lng:55.1622, type:"Residential", desc:"Luxury villas overlooking championship golf courses." },
+  { id:86, name:"Al Furjan Tower",     area:"Al Furjan",            status:"dev",      lat:25.0368, lng:55.1408, type:"Residential",  desc:"New residential tower in the growing Al Furjan community." },
+  { id:87, name:"Town Square Residences", area:"Town Square Dubai", status:"dev",      lat:24.9890, lng:55.2522, type:"Residential",  desc:"Modern residential apartments in Dubai's Town Square development." },
+  { id:88, name:"Expo Valley",         area:"Dubai South",          status:"dev",      lat:24.8960, lng:55.1610, type:"Residential",  desc:"Eco-conscious residential community near Expo City Dubai." },
+  { id:89, name:"The Crest Tower",     area:"Sobha Hartland",       status:"dev",      lat:25.1932, lng:55.3148, type:"Residential",  desc:"Luxury residential tower in the premium Sobha Hartland development." },
+  { id:90, name:"Park Lane Residences", area:"Dubai Hills Estate",  status:"dev",      lat:25.1098, lng:55.2530, type:"Residential",  desc:"Premium residences within the master-planned Dubai Hills Estate." },
+  { id:91, name:"Al Warsan Apartments", area:"Al Warsan",           status:"complete", lat:25.1762, lng:55.4238, type:"Residential",  desc:"Residential apartment complex serving the Al Warsan community." },
+  { id:92, name:"Rashidiya Villas",    area:"Rashidiya",            status:"complete", lat:25.2218, lng:55.4050, type:"Residential",  desc:"Villa compound in Rashidiya providing spacious family living." },
+  { id:93, name:"Al Nahda Residential Tower", area:"Al Nahda",      status:"complete", lat:25.2882, lng:55.3750, type:"Residential",  desc:"Residential high-rise in the mixed community of Al Nahda." },
+  { id:94, name:"Al Barsha Heights Tower", area:"Al Barsha",        status:"complete", lat:25.1078, lng:55.1940, type:"Mixed-Use",    desc:"Mixed-use development in the commercial Al Barsha Heights." },
+  { id:95, name:"Satwa Commercial Building", area:"Al Satwa",       status:"complete", lat:25.2288, lng:55.2655, type:"Commercial",   desc:"Commercial development in the urban Al Satwa neighbourhood." },
+  { id:96, name:"Umm Suqeim Villa Complex", area:"Umm Suqeim",      status:"complete", lat:25.1388, lng:55.2005, type:"Residential",  desc:"Exclusive villa compound in the prestigious Umm Suqeim area." },
+  { id:97, name:"Jumeirah 1 Compound", area:"Jumeirah",             status:"complete", lat:25.2048, lng:55.2708, type:"Residential",  desc:"Gated residential compound in sought-after Jumeirah 1." },
+  { id:98, name:"Al Quoz Warehouses",  area:"Al Quoz",              status:"complete", lat:25.1425, lng:55.2355, type:"Industrial",   desc:"Industrial warehousing complex in Al Quoz industrial district." },
+  { id:99, name:"Motor City Apartments", area:"Motor City",         status:"complete", lat:25.0480, lng:55.2412, type:"Residential",  desc:"Lifestyle apartment complex in the auto-themed Motor City." },
+  { id:100,name:"Green Community Villas", area:"Investment Park",   status:"complete", lat:24.9978, lng:55.1518, type:"Residential",  desc:"Eco-conscious villa community within Investment Park." },
+  { id:101,name:"Falcon City Tower",   area:"Falcon City",          status:"cancel",   lat:25.0892, lng:55.3728, type:"Residential",  desc:"Residential tower in Falcon City of Wonders; suspended." },
+  { id:102,name:"Remraam Apartments",  area:"Remraam",              status:"complete", lat:25.0120, lng:55.2098, type:"Residential",  desc:"Affordable residential apartments in the Remraam community." },
+  { id:103,name:"Mudon Villas",        area:"Mudon",                status:"complete", lat:25.0258, lng:55.2532, type:"Residential",  desc:"Premium villas in the Mudon gated community, Dubailand." },
+  { id:104,name:"The Sustainable City Villas", area:"Sustainable City", status:"complete", lat:25.0368, lng:55.2472, type:"Residential", desc:"Zero-energy villa project in Dubai's Sustainable City." },
+  { id:105,name:"DIFC Offices",        area:"DIFC",                 status:"complete", lat:25.2128, lng:55.2798, type:"Commercial",   desc:"Grade A commercial offices within the Dubai International Financial Centre." },
+  { id:106,name:"Emirates Towers Annex", area:"Trade Centre Second", status:"cancel",  lat:25.2185, lng:55.2830, type:"Commercial",   desc:"Proposed annex tower to Emirates Towers complex; cancelled." },
+  { id:107,name:"Festival Tower",      area:"Dubai Festival City",  status:"complete", lat:25.2290, lng:55.3500, type:"Mixed-Use",    desc:"Mixed-use tower at the heart of Dubai Festival City." },
+  { id:108,name:"Garhoud Heights",     area:"Al Garhoud",           status:"complete", lat:25.2448, lng:55.3478, type:"Residential",  desc:"Residential tower in the well-connected Al Garhoud district." },
+  { id:109,name:"Port Saeed Tower",    area:"Port Saeed",           status:"complete", lat:25.2602, lng:55.3328, type:"Commercial",   desc:"Commercial tower in Port Saeed, Deira's commercial corridor." },
+  { id:110,name:"Al Rigga Tower",      area:"Al Rigga",             status:"complete", lat:25.2682, lng:55.3248, type:"Mixed-Use",    desc:"Mixed-use development in the popular Al Rigga area of Deira." },
+  { id:111,name:"Healthcare City Tower", area:"Dubai Healthcare City", status:"complete", lat:25.2332, lng:55.3210, type:"Commercial", desc:"Medical office tower within Dubai Healthcare City." },
+  { id:112,name:"Knowledge Village Offices", area:"Knowledge Village", status:"complete", lat:25.1058, lng:55.1702, type:"Commercial", desc:"Educational and corporate offices in Knowledge Village." },
+  { id:113,name:"Internet City Complex", area:"Dubai Internet City", status:"complete", lat:25.0988, lng:55.1648, type:"Commercial",  desc:"Tech campus office complex in Dubai's Internet City free zone." },
+  { id:114,name:"Tecom Business Bay Tower", area:"Barsha Heights",  status:"complete", lat:25.0992, lng:55.1818, type:"Commercial",   desc:"Commercial tower serving tech and media companies in TECOM." },
+  { id:115,name:"Al Sufouh Residences", area:"Al Sufouh",           status:"complete", lat:25.1138, lng:55.1778, type:"Residential",  desc:"Waterfront residences in the prestigious Al Sufouh beachside area." },
+  { id:116,name:"Meadows Villas Phase 2", area:"The Meadows",       status:"complete", lat:25.0682, lng:55.1615, type:"Residential",  desc:"Phase 2 of the iconic Meadows villa community in Emirates Living." },
+  { id:117,name:"Springs Townhouses",  area:"The Springs",          status:"complete", lat:25.0638, lng:55.1588, type:"Residential",  desc:"Townhouse cluster within the Springs community." },
+  { id:118,name:"Nakheel Mall Tower",  area:"Palm Jumeirah",        status:"cancel",   lat:25.1148, lng:55.1422, type:"Mixed-Use",    desc:"Proposed tower adjacent to Nakheel Mall; project cancelled." },
+  { id:119,name:"Jumeirah Heights Tower", area:"Jumeirah Heights",  status:"complete", lat:25.0698, lng:55.1525, type:"Residential",  desc:"Luxury residential tower in Jumeirah Heights cluster." },
+  { id:120,name:"Al Rashidiya Hotel",  area:"Al Rashidiya",         status:"complete", lat:25.2280, lng:55.4078, type:"Hospitality",  desc:"Mid-scale hotel serving transit travellers near Dubai Airport." },
+  { id:121,name:"Nad Al Sheba Villas", area:"Nad Al Sheba",         status:"complete", lat:25.1538, lng:55.3198, type:"Residential",  desc:"Exclusive villa compound near the Nad Al Sheba racecourse." },
+  { id:122,name:"Business Bay Canal Tower", area:"Business Bay",    status:"dev",      lat:25.1862, lng:55.2695, type:"Residential",  desc:"New canal-facing residential tower under development in Business Bay." },
+  { id:123,name:"Dubai Hills Grove",   area:"Dubai Hills Estate",   status:"dev",      lat:25.1082, lng:55.2480, type:"Residential",  desc:"Upscale villa and townhouse community within Dubai Hills Estate." },
+  { id:124,name:"Al Rashidiya Heights", area:"Mirdif",              status:"complete", lat:25.2250, lng:55.4180, type:"Residential",  desc:"Residential tower in the established suburb of Mirdif." },
+  { id:125,name:"Ras Al Khor Offices", area:"Ras Al Khor",          status:"complete", lat:25.1980, lng:55.3570, type:"Commercial",   desc:"Commercial offices in the Ras Al Khor industrial zone." },
+  { id:126,name:"Jebel Ali Village Villas", area:"Jebel Ali",       status:"complete", lat:25.0082, lng:55.1145, type:"Residential",  desc:"Historic villa community in Jebel Ali, one of Dubai's first suburbs." },
+  { id:127,name:"Maritime City Tower", area:"Dubai Maritime City",  status:"dev",      lat:25.2285, lng:55.2785, type:"Commercial",   desc:"Commercial hub serving the maritime and logistics industry." },
+  { id:128,name:"Bluewaters Residences", area:"Bluewaters Island",  status:"dev",      lat:25.0818, lng:55.1268, type:"Residential",  desc:"Luxury island residences adjacent to the Ain Dubai Ferris wheel." },
+  { id:129,name:"Al Jadaf Culture Village", area:"Al Jaddaf",       status:"dev",      lat:25.2188, lng:55.3225, type:"Mixed-Use",    desc:"Cultural mixed-use village integrating arts, retail, and residences." },
+  { id:130,name:"Deira Islands Hotel", area:"Dubai Islands",        status:"dev",      lat:25.3242, lng:55.3298, type:"Hospitality",  desc:"Beachfront luxury hotel on Deira Islands (Dubai Islands)." },
+  { id:131,name:"Al Barari Residences", area:"Majan",               status:"complete", lat:25.1108, lng:55.3412, type:"Residential",  desc:"Ultra-luxury villa residences in the green Barari nature reserve." },
+  { id:132,name:"Tilal Al Ghaf Villas", area:"Tilal Al Ghaf",       status:"dev",      lat:25.0388, lng:55.2728, type:"Residential",  desc:"Lagoon-side villas in Meraas' Tilal Al Ghaf master-planned community." },
+  { id:133,name:"DAMAC Lagoons Tower", area:"Damac Hills",          status:"dev",      lat:25.0318, lng:55.2308, type:"Residential",  desc:"New residential tower within the Damac Hills lagoon community." },
+  { id:134,name:"MBR City Tower",      area:"Mohammed Bin Rashid City", status:"dev",  lat:25.1482, lng:55.2882, type:"Residential",  desc:"Luxury residential tower in the mixed-use MBR City mega-development." },
+  { id:135,name:"Creek Plaza",         area:"Dubai Creek Harbour",  status:"cancel",   lat:25.2008, lng:55.3620, type:"Mixed-Use",    desc:"Proposed mixed-use plaza at Dubai Creek Harbour; suspended." },
+  { id:136,name:"The Valley Villas",   area:"The Valley",           status:"dev",      lat:25.0118, lng:55.4618, type:"Residential",  desc:"Modern villas in Emaar's The Valley community along Dubai-Al Ain Road." },
+  { id:137,name:"Sobha Reserve Villas", area:"Wadi Al Safa",        status:"planned",  lat:25.0798, lng:55.3308, type:"Residential",  desc:"Premium reserve villas planned for the Wadi Al Safa nature corridor." }
+];
+
+// ══════════════════════════════
+// HELPERS
+// ══════════════════════════════
+function statusBadge(s) {
+  const m = {
+    complete:{ cls:'badge-complete', label:'Completed' },
+    dev:     { cls:'badge-dev',      label:'Under Development' },
+    cancel:  { cls:'badge-cancel',   label:'On Hold' },
+    planned: { cls:'badge-planned',  label:'Planned' }
+  };
+  return m[s] || m.cancel;
+}
+function statusLabel(s) { return statusBadge(s).label; }
+
+// ══════════════════════════════
+// COUNTS
+// ══════════════════════════════
+(function seedCounts(){
+  const c = { all:0, complete:0, dev:0, cancel:0, planned:0, Residential:0, Commercial:0, Hospitality:0, 'Mixed-Use':0, Industrial:0 };
+  PROJECTS.forEach(p => { c.all++; c[p.status]++; c[p.type] = (c[p.type]||0)+1; });
+  document.getElementById('sTotal').textContent    = c.all;
+  document.getElementById('sComplete').textContent = c.complete;
+  document.getElementById('sDev').textContent      = c.dev;
+  document.getElementById('sPlanned').textContent  = c.planned;
+  document.getElementById('pcAll').textContent     = c.all;
+  document.getElementById('pcComplete').textContent= c.complete;
+  document.getElementById('pcDev').textContent     = c.dev;
+  document.getElementById('pcCancel').textContent  = c.cancel;
+  document.getElementById('pcPlanned').textContent = c.planned;
+  document.getElementById('ptAll').textContent     = c.all;
+  document.getElementById('ptRes').textContent     = c['Residential']||0;
+  document.getElementById('ptCom').textContent     = c['Commercial']||0;
+  document.getElementById('ptHos').textContent     = c['Hospitality']||0;
+  document.getElementById('ptMix').textContent     = c['Mixed-Use']||0;
+  document.getElementById('ptInd').textContent     = c['Industrial']||0;
+})();
+
+// ══════════════════════════════
+// FILTER STATE
+// ══════════════════════════════
+var filterStatus = 'all';
+var filterType   = 'all';
+var allMarkers   = [];
+var mapInst      = null;
+
+function setStatusFilter(val, el) {
+  filterStatus = val;
+  document.querySelectorAll('.status-pill').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+function setTypeFilter(val, el) {
+  filterType = val;
+  document.querySelectorAll('.type-pill').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+function applyFilters() {
+  var visible = 0;
+  allMarkers.forEach(function(m) {
+    var p = m._project;
+    var show = (filterStatus === 'all' || p.status === filterStatus) &&
+               (filterType   === 'all' || p.type   === filterType);
+    var el = m.getElement();
+    el.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('visibleCount').textContent = visible;
+}
+
+// ══════════════════════════════
+// MAP
+// ══════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  var map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    center: [55.27, 25.12],
+    zoom: 10.5,
+    pitch: 52,
+    bearing: -16,
+    antialias: true
+  });
+  mapInst = map;
+
+  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-right');
+
+  map.on('load', function() {
+    // ── 3D BUILDINGS ──
+    var layers = map.getStyle().layers;
+    var firstSymbolId;
+    for (var i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol') { firstSymbolId = layers[i].id; break; }
+    }
+    try {
+      map.addLayer({
+        id: '3d-buildings',
+        type: 'fill-extrusion',
+        source: 'carto',
+        'source-layer': 'building',
+        minzoom: 13,
+        paint: {
+          'fill-extrusion-color': [
+            'interpolate', ['linear'], ['zoom'],
+            13, '#1a1a28', 16, '#22222e'
+          ],
+          'fill-extrusion-height': [
+            'interpolate', ['linear'], ['zoom'],
+            13, 0, 16, ['coalesce', ['get','height'], ['get','render_height'], 10]
+          ],
+          'fill-extrusion-base': [
+            'interpolate', ['linear'], ['zoom'],
+            13, 0, 16, ['coalesce', ['get','min_height'], ['get','render_min_height'], 0]
+          ],
+          'fill-extrusion-opacity': 0.72
+        }
+      }, firstSymbolId);
+    } catch(e) { console.log('3D buildings:', e.message); }
+
+    // ── PROJECT PINS ──
+    PROJECTS.forEach(function(p) {
+      var el = document.createElement('div');
+      el.className = 'map-pin status-' + p.status;
+      el.title = p.name;
+
+      var badge = statusBadge(p.status);
+      var popup = new maplibregl.Popup({ offset: 16, closeButton: true, maxWidth: '240px' })
+        .setHTML(
+          '<div class="popup-name">' + p.name + '</div>' +
+          '<div class="popup-area"><i class="ti ti-map-pin"></i> ' + p.area + '</div>' +
+          '<span class="popup-badge ' + badge.cls + '">' + badge.label + '</span>' +
+          '<div class="popup-type"><i class="ti ti-building"></i> ' + p.type + '</div>' +
+          '<button class="popup-detail-btn" onclick="openDetail(' + p.id + ')"><i class="ti ti-info-circle"></i> View Details</button>'
+        );
+
+      var marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([p.lng, p.lat])
+        .setPopup(popup)
+        .addTo(map);
+      marker._project = p;
+      allMarkers.push(marker);
+    });
+
+    // Hide loading
+    document.getElementById('mapLoading').classList.add('hidden');
+  });
+});
+
+// ══════════════════════════════
+// DETAIL PANEL
+// ══════════════════════════════
+var PROJECT_MAP = {};
+PROJECTS.forEach(function(p){ PROJECT_MAP[p.id] = p; });
+
+var BUILDING_IMAGES = {
+  "princess tower":      "https://www.saffarinidxb.com/MediaFiles/Slider/641d8659-e73a-43c4-ad11-a7dcbe806c47.jpg",
+  "elite residence":     "https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=600&height=350",
+  "marina view towers":  "https://www.saffarinidxb.com/MediaFiles/Slider/ad6100cd-a7f4-4998-9bf3-0ab3f2b7dfce.jpg",
+  "mercato shopping mall":"https://www.saffarinidxb.com/MediaFiles/Projects/4c6442ff-0d56-490f-871d-c51a91c2acbd.jpg.ashx?width=600&height=350",
+  "dhow palace hotel":   "https://www.saffarinidxb.com/MediaFiles/Projects/b5dd98da-71c5-4998-b16d-9ecf4a63b962.jpg.ashx?width=600&height=350",
+  "ajman university":    "https://www.saffarinidxb.com/MediaFiles/Projects/62424856-3f8b-4b0a-a67b-7aee351abeb6.jpg.ashx?width=600&height=350",
+  "belshalat mosque":    "https://www.saffarinidxb.com/MediaFiles/Projects/5c7a3746-c5f2-42b1-9d9e-4909220bf7cd.jpg.ashx?width=600&height=350"
+};
+var PLACEHOLDER = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJJbnRlciIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzNhM2EzYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVuZy4gQWRuYW4gU2FmZmFyaW5pIE9mZmljZTwvdGV4dD48L3N2Zz4=";
+
+function getImg(p) {
+  var key = p.name.toLowerCase().replace(/[',&.]/g, '').replace(/\s+/g, ' ').trim();
+  return BUILDING_IMAGES[key] || PLACEHOLDER;
+}
+
+function openDetail(id) {
+  var p = PROJECT_MAP[id];
+  if (!p) return;
+  var badge = statusBadge(p.status);
+  document.getElementById('dpImg').src     = getImg(p);
+  document.getElementById('dpImg').alt     = p.name;
+  document.getElementById('dpBadge').className = 'dp-badge ' + badge.cls;
+  document.getElementById('dpBadge').textContent = badge.label;
+  document.getElementById('dpName').textContent  = p.name;
+  document.getElementById('dpArea').textContent  = p.area;
+  document.getElementById('dpType').textContent  = p.type;
+  document.getElementById('dpStatus').textContent= badge.label;
+  document.getElementById('dpDesc').textContent  = p.desc;
+  document.getElementById('detailPanel').classList.add('open');
+  // Fly to project
+  if (mapInst) mapInst.flyTo({ center: [p.lng, p.lat], zoom: 14.5, duration: 800 });
+}
+
+document.getElementById('dpClose').addEventListener('click', function() {
+  document.getElementById('detailPanel').classList.remove('open');
+});
+</script>
+</body>
+</html>
