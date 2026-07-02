@@ -30,7 +30,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
 /* ── Header ── */
 .header{position:fixed;top:0;left:0;right:0;z-index:20;height:52px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px}
 .header-brand{display:flex;align-items:center;gap:10px}
-.h-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:7px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.h-logo-hidden{}
 .h-logo::after{content:'';position:absolute;top:50%;left:50%;width:12px;height:12px;border:2px solid rgba(255,255,255,0.85);transform:translate(-50%,-50%) rotate(45deg)}
 .header-brand .title{font-size:13px;font-weight:700;letter-spacing:.3px}
 .header-brand .sub{font-size:9px;color:var(--dim)}
@@ -92,6 +92,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
   .panel-right{display:none}
   .header-brand .sub{display:none}
 }
+
+  /* ── DARK OVERRIDE ── */
+  :root {
+    --bg:#0a0a0a; --bg2:#141414; --surface:#1c1c1c;
+    --text:#f2f2f2; --muted:#7a7a7a; --dim:#5a5a5a;
+    --border:rgba(255,255,255,.08); --glass:rgba(20,20,20,.96);
+  }
+  body{background:#0a0a0a!important;color:#f2f2f2!important}
+  .header{background:#141414!important;border-bottom:1px solid #2a2a2a!important}
+  .header-brand .title{color:#f2f2f2!important}
+  .header-brand .sub{color:#7a7a7a!important}
+  .h-btn{background:#1c1c1c!important;border:1px solid #2a2a2a!important;color:#f2f2f2!important}
+  .h-btn:hover{border-color:#e87d1e!important;color:#e87d1e!important}
+  .panel,.controls-panel,.sidebar-panel,.info-panel{background:#141414!important;border-color:#2a2a2a!important}
+  .panel-title,.section-title,.ctrl-label{color:#f2f2f2!important}
+  .ctrl-sub,.hint-text{color:#7a7a7a!important}
+  input[type=range]{accent-color:#e87d1e}
+  input[type=range]::-webkit-slider-thumb{background:#e87d1e}
+  select,input[type=number]{background:#1c1c1c!important;border-color:#2a2a2a!important;color:#f2f2f2!important}
+  .tab,.nav-tab{background:#1c1c1c!important;color:#7a7a7a!important;border-color:#2a2a2a!important}
+  .tab.active,.nav-tab.active{background:#e87d1e!important;color:#fff!important}
+
 </style>
 </head>
 <body>
@@ -99,12 +121,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;use
 <!-- HEADER -->
 <div class="header">
   <div class="header-brand">
-    <div class="h-logo"></div>
+    <img src="https://www.saffarinidxb.com/images/logo.png" alt="Eng. Adnan Saffarini Office" style="height:40px;width:auto;object-fit:contain"><style>.h-logo-img{display:none}</style>
     <div><div class="title">Saffarini Design Studio</div><div class="sub">3D Concept Visualizer</div></div>
   </div>
   <div class="header-actions">
-    <button class="h-btn" id="btnDayNight" title="Toggle Day/Night">&#9788; Day</button>
-    <button class="h-btn" id="btnScreenshot" title="Screenshot">&#128247; Capture</button>
+    <button class="h-btn" id="btnDayNight" title="Toggle Day/Night"><i class="ti ti-sun"></i> Day</button>
+    <button class="h-btn" id="btnScreenshot" title="Screenshot"><i class="ti ti-camera"></i> Capture</button>
     <a class="h-btn" href="/showcase.html">&larr; Back</a>
   </div>
 </div>
@@ -867,7 +889,7 @@ let isNight=false;
 document.getElementById('btnDayNight').addEventListener('click',()=>{
   isNight=!isNight;
   updateSky(isNight);
-  document.getElementById('btnDayNight').innerHTML=isNight?'&#9790; Night':'&#9788; Day';
+  document.getElementById('btnDayNight').innerHTML=isNight?'<i class="ti ti-moon"></i> Night':'<i class="ti ti-sun"></i> Day';
   document.getElementById('btnDayNight').classList.toggle('active',isNight);
 });
 
@@ -910,7 +932,4 @@ function animate(now){
    ═══════════════════════════════════════════════════════════════════════ */
 animate(0);
 // Auto-generate on load
-setTimeout(generateDesign,300);
-</script>
-</body>
-</html>
+set

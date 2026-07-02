@@ -234,19 +234,35 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* ── DARK OVERRIDE ── */
+  :root {
+    --navy:#141414; --navy-light:#1c1c1c;
+    --gold:#e87d1e; --gold-light:#f09340;
+    --white:#f2f2f2; --light:#1c1c1c;
+    --border:#2a2a2a; --text:#f2f2f2; --text-muted:#7a7a7a;
+  }
+  body{background:#0a0a0a!important;color:#f2f2f2!important}
+  .fp-header{background:#141414!important;border-bottom-color:#2a2a2a!important}
+  .fp-toolbar{background:#141414!important;border-right-color:#2a2a2a!important}
+  .fp-sidebar-left,.fp-sidebar-right{background:#141414!important;border-color:#2a2a2a!important}
+  .fp-canvas-area{background:#0a0a0a!important}
+  .fp-properties,.fp-layers,.fp-panel-section{background:#1c1c1c!important;border-color:#2a2a2a!important}
+  .fp-input,.fp-select{background:#242424!important;border-color:#2a2a2a!important;color:#f2f2f2!important}
+  .fp-tool-btn{background:#1c1c1c!important;color:#f2f2f2!important}
+  .fp-tool-btn:hover,.fp-tool-btn.active{background:#e87d1e!important;color:#fff!important}
+  .fp-section-title,.fp-prop-label,.fp-layer-name{color:#7a7a7a!important}
+  .fp-layer-item{background:#1c1c1c!important;border-color:#2a2a2a!important;color:#f2f2f2!important}
+  .fp-layer-item:hover{background:#242424!important}
+  .fp-save-btn{background:#e87d1e!important;border-color:#e87d1e!important}
+
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="fp-header">
-  <div class="fp-logo">
-    <div class="fp-logo-icon"><i class="ti ti-building-arch"></i></div>
-    <div>
-      <div class="fp-logo-text">Eng. Adnan Saffarini Office</div>
-      <div class="fp-logo-sub">Architects &amp; Consultants · Dubai, UAE</div>
-    </div>
-  </div>
+  <a href="/" class="fp-logo" style="text-decoration:none;display:flex;align-items:center;gap:10px"><img src="https://www.saffarinidxb.com/images/logo.png" alt="Eng. Adnan Saffarini Office" style="height:40px;width:auto;object-fit:contain"><span style="color:#f2f2f2;font-size:15px;font-weight:600">Safarini Junior</span></a>
   <div class="fp-header-sep"></div>
   <span class="fp-title"><i class="ti ti-layout-grid" style="margin-right:6px;font-size:16px;vertical-align:-2px;"></i>Home Floor Planner</span>
   <div class="fp-header-actions">
