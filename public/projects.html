@@ -1212,8 +1212,8 @@ function openProject(id) {
       '<i class="ti ti-map-pin" style="color:#e87d1e;font-size:14px;"></i>' +
       '<span style="color:#c8c8c8">' + (p.area || 'UAE') + '</span></span>' +
     '<span style="display:flex;align-items:center;gap:5px;font-size:12.5px;">' +
-      '<i class="' + ti.icon + '" style="color:#e87d1e;font-size:14px;"></i>' +
-      '<span style="color:#c8c8c8">' + ti.label + '</span></span>';
+      '<i class="ti ' + ti + '" style="color:#e87d1e;font-size:14px;"></i>' +
+      '<span style="color:#c8c8c8">' + (p.type || 'Mixed-Use') + '</span></span>';
   document.getElementById('projModalDesc').textContent =
     p.desc || 'A landmark project by Eng. Adnan Saffarini — delivering engineering excellence and architectural vision across the UAE and the Gulf region.';
 
