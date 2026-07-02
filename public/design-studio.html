@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Design Studio — Eng. Adnan Saffarini Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--navy-deep:#0F1C35;--navy-mid:#263956;
+  --gold:#C4923B;--gold-h:#D4A34E;--gold-pale:#FBF5E8;
+  --white:#FFF;--off-white:#F9F7F4;--warm-grey:#F0EDE7;
+  --border:rgba(27,42,74,.1);
+  --r:6px;--r-lg:12px;
+}
+html,body{height:100%;overflow:hidden;background:var(--off-white)}
+body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;color:var(--navy)}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:54px;flex-shrink:0;
+  background:var(--navy);
+  border-bottom:1px solid rgba(0,0,0,.12);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;z-index:10;
+}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-icon{
+  width:34px;height:34px;border-radius:var(--r);
+  background:var(--gold);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.tb-icon i{font-size:18px;color:#fff}
+.tb-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;line-height:1.1;color:#fff}
+.tb-sub{font-size:10px;color:var(--gold);font-weight:500;letter-spacing:.6px;text-transform:uppercase}
+.tb-actions{display:flex;align-items:center;gap:8px}
+.tbtn{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 13px;border-radius:var(--r);
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:none;text-decoration:none;transition:all .18s;
+}
+.tbtn-ghost{background:rgba(255,255,255,.1);color:rgba(255,255,255,.82)}
+.tbtn-ghost:hover{background:rgba(255,255,255,.18);color:#fff}
+.tbtn-gold{background:var(--gold);color:#fff}
+.tbtn-gold:hover{background:var(--gold-h)}
+
+/* ── LAYOUT ── */
+.studio{flex:1;display:flex;overflow:hidden;min-height:0}
+
+/* ── PANEL ── */
+.panel{
+  width:268px;flex-shrink:0;
+  background:#fff;
+  border-right:1px solid var(--border);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.panel::-webkit-scrollbar{width:3px}
+.panel::-webkit-scrollbar-thumb{background:rgba(27,42,74,.15);border-radius:2px}
+
+.psec{padding:16px 14px;border-bottom:1px solid var(--border)}
+.psec-title{
+  font-size:9.5px;font-weight:600;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:10px;
+}
+
+/* Room type */
+.room-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.rbtn{
+  padding:9px 5px;border-radius:var(--r);
+  background:rgba(27,42,74,.04);border:1.5px solid transparent;
+  text-align:center;cursor:pointer;transition:all .18s;
+}
+.rbtn:hover{background:rgba(27,42,74,.08)}
+.rbtn.active{border-color:var(--gold);background:rgba(196,146,59,.1)}
+.rbtn i{display:block;font-size:21px;color:var(--gold);margin-bottom:3px}
+.rbtn span{font-size:10.5px;font-weight:500;color:var(--navy)}
+
+/* Style selector */
+.sbtnlist{display:flex;flex-direction:column;gap:5px}
+.sbtn{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:var(--r);
+  background:rgba(27,42,74,.04);border:1.5px solid transparent;
+  cursor:pointer;transition:all .18s;
+}
+.sbtn:hover{background:rgba(27,42,74,.08)}
+.sbtn.active{border-color:var(--gold);background:rgba(196,146,59,.1)}
+.swatch{width:26px;height:26px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.slabel{font-size:11.5px;font-weight:500;color:var(--navy);line-height:1.1}
+.sdesc{font-size:9.5px;color:#7A8BA8;margin-top:1px}
+
+/* Wall colors */
+.colgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.col{
+  height:32px;border-radius:var(--r);cursor:pointer;
+  border:2px solid transparent;transition:all .14s;position:relative;
+}
+.col:hover{transform:scale(1.07)}
+.col.active{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,146,59,.28)}
+.col.active::after{
+  content:'✓';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:rgba(0,0,0,.45);
+}
+
+/* Floor */
+.floorgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.fbtn{
+  padding:7px;border-radius:var(--r);cursor:pointer;
+  background:rgba(27,42,74,.04);border:1.5px solid transparent;
+  transition:all .18s;text-align:center;
+}
+.fbtn:hover{background:rgba(27,42,74,.08)}
+.fbtn.active{border-color:var(--gold);background:rgba(196,146,59,.1)}
+.fprev{height:26px;border-radius:4px;margin-bottom:4px}
+.flabel{font-size:10px;font-weight:500;color:var(--navy)}
+
+/* Lighting */
+.lrow{display:flex;gap:5px}
+.lbtn{
+  flex:1;padding:8px 5px;border-radius:var(--r);
+  background:rgba(27,42,74,.04);border:1.5px solid transparent;
+  text-align:center;cursor:pointer;transition:all .18s;
+}
+.lbtn:hover{background:rgba(27,42,74,.08)}
+.lbtn.active{border-color:var(--gold);background:rgba(196,146,59,.1)}
+.lbtn i{display:block;font-size:19px;color:var(--navy);margin-bottom:3px}
+.lbtn span{font-size:10px;font-weight:500;color:var(--navy)}
+
+/* CTA */
+.pcta{padding:14px;margin-top:auto;border-top:1px solid var(--border)}
+.ctabtn{
+  width:100%;padding:11px;border-radius:var(--r);
+  background:var(--gold);color:#fff;
+  font-size:12.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  cursor:pointer;border:none;transition:all .18s;
+}
+.ctabtn:hover{background:var(--gold-h)}
+.ctabtn-outline{
+  width:100%;padding:10px;border-radius:var(--r);
+  background:transparent;color:var(--navy);
+  font-size:11.5px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;border:1px solid rgba(27,42,74,.2);
+  transition:all .18s;margin-top:7px;text-decoration:none;
+}
+.ctabtn-outline:hover{background:rgba(27,42,74,.06);color:var(--navy)}
+
+/* ── CANVAS AREA ── */
+.cvwrap{
+  flex:1;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#D4DAE6 0%,#DDE2EE 40%,#D8DCE8 100%);
+}
+#cv{width:100%!important;height:100%!important;display:block}
+
+/* overlay elements */
+.hint{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+  border:1px solid rgba(27,42,74,.1);border-radius:30px;
+  padding:6px 16px;font-size:11px;color:rgba(27,42,74,.62);
+  display:flex;align-items:center;gap:7px;pointer-events:none;
+  transition:opacity .5s;
+}
+.badge{
+  position:absolute;top:14px;right:14px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  border:1px solid rgba(196,146,59,.28);border-radius:var(--r);
+  padding:8px 13px;
+}
+.badge-t{font-size:12px;font-weight:600;color:var(--gold)}
+.badge-s{font-size:10px;color:rgba(27,42,74,.55);margin-top:2px}
+.zoom-c{
+  position:absolute;bottom:56px;right:14px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.zbtn{
+  width:34px;height:34px;border-radius:var(--r);
+  background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+  border:1px solid rgba(27,42,74,.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--navy);font-size:16px;
+  transition:all .14s;user-select:none;font-weight:600;
+}
+.zbtn:hover{background:rgba(196,146,59,.15);border-color:var(--gold);color:var(--navy)}
+.resetbtn{
+  width:34px;height:34px;border-radius:var(--r);margin-top:5px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+  border:1px solid rgba(27,42,74,.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--navy);
+  transition:all .14s;
+}
+.resetbtn:hover{background:rgba(196,146,59,.15);border-color:var(--gold);color:var(--navy)}
+
+/* Loading */
+.loader{
+  position:absolute;inset:0;
+  background:var(--off-white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:5;transition:opacity .6s;
+}
+.spinner{
+  width:44px;height:44px;border-radius:50%;
+  border:3px solid rgba(196,146,59,.18);
+  border-top-color:var(--gold);
+  animation:spin 1s linear infinite;margin-bottom:14px;
+}
+.loadtxt{font-size:12.5px;color:rgba(27,42,74,.5)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Share modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+  z-index:50;align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#fff;border:1px solid rgba(196,146,59,.3);
+  border-radius:var(--r-lg);padding:28px;max-width:440px;width:90%;
+}
+.modal h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px;color:var(--navy)}
+.modal p{font-size:13px;color:rgba(27,42,74,.6);margin-bottom:18px;line-height:1.5}
+.modal-summary{
+  background:var(--gold-pale);border-radius:var(--r);
+  padding:14px;margin-bottom:18px;font-size:12.5px;
+  color:var(--navy);line-height:1.8;
+  border:1px solid rgba(196,146,59,.2);
+}
+.modal-actions{display:flex;gap:8px}
+.modal-close{
+  flex:1;padding:11px;border-radius:var(--r);
+  background:rgba(27,42,74,.06);color:var(--navy);
+  font-size:12.5px;font-weight:500;cursor:pointer;border:none;
+  transition:all .18s;
+}
+.modal-close:hover{background:rgba(27,42,74,.1);color:var(--navy)}
+.modal-send{
+  flex:2;padding:11px;border-radius:var(--r);
+  background:var(--gold);color:#fff;
+  font-size:12.5px;font-weight:600;cursor:pointer;border:none;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .18s;text-decoration:none;
+}
+.modal-send:hover{background:var(--gold-h)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-icon"><i class="ti ti-3d-cube-sphere"></i></div>
+    <div>
+      <div class="tb-title">3D Design Studio</div>
+      <div class="tb-sub">Eng. Adnan Saffarini Office</div>
+    </div>
+  </div>
+  <div class="tb-actions">
+    <a href="/" class="tbtn tbtn-ghost"><i class="ti ti-arrow-left" style="font-size:13px"></i> Portfolio</a>
+    <button class="tbtn tbtn-gold" onclick="openModal()"><i class="ti ti-send" style="font-size:13px"></i> Share Design</button>
+  </div>
+</header>
+
+<div class="studio">
+
+  <!-- LEFT PANEL -->
+  <aside class="panel">
+
+    <div class="psec">
+      <div class="psec-title">Room Type</div>
+      <div class="room-grid">
+        <div class="rbtn active" id="rt-living" onclick="setRoom('living',this)">
+          <i class="ti ti-sofa"></i><span>Living Room</span>
+        </div>
+        <div class="rbtn" id="rt-bedroom" onclick="setRoom('bedroom',this)">
+          <i class="ti ti-bed"></i><span>Bedroom</span>
+        </div>
+        <div class="rbtn" id="rt-office" onclick="setRoom('office',this)">
+          <i class="ti ti-desk"></i><span>Office</span>
+        </div>
+        <div class="rbtn" id="rt-lobby" onclick="setRoom('lobby',this)">
+          <i class="ti ti-building-arch"></i><span>Lobby</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="psec">
+      <div class="psec-title">Design Style</div>
+      <div class="sbtnlist">
+        <div class="sbtn active" onclick="setStyle('modern',this)">
+          <div class="swatch" style="background:linear-gradient(135deg,#2D3748,#4A5568)"><i class="ti ti-layout-grid" style="font-size:11px;color:#94A3B8"></i></div>
+          <div><div class="slabel">Modern Minimalist</div><div class="sdesc">Clean lines · Neutral palette</div></div>
+        </div>
+        <div class="sbtn" onclick="setStyle('arabic',this)">
+          <div class="swatch" style="background:linear-gradient(135deg,#7B3F00,#C4923B)"><i class="ti ti-arch" style="font-size:11px;color:#FFD700"></i></div>
+          <div><div class="slabel">Classic Arabic</div><div class="sdesc">Majlis · Ornate · Warm tones</div></div>
+        </div>
+        <div class="sbtn" onclick="setStyle('luxury',this)">
+          <div class="swatch" style="background:linear-gradient(135deg,#1a1a2e,#C4923B)"><i class="ti ti-crown" style="font-size:11px;color:#FFD700"></i></div>
+          <div><div class="slabel">Luxury Contemporary</div><div class="sdesc">Premium finishes · Statement pieces</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="psec">
+      <div class="psec-title">Wall Color</div>
+      <div class="colgrid">
+        <div class="col active" style="background:#F0EDE7" onclick="setWall(0xF0EDE7,this)" title="Warm White"></div>
+        <div class="col" style="background:#E8F0F8" onclick="setWall(0xE8F0F8,this)" title="Cool White"></div>
+        <div class="col" style="background:#D8CBBA" onclick="setWall(0xD8CBBA,this)" title="Warm Beige"></div>
+        <div class="col" style="background:#B4C2D6" onclick="setWall(0xB4C2D6,this)" title="Soft Blue"></div>
+        <div class="col" style="background:#C4D0BC" onclick="setWall(0xC4D0BC,this)" title="Sage Green"></div>
+        <div class="col" style="background:#E4D5BF" onclick="setWall(0xE4D5BF,this)" title="Desert Sand"></div>
+        <div class="col" style="background:#D4C2C2" onclick="setWall(0xD4C2C2,this)" title="Rose Taupe"></div>
+        <div class="col" style="background:#F5F5F0" onclick="setWall(0xF5F5F0,this)" title="Pure White"></div>
+      </div>
+    </div>
+
+    <div class="psec">
+      <div class="psec-title">Floor Material</div>
+      <div class="floorgrid">
+        <div class="fbtn active" onclick="setFloor('marble',this)">
+          <div class="fprev" style="background:linear-gradient(120deg,#E4E4E4 25%,#F2F2F2 50%,#D8D8D8 75%)"></div>
+          <div class="flabel">Marble</div>
+        </div>
+        <div class="fbtn" onclick="setFloor('wood',this)">
+          <div class="fprev" style="background:linear-gradient(90deg,#8B6610,#A07828,#7A5808,#98721C)"></div>
+          <div class="flabel">Hardwood</div>
+        </div>
+        <div class="fbtn" onclick="setFloor('tiles',this)">
+          <div class="fprev" style="background:repeating-conic-gradient(#C4C4C4 0% 25%,#ACACAC 0% 50%) 0 0/18px 18px"></div>
+          <div class="flabel">Tiles</div>
+        </div>
+        <div class="fbtn" onclick="setFloor('concrete',this)">
+          <div class="fprev" style="background:linear-gradient(135deg,#8C8C8C,#787878,#9C9C9C)"></div>
+          <div class="flabel">Concrete</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="psec">
+      <div class="psec-title">Lighting Mood</div>
+      <div class="lrow">
+        <div class="lbtn active" onclick="setLight('day',this)">
+          <i class="ti ti-sun"></i><span>Daylight</span>
+        </div>
+        <div class="lbtn" onclick="setLight('evening',this)">
+          <i class="ti ti-moon"></i><span>Evening</span>
+        </div>
+        <div class="lbtn" onclick="setLight('warm',this)">
+          <i class="ti ti-bulb"></i><span>Warm</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcta">
+      <button class="ctabtn" onclick="openModal()">
+        <i class="ti ti-send"></i> Share with Consultant
+      </button>
+      <a href="/" class="ctabtn-outline">
+        <i class="ti ti-arrow-left"></i> Back to Portfolio
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- CANVAS -->
+  <div class="cvwrap" id="cvwrap">
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <div class="loadtxt">Building your room…</div>
+    </div>
+    <canvas id="cv"></canvas>
+    <div class="hint" id="hint"><i class="ti ti-mouse"></i> Drag to rotate &nbsp;·&nbsp; Scroll to zoom</div>
+    <div class="badge">
+      <div class="badge-t" id="badge-t">Living Room</div>
+      <div class="badge-s" id="badge-s">Modern Minimalist · Marble Floor</div>
+    </div>
+    <div class="zoom-c">
+      <div class="zbtn" onclick="doZoom(-0.6)" title="Zoom in">+</div>
+      <div class="zbtn" onclick="doZoom(0.6)" title="Zoom out">-</div>
+      <div class="resetbtn" onclick="resetCam()" title="Reset view"><i class="ti ti-focus-centered" style="font-size:16px"></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3>Share Your Design</h3>
+    <p>Send your room configuration to our consultants. They will prepare a personalized proposal based on your selections.</p>
+    <div class="modal-summary" id="modal-summary">Loading design summary…</div>
+    <div class="modal-actions">
+      <button class="modal-close" onclick="closeModal()">Cancel</button>
+      <a class="modal-send" id="modal-link" href="#" onclick="closeModal()">
+        <i class="ti ti-mail"></i> Send via Email
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// SAFFARINI 3D DESIGN STUDIO
+// ═══════════════════════════════════════════
+
+const cv   = document.getElementById('cv');
+const wrap = document.getElementById('cvwrap');
+
+// ── Renderer ──────────────────────────────
+const renderer = new THREE.WebGLRenderer({canvas: cv, antialias: true, alpha: false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+// ── Scene / Camera ────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xCED5E0);
+scene.fog = new THREE.FogExp2(0xCED5E0, 0.055);
+
+const cam = new THREE.PerspectiveCamera(52, 1, 0.1, 80);
+
+// Camera orbit
+let tH = Math.PI * 0.12, tV = 0.44, tR = 10;
+let cH = tH, cV = tV, cR = tR;
+const LOOK_AT = new THREE.Vector3(0, 1.1, -0.5);
+
+function updateCam() {
+  cam.position.set(
+    cR * Math.sin(cH) * Math.cos(cV),
+    cR * Math.sin(cV) + 0.9,
+    cR * Math.cos(cH) * Math.cos(cV)
+  );
+  cam.lookAt(LOOK_AT);
+}
+updateCam();
+
+// ── Materials (mutable) ───────────────────
+const wallMat  = new THREE.MeshStandardMaterial({color:0xF0EDE7, roughness:0.9, metalness:0.0});
+const floorMat = new THREE.MeshStandardMaterial({color:0xE0E0E0, roughness:0.18, metalness:0.04});
+const ceilMat  = new THREE.MeshStandardMaterial({color:0xFAF8F5, roughness:0.97, metalness:0.0});
+const skirtMat = new THREE.MeshStandardMaterial({color:0xE0DCD4, roughness:0.85, metalness:0.0});
+
+// Floor presets
+const FP = {
+  marble:  {color:0xE4E4E4, rough:0.14, metal:0.04},
+  wood:    {color:0x8B6610, rough:0.80, metal:0.0},
+  tiles:   {color:0xBCBCBC, rough:0.38, metal:0.02},
+  concrete:{color:0x909090, rough:0.92, metal:0.01},
+};
+
+// Light presets
+const LP = {
+  day:     {amb:0.62, main:0.9,  mainC:0xFFF8EE, fill:0.28, fillC:0xCCE0FF},
+  evening: {amb:0.20, main:0.75, mainC:0xFF9944, fill:0.10, fillC:0xFF7722},
+  warm:    {amb:0.32, main:0.85, mainC:0xFFCC88, fill:0.18, fillC:0xFFAA44},
+};
+
+// ── Helpers ───────────────────────────────
+const W=8, H=3, D=8;
+
+function bx(w,h,d,c,r=0.7,m=0) {
+  return new THREE.Mesh(
+    new THREE.BoxGeometry(w,h,d),
+    new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m})
+  );
+}
+function cy(rTop,rBot,h,c,r=0.7,seg=14) {
+  return new THREE.Mesh(
+    new THREE.CylinderGeometry(rTop,rBot,h,seg),
+    new THREE.MeshStandardMaterial({color:c,roughness:r})
+  );
+}
+function sp(rad,c,r=0.85) {
+  return new THREE.Mesh(
+    new THREE.SphereGeometry(rad,14,14),
+    new THREE.MeshStandardMaterial({color:c,roughness:r})
+  );
+}
+function at(obj,x,y,z){obj.position.set(x,y,z);return obj}
+function shadows(g){g.traverse(c=>{if(c.isMesh){c.castShadow=true;c.receiveShadow=true}});return g}
+function grp(...items){const g=new THREE.Group();items.forEach(i=>g.add(i));return g}
+
+// ── Room Shell ────────────────────────────
+function buildShell() {
+  const g = new THREE.Group();
+  // Floor
+  const fl = new THREE.Mesh(new THREE.BoxGeometry(W,0.07,D), floorMat);
+  fl.position.y = -0.035; fl.receiveShadow = true; g.add(fl);
+  // Back wall
+  const bw = new THREE.Mesh(new THREE.BoxGeometry(W,H,0.09), wallMat);
+  bw.position.set(0,H/2,-D/2); bw.receiveShadow=true; g.add(bw);
+  // Left wall
+  const lw = new THREE.Mesh(new THREE.BoxGeometry(0.09,H,D), wallMat);
+  lw.position.set(-W/2,H/2,0); lw.receiveShadow=true; g.add(lw);
+  // Right wall
+  const rw = new THREE.Mesh(new THREE.BoxGeometry(0.09,H,D), wallMat);
+  rw.position.set(W/2,H/2,0); rw.receiveShadow=true; g.add(rw);
+  // Ceiling
+  const cl = new THREE.Mesh(new THREE.BoxGeometry(W,0.09,D), ceilMat);
+  cl.position.y = H; g.add(cl);
+  // Skirting
+  [[W,0.09,0.035,0,0.045,-D/2+0.05],[W,0.09,0.035,0,0.045,D/2-0.05],
+   [0.035,0.09,D,-W/2+0.05,0.045,0],[0.035,0.09,D,W/2-0.05,0.045,0]]
+  .forEach(([w,h,d,x,y,z])=>{
+    const s=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),skirtMat);
+    s.position.set(x,y,z); g.add(s);
+  });
+  // Ceiling cornice (decorative thin ledge)
+  const corniceH=0.07;
+  [[W+0.1,corniceH,0.06,0,H-corniceH/2,-D/2+0.03],
+   [W+0.1,corniceH,0.06,0,H-corniceH/2,D/2-0.03],
+   [0.06,corniceH,D,-W/2+0.03,H-corniceH/2,0],
+   [0.06,corniceH,D,W/2-0.03,H-corniceH/2,0]]
+  .forEach(([w,h,d,x,y,z])=>{
+    const c=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),skirtMat);
+    c.position.set(x,y,z); g.add(c);
+  });
+  return g;
+}
+
+// ── MODERN LIVING ROOM ─────────────────────
+function modernLiving() {
+  const g = new THREE.Group();
+
+  // 3-seat sofa
+  const sofa = new THREE.Group();
+  sofa.add(at(bx(2.5,0.44,0.88,0x3A4151,0.9), 0,0.22,0));
+  sofa.add(at(bx(2.5,0.58,0.10,0x3A4151,0.9), 0,0.70,-0.4));
+  sofa.add(at(bx(0.11,0.52,0.88,0x3A4151,0.9), -1.3,0.26,0));
+  sofa.add(at(bx(0.11,0.52,0.88,0x3A4151,0.9), 1.3,0.26,0));
+  // seat cushions
+  [-0.85,0,0.85].forEach(x=>sofa.add(at(bx(0.75,0.09,0.54,0x47516A,0.95), x,0.485,-0.08)));
+  sofa.position.set(0,0,-2.6); g.add(shadows(sofa));
+
+  // Glass coffee table
+  const ct = new THREE.Group();
+  const ctTop = new THREE.Mesh(
+    new THREE.BoxGeometry(1.3,0.04,0.65),
+    new THREE.MeshStandardMaterial({color:0xCCE4F0,roughness:0.04,metalness:0.08,transparent:true,opacity:0.55})
+  );
+  at(ctTop,0,0.42,0); ct.add(ctTop);
+  const legM = new THREE.MeshStandardMaterial({color:0x888888,roughness:0.35,metalness:0.65});
+  [[-0.58,-0.27],[0.58,-0.27],[-0.58,0.27],[0.58,0.27]].forEach(([x,z])=>{
+    const l=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.42,0.035),legM);
+    l.position.set(x,0.21,z); ct.add(l);
+  });
+  ct.position.set(0,0,-1.25); g.add(ct);
+
+  // Floating TV unit + screen
+  const tv = new THREE.Group();
+  tv.add(at(bx(2.2,0.28,0.38,0x232323,0.65,0.12), 0,0.47,0));
+  tv.add(at(bx(1.7,0.96,0.045,0x111111,0.05,0.08), 0,1.25,0));
+  tv.add(at(bx(1.74,1.00,0.035,0x202020,0.3,0.1), 0,1.25,-0.006));
+  tv.position.set(0,0.32,-3.91); g.add(shadows(tv));
+
+  // Side table + lamp
+  const lamp = new THREE.Group();
+  lamp.add(at(bx(0.42,0.52,0.42,0x5C4828,0.72), 0,0.26,0));
+  lamp.add(at(cy(0.026,0.026,0.52,0x888070,0.45), 0,0.8,0));
+  const shade = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.13,0.19,0.24,14,1,true),
+    new THREE.MeshStandardMaterial({color:0xF0E8D0,roughness:0.92,side:THREE.DoubleSide})
+  );
+  at(shade,0,1.14,0); lamp.add(shade);
+  lamp.position.set(-2.9,0,-2.6); g.add(shadows(lamp));
+
+  // Floor plant
+  const plant = new THREE.Group();
+  plant.add(at(cy(0.17,0.12,0.38,0xBB8866,0.82), 0,0.19,0));
+  plant.add(at(cy(0.04,0.04,0.9,0x4A6A28,0.92,8), 0,0.85,0));
+  [[0.22,1.18,0,0.27],[-0.18,1.14,0.1,0.21],[0,1.28,-0.1,0.23]].forEach(([x,y,z,r])=>
+    plant.add(at(sp(r,0x3A6018,0.92),x,y,z)));
+  plant.position.set(3.1,0,-3.3); g.add(shadows(plant));
+
+  // Rug
+  const rug = new THREE.Mesh(new THREE.BoxGeometry(3.1,0.018,1.9),
+    new THREE.MeshStandardMaterial({color:0x6858A0,roughness:0.98}));
+  rug.position.set(0,0.009,-1.7); rug.receiveShadow=true; g.add(rug);
+
+  // Wall art (diptych)
+  const artMat1 = new THREE.MeshStandardMaterial({color:0xC4923B,roughness:0.95});
+  const artMat2 = new THREE.MeshStandardMaterial({color:0x2D3748,roughness:0.95});
+  const a1=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.88,0.038),artMat1);
+  a1.position.set(-0.38,2.06,-3.93); g.add(a1);
+  const a2=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.88,0.038),artMat2);
+  a2.position.set(0.38,2.06,-3.93); g.add(a2);
+
+  return g;
+}
+
+// ── ARABIC LIVING (Majlis) ─────────────────
+function arabicLiving() {
+  const g = new THREE.Group();
+  const SC = 0x7B3500, CC = 0xB8860B, AC = 0xC4923B;
+
+  // Back wall majlis bench
+  g.add(shadows(at(bx(7.0,0.34,0.72,SC,0.9), 0,0.17,-3.55)));
+  g.add(shadows(at(bx(7.0,0.18,0.68,0x9B3A10,0.95), 0,0.43,-3.55)));
+  // Back pillows
+  for(let i=-3;i<=3;i++) g.add(shadows(at(bx(0.48,0.38,0.1,CC,0.95), i*0.98,0.62,-3.64)));
+
+  // Left side majlis
+  g.add(shadows(at(bx(0.72,0.34,5.2,SC,0.9), -3.53,0.17,-0.8)));
+  g.add(shadows(at(bx(0.68,0.18,5.2,0x9B3A10,0.95), -3.53,0.43,-0.8)));
+
+  // Right side majlis
+  g.add(shadows(at(bx(0.72,0.34,5.2,SC,0.9), 3.53,0.17,-0.8)));
+  g.add(shadows(at(bx(0.68,0.18,5.2,0x9B3A10,0.95), 3.53,0.43,-0.8)));
+
+  // Low central table
+  const tb = new THREE.Group();
+  tb.add(at(bx(1.5,0.055,1.05,0x704214,0.45,0.18), 0,0.3,0));
+  [[-0.65,-0.44],[0.65,-0.44],[-0.65,0.44],[0.65,0.44]].forEach(([x,z])=>
+    tb.add(at(bx(0.07,0.3,0.07,AC,0.35,0.28), x,0.15,z)));
+  tb.position.set(0,0,-1.6); g.add(shadows(tb));
+
+  // Arabic lantern (hanging)
+  const ln = new THREE.Group();
+  ln.add(at(cy(0.14,0.09,0.52,AC,0.28,8), 0,0,0));
+  const ltop = new THREE.Mesh(new THREE.ConeGeometry(0.17,0.22,8),
+    new THREE.MeshStandardMaterial({color:AC,roughness:0.28,metalness:0.5}));
+  at(ltop,0,0.37,0); ln.add(ltop);
+  ln.add(at(cy(0.008,0.008,0.62,0xB8960A,0.35,6), 0,0.62,0));
+  // Inner glow glass
+  const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.07,0.42,8),
+    new THREE.MeshStandardMaterial({color:0xFFCC44,roughness:0.1,transparent:true,opacity:0.18}));
+  at(glass,0,0,0); ln.add(glass);
+  ln.position.set(0,2.16,-1.6); g.add(ln);
+
+  // Large ornate carpet
+  const carpet = new THREE.Mesh(new THREE.BoxGeometry(4.4,0.022,4.0),
+    new THREE.MeshStandardMaterial({color:0x8B0000,roughness:0.98}));
+  carpet.position.set(0,0.011,-1.6); carpet.receiveShadow=true; g.add(carpet);
+  const border = new THREE.Mesh(new THREE.BoxGeometry(4.7,0.018,4.3),
+    new THREE.MeshStandardMaterial({color:AC,roughness:0.98}));
+  border.position.set(0,0.009,-1.6); g.add(border);
+
+  // Gold tea set on table
+  const pot = new THREE.Mesh(new THREE.SphereGeometry(0.085,12,12),
+    new THREE.MeshStandardMaterial({color:AC,roughness:0.18,metalness:0.72}));
+  pot.position.set(0,0.42,-1.6); g.add(pot);
+
+  // Ornate arched mirror on back wall
+  const mirror = new THREE.Mesh(new THREE.BoxGeometry(0.7,1.2,0.04),
+    new THREE.MeshStandardMaterial({color:0xCCD8E8,roughness:0.05,metalness:0.1}));
+  mirror.position.set(-2.0,1.9,-3.91); g.add(mirror);
+  const mframe = new THREE.Mesh(new THREE.BoxGeometry(0.78,1.28,0.035),
+    new THREE.MeshStandardMaterial({color:AC,roughness:0.3,metalness:0.45}));
+  mframe.position.set(-2.0,1.9,-3.915); g.add(mframe);
+
+  return g;
+}
+
+// ── LUXURY LIVING ──────────────────────────
+function luxuryLiving() {
+  const g = new THREE.Group();
+
+  // L-shaped sectional (cream)
+  const sec = new THREE.Group();
+  sec.add(at(bx(3.1,0.5,0.95,0xEEE8E0,0.88), 0,0.25,0));
+  sec.add(at(bx(3.1,0.62,0.1,0xEEE8E0,0.88), 0,0.81,-0.44));
+  sec.add(at(bx(0.95,0.5,2.2,0xE8E0D8,0.88), 1.58,0.25,1.1));
+  sec.add(at(bx(0.1,0.62,2.2,0xE8E0D8,0.88), 2.04,0.81,1.1));
+  sec.add(at(bx(0.95,0.5,0.95,0xEEE8E0,0.88), 1.58,0.25,0));
+  sec.position.set(-0.6,0,-2.6); g.add(shadows(sec));
+
+  // Marble coffee table
+  const mct = new THREE.Group();
+  mct.add(at(bx(1.35,0.055,0.78,0xF0F0F0,0.09,0.04), 0,0.52,0));
+  mct.add(at(bx(0.85,0.48,0.55,0xC8C8C8,0.18,0.28), 0,0.26,0));
+  mct.position.set(-0.2,0,-1.2); g.add(shadows(mct));
+
+  // Accent chairs x2 (gold velvet)
+  const makeChair = (x,z,ry) => {
+    const c = new THREE.Group();
+    c.add(at(bx(0.7,0.09,0.7,0xC4923B,0.88), 0,0.44,0));
+    c.add(at(bx(0.7,0.65,0.09,0xC4923B,0.88), 0,0.8,-0.3));
+    c.add(at(bx(0.6,0.09,0.58,0xD4A34E,0.92), 0,0.49,0));
+    const lm=new THREE.MeshStandardMaterial({color:0xB89800,roughness:0.22,metalness:0.55});
+    [[-0.3,-0.3],[0.3,-0.3],[-0.3,0.3],[0.3,0.3]].forEach(([lx,lz])=>{
+      const l=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.44,10),lm);
+      l.position.set(lx,0.22,lz); c.add(l);
+    });
+    c.rotation.y=ry; c.position.set(x,0,z); return c;
+  };
+  g.add(shadows(makeChair(-2.2,-1.0, 0.45)));
+  g.add(shadows(makeChair(2.0,-0.9,-0.45)));
+
+  // Gold floor lamp
+  const fl = new THREE.Group();
+  const baseM=new THREE.MeshStandardMaterial({color:0xC4923B,roughness:0.18,metalness:0.75});
+  fl.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.25,0.045,28),baseM), 0,0.023,0));
+  fl.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.016,1.65,10),baseM), 0,0.848,0));
+  const shd=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.2,0.3,16),
+    new THREE.MeshStandardMaterial({color:0xF5ECD0,roughness:0.9,side:THREE.DoubleSide}));
+  at(shd,0,1.825,0); fl.add(shd);
+  fl.position.set(-3.35,0,-3.25); g.add(shadows(fl));
+
+  // Marble side table (round pedestal)
+  const st = new THREE.Group();
+  st.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.22,0.042,26),
+    new THREE.MeshStandardMaterial({color:0xF0F0F0,roughness:0.09,metalness:0.04})), 0,0.62,0));
+  st.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,0.62,10),
+    new THREE.MeshStandardMaterial({color:0xC4923B,roughness:0.18,metalness:0.65})), 0,0.31,0));
+  st.position.set(-3.35,0,-2.0); g.add(shadows(st));
+
+  // Large artwork + gold frame
+  const art = new THREE.Mesh(new THREE.BoxGeometry(1.7,1.25,0.042),
+    new THREE.MeshStandardMaterial({color:0xC4923B,roughness:0.94,metalness:0.06}));
+  art.position.set(0,2.06,-3.93); g.add(art);
+  const fr = new THREE.Mesh(new THREE.BoxGeometry(1.82,1.37,0.038),
+    new THREE.MeshStandardMaterial({color:0xC4923B,roughness:0.25,metalness:0.55}));
+  fr.position.set(0,2.06,-3.935); g.add(fr);
+
+  // Deep area rug (navy)
+  const rug=new THREE.Mesh(new THREE.BoxGeometry(5.0,0.018,3.8),
+    new THREE.MeshStandardMaterial({color:0x1B2A4A,roughness:0.98}));
+  rug.position.set(-0.2,0.009,-1.6); rug.receiveShadow=true; g.add(rug);
+
+  // Architectural plant
+  const ap = new THREE.Group();
+  ap.add(at(cy(0.22,0.15,0.48,0x1A1A2E,0.7,20), 0,0.24,0));
+  ap.add(at(cy(0.045,0.045,1.3,0x2A4A18,0.92,8), 0,1.09,0));
+  [[0.2,1.62,0,0.24],[-0.18,1.58,0.1,0.2],[0,1.75,-0.1,0.22]].forEach(([x,y,z,r])=>
+    ap.add(at(sp(r,0x2A5018,0.92),x,y,z)));
+  ap.position.set(3.2,0,-3.25); g.add(shadows(ap));
+
+  return g;
+}
+
+// ── BEDROOM ────────────────────────────────
+function buildBedroom() {
+  const g = new THREE.Group();
+
+  // Bed
+  const bed = new THREE.Group();
+  bed.add(at(bx(2.2,0.24,3.1,0x4A3520,0.7), 0,0.12,0));
+  bed.add(at(bx(2.0,0.26,2.9,0xF0EBE5,0.96), 0,0.38,0));
+  bed.add(at(bx(2.2,0.9,0.1,0x4A3520,0.68), 0,0.69,-1.52));
+  // Pillows
+  [[-0.52,0.62,-1.02],[0.52,0.62,-1.02]].forEach(([x,y,z])=>
+    bed.add(at(bx(0.76,0.17,0.5,0xFFFEFC,0.95),x,y,z)));
+  // Duvet
+  bed.add(at(bx(1.92,0.19,2.1,0xE4DDD4,0.96), 0,0.62,0.38));
+  bed.add(at(bx(1.92,0.07,0.2,0xF0EBE5,0.95), 0,0.52,-0.97)); // folded edge
+  bed.position.set(0,0,-2.0); g.add(shadows(bed));
+
+  // Nightstands x2
+  const ns = (xp) => {
+    const n = new THREE.Group();
+    n.add(at(bx(0.52,0.56,0.42,0x5C3E28,0.7), 0,0.28,0));
+    n.add(at(bx(0.54,0.042,0.44,0x7A5438,0.48,0.08), 0,0.58,0));
+    // Lamp
+    n.add(at(cy(0.055,0.055,0.3,0x8A8070,0.4), 0,0.73,0));
+    const sh=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.13,0.19,12),
+      new THREE.MeshStandardMaterial({color:0xF0E8D0,roughness:0.9,side:THREE.DoubleSide}));
+    at(sh,0,0.975,0); n.add(sh);
+    n.position.set(xp,0,-2.85); return n;
+  };
+  g.add(shadows(ns(-1.42))); g.add(shadows(ns(1.42)));
+
+  // Wardrobe
+  const wr = new THREE.Group();
+  wr.add(at(bx(2.4,2.42,0.62,0x4A3520,0.7), 0,1.21,0));
+  wr.add(at(bx(1.15,2.36,0.042,0x5C4030,0.6), -0.62,1.21,0.33));
+  wr.add(at(bx(1.15,2.36,0.042,0x5C4030,0.6), 0.62,1.21,0.33));
+  // Handles
+  [[-0.1,0.34],[1.14,0.34]].forEach(([x,z])=>
+    wr.add(at(bx(0.04,0.22,0.042,0xC4923B,0.28,0.38),x,1.21,z)));
+  wr.position.set(-2.5,0,-3.44); g.add(shadows(wr));
+
+  // Dresser + mirror
+  const dr = new THREE.Group();
+  dr.add(at(bx(1.3,0.78,0.48,0x5C4030,0.7), 0,0.39,0));
+  const mirr=new THREE.Mesh(new THREE.BoxGeometry(0.92,1.12,0.038),
+    new THREE.MeshStandardMaterial({color:0xCCDBE8,roughness:0.05,metalness:0.09}));
+  at(mirr,0,1.35,-0.16); dr.add(mirr);
+  const mf=new THREE.Mesh(new THREE.BoxGeometry(0.98,1.18,0.03),
+    new THREE.MeshStandardMaterial({color:0x5C4030,roughness:0.5}));
+  at(mf,0,1.35,-0.165); dr.add(mf);
+  dr.position.set(2.5,0,-1.5); g.add(shadows(dr));
+
+  // Rug
+  const rug=new THREE.Mesh(new THREE.BoxGeometry(2.7,0.018,2.3),
+    new THREE.MeshStandardMaterial({color:0x506050,roughness:0.98}));
+  rug.position.set(0,0.009,-1.0); rug.receiveShadow=true; g.add(rug);
+
+  return g;
+}
+
+// ── OFFICE ─────────────────────────────────
+function buildOffice() {
+  const g = new THREE.Group();
+
+  // L-desk
+  const desk = new THREE.Group();
+  desk.add(at(bx(2.4,0.055,0.9,0x4A3520,0.48,0.08), 0,0.75,0));
+  desk.add(at(bx(0.9,0.055,1.6,0x4A3520,0.48,0.08), -1.62,0.75,-0.36));
+  // Desk legs
+  [[-1.12,0.375,-0.42],[1.12,0.375,-0.42],[-1.12,0.375,0.42],
+   [-2.04,0.375,-1.12],[-2.04,0.375,-1.02]].forEach(([x,y,z])=>
+    desk.add(at(bx(0.06,0.75,0.06,0x2A2A2A,0.7),x,y,z)));
+  desk.position.set(0.6,0,-2.9); g.add(shadows(desk));
+
+  // Monitor
+  const mon = new THREE.Group();
+  mon.add(at(bx(0.82,0.5,0.04,0x111111,0.08,0.1), 0,0.55,0));
+  mon.add(at(bx(0.86,0.54,0.03,0x222222,0.3), 0,0.55,-0.006));
+  mon.add(at(bx(0.04,0.04,0.38,0x333333,0.6), 0,0.29,0));
+  mon.add(at(bx(0.28,0.025,0.22,0x333333,0.5), 0,0.086,0));
+  mon.position.set(0.6,0.768,-3.35); g.add(shadows(mon));
+
+  // Keyboard + mouse
+  g.add(at(bx(0.42,0.014,0.14,0xCCCCCC,0.6), 0.6,0.778,-2.96));
+  g.add(at(sp(0.038,0xCCCCCC,0.5), 1.0,0.775,-2.92));
+
+  // Ergonomic chair
+  const ch = new THREE.Group();
+  ch.add(at(bx(0.56,0.06,0.52,0x222222,0.7,0.08), 0,0.48,0));
+  ch.add(at(bx(0.56,0.78,0.06,0x1A1A1A,0.7), 0,0.9,-0.25));
+  ch.add(at(bx(0.58,0.055,0.52,0x333333,0.7), 0,0.52,0));
+  // Armrests
+  [[-0.34,0.38,0],[0.34,0.38,0]].forEach(([x,y,z])=>
+    ch.add(at(bx(0.065,0.22,0.38,0x333333,0.65),x,y,z)));
+  // Gas lift
+  ch.add(at(cy(0.03,0.03,0.48,0x555555,0.5), 0,0.24,0));
+  // Wheels base
+  ch.add(at(cy(0.28,0.28,0.04,0x333333,0.7,5), 0,0.038,0));
+  ch.position.set(0.6,0,-2.0); ch.rotation.y=Math.PI; g.add(shadows(ch));
+
+  // Bookshelf
+  const bs = new THREE.Group();
+  bs.add(at(bx(1.6,2.4,0.32,0x4A3520,0.7), 0,1.2,0));
+  // Shelves
+  [0.4,0.9,1.42,1.92].forEach(y=>
+    bs.add(at(bx(1.54,0.025,0.3,0x5C4030,0.5), 0,y,0)));
+  // Books (colored boxes)
+  const bcs=[0xC4382A,0x2A6CB4,0x2A8A3A,0xC4923B,0x8A2AC4,0xC4A42A,0x2A4AC4];
+  let bx_=-0.7;
+  bcs.forEach((c,i)=>{
+    const bk=bx(0.06+Math.random()*0.04,0.2+Math.random()*0.12,0.26,c,0.8);
+    bk.position.set(bx_,0.52+0.02,0.0); bs.add(bk); bx_+=0.12;
+    if(i===2){bx_=-0.7; /* next row */}
+  });
+  bs.position.set(-3.1,0,-3.2); g.add(shadows(bs));
+
+  // Coffee station (small side table)
+  const cof = new THREE.Group();
+  cof.add(at(bx(0.6,0.82,0.5,0x4A3520,0.7), 0,0.41,0));
+  cof.add(at(bx(0.62,0.025,0.52,0x5C4030,0.48,0.08), 0,0.838,0));
+  cof.add(at(cy(0.05,0.05,0.2,0x1A1A1A,0.3,8), 0,0.98,0));
+  cof.add(at(sp(0.055,0x1A1A1A,0.3), 0,1.11,0));
+  cof.position.set(2.9,0,-3.3); g.add(shadows(cof));
+
+  // Plant
+  const pl = new THREE.Group();
+  pl.add(at(cy(0.14,0.1,0.32,0x9B6644,0.82), 0,0.16,0));
+  pl.add(at(sp(0.22,0x3A6018,0.9), 0,0.54,0));
+  pl.add(at(sp(0.18,0x4A7428,0.9), 0.14,0.56,0.08));
+  pl.position.set(-3.1,0,-1.1); g.add(shadows(pl));
+
+  return g;
+}
+
+// ── LOBBY ──────────────────────────────────
+function buildLobby() {
+  const g = new THREE.Group();
+  const AC=0xC4923B;
+
+  // Reception desk (curved front)
+  const rd = new THREE.Group();
+  rd.add(at(bx(3.0,0.92,0.8,0x1B2A4A,0.68,0.08), 0,0.46,0));
+  rd.add(at(bx(3.0,0.06,0.82,AC,0.28,0.35), 0,0.92,0));
+  // Front panel (glass panels)
+  const gM=new THREE.MeshStandardMaterial({color:0x8AAABB,roughness:0.06,transparent:true,opacity:0.3});
+  const gp=new THREE.Mesh(new THREE.BoxGeometry(2.9,0.8,0.04),gM);
+  at(gp,0,0.46,0.41); rd.add(gp);
+  rd.position.set(0,0,-2.5); g.add(shadows(rd));
+
+  // Logo / signage on back wall
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.22,0.045),
+    new THREE.MeshStandardMaterial({color:AC,roughness:0.2,metalness:0.6}));
+  sign.position.set(0,2.4,-3.91); g.add(sign);
+
+  // Waiting area – sofa pair
+  const ws = (x,z,ry) => {
+    const s=new THREE.Group();
+    s.add(at(bx(1.4,0.42,0.72,0x2D3748,0.88), 0,0.21,0));
+    s.add(at(bx(1.4,0.5,0.09,0x2D3748,0.88), 0,0.62,-0.32));
+    s.add(at(bx(0.09,0.48,0.72,0x2D3748,0.88), -0.74,0.24,0));
+    s.add(at(bx(0.09,0.48,0.72,0x2D3748,0.88), 0.74,0.24,0));
+    s.rotation.y=ry; s.position.set(x,0,z); return s;
+  };
+  g.add(shadows(ws(-2.2,-0.8, 0.5)));
+  g.add(shadows(ws( 2.2,-0.8,-0.5)));
+
+  // Low coffee tables between sofas
+  const lt = new THREE.Group();
+  lt.add(at(bx(0.6,0.04,0.4,0xF0F0F0,0.1,0.04), 0,0.45,0));
+  lt.add(at(bx(0.4,0.44,0.28,0xC8C8C8,0.2,0.28), 0,0.22,0));
+  lt.position.set(0,0,-0.9); g.add(shadows(lt));
+
+  // Tall plants x2
+  const tp = (x) => {
+    const p=new THREE.Group();
+    p.add(at(cy(0.2,0.14,0.5,0x1A1A2E,0.7,20), 0,0.25,0));
+    p.add(at(cy(0.04,0.04,1.1,0x2A4A18,0.9,8), 0,1.05,0));
+    [[0.18,1.55,0,0.22],[-0.15,1.5,0.1,0.18],[0,1.65,-0.1,0.2]].forEach(([lx,ly,lz,r])=>
+      p.add(at(sp(r,0x2A5018,0.92),lx,ly,lz)));
+    p.position.set(x,0,-3.3); return p;
+  };
+  g.add(shadows(tp(-3.0)));
+  g.add(shadows(tp( 3.0)));
+
+  // Feature wall panels (vertical accent strips)
+  const stripM=new THREE.MeshStandardMaterial({color:AC,roughness:0.28,metalness:0.42});
+  [-2.2,-0.8,0.8,2.2].forEach(x=>{
+    const strip=new THREE.Mesh(new THREE.BoxGeometry(0.09,H-0.2,0.04),stripM);
+    strip.position.set(x,H/2,-3.89); g.add(strip);
+  });
+
+  // Pendant lights (ceiling)
+  [[-1.5,1.5]].forEach(([x,z])=>{
+    const pnd=new THREE.Group();
+    pnd.add(at(cy(0.008,0.008,0.5,0x999999,0.4,6), 0,0.25,0));
+    pnd.add(at(cy(0.12,0.12,0.18,AC,0.25,12), 0,-0.01,0));
+    const plight=new THREE.PointLight(0xFFEE88,0.5,3.5);
+    plight.position.set(0,-0.15,0); pnd.add(plight);
+    pnd.position.set(x,H,z); g.add(pnd);
+  });
+
+  return g;
+}
+
+// ── LIGHTING ──────────────────────────────
+let ambL, mainL, fillL, ptL=[];
+
+function buildLights() {
+  ambL=new THREE.AmbientLight(0xFFF8F0,0.62); scene.add(ambL);
+  mainL=new THREE.SpotLight(0xFFF8EE,0.9);
+  mainL.position.set(0,5.5,1); mainL.target.position.set(0,0,0);
+  mainL.angle=Math.PI/2.8; mainL.penumbra=0.55;
+  mainL.castShadow=true;
+  mainL.shadow.mapSize.set(1024,1024);
+  mainL.shadow.camera.near=0.1; mainL.shadow.camera.far=14;
+  scene.add(mainL); scene.add(mainL.target);
+  fillL=new THREE.DirectionalLight(0xCCE0FF,0.28);
+  fillL.position.set(-5,3,5); scene.add(fillL);
+  // Recessed ceiling points
+  [[-2,H-0.06,-2],[2,H-0.06,-2],[-2,H-0.06,-3.6],[2,H-0.06,-3.6]].forEach(([x,y,z])=>{
+    const p=new THREE.PointLight(0xFFF5E0,0.38,4.5);
+    p.position.set(x,y,z); scene.add(p); ptL.push(p);
+  });
+}
+
+// ── STATE ─────────────────────────────────
+let curRoom='living', curStyle='modern', curFloor='marble';
+let furnGrp=null, shellGrp=null;
+let busy=false;
+
+const roomLabels={living:'Living Room',bedroom:'Bedroom',office:'Office',lobby:'Lobby'};
+const styleLabels={modern:'Modern Minimalist',arabic:'Classic Arabic',luxury:'Luxury Contemporary'};
+const floorLabels={marble:'Marble Floor',wood:'Hardwood Floor',tiles:'Tile Floor',concrete:'Concrete Floor'};
+
+function getFurniture(room,style){
+  if(room==='living'){
+    if(style==='arabic') return arabicLiving();
+    if(style==='luxury') return luxuryLiving();
+    return modernLiving();
+  }
+  if(room==='bedroom') return buildBedroom();
+  if(room==='office') return buildOffice();
+  return buildLobby();
+}
+
+function swapFurniture(room,style){
+  if(busy) return; busy=true;
+  const NEW=getFurniture(room,style);
+  NEW.traverse(c=>{
+    if(c.isMesh&&c.material){c.material.transparent=true;c.material.opacity=0}
+  });
+  if(furnGrp){
+    let op=1, t0=Date.now();
+    const out=()=>{
+      op=1-Math.min((Date.now()-t0)/280,1);
+      furnGrp.traverse(c=>{if(c.isMesh&&c.material)c.material.opacity=op});
+      if(op>0) requestAnimationFrame(out);
+      else{scene.remove(furnGrp);furnGrp=null;fadeIn(NEW);}
+    }; out();
+  } else fadeIn(NEW);
+
+  function fadeIn(n){
+    scene.add(n); furnGrp=n;
+    let op=0, t0=Date.now();
+    const inn=()=>{
+      op=Math.min((Date.now()-t0)/350,1);
+      n.traverse(c=>{
+        if(c.isMesh&&c.material){
+          const base=c.material._base||1;
+          c.material._base=base; c.material.opacity=base*op;
+          if(op>=1){c.material.transparent=false;}
+        }
+      });
+      if(op<1) requestAnimationFrame(inn);
+      else busy=false;
+    }; inn();
+  }
+}
+
+function updateBadge(){
+  document.getElementById('badge-t').textContent=roomLabels[curRoom]||curRoom;
+  document.getElementById('badge-s').textContent=
+    (styleLabels[curStyle]||curStyle)+' · '+(floorLabels[curFloor]||curFloor);
+}
+
+// UI handlers
+function setRoom(r,el){
+  curRoom=r;
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  swapFurniture(r,curStyle); updateBadge();
+}
+function setStyle(s,el){
+  curStyle=s;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  swapFurniture(curRoom,s); updateBadge();
+}
+function setWall(hex,el){
+  wallMat.color.setHex(hex); skirtMat.color.setHex(Math.round(hex*0.9));
+  document.querySelectorAll('.col').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function setFloor(type,el){
+  curFloor=type;
+  const p=FP[type];
+  floorMat.color.setHex(p.color); floorMat.roughness=p.rough; floorMat.metalness=p.metal;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); updateBadge();
+}
+function setLight(mode,el){
+  const p=LP[mode];
+  ambL.intensity=p.amb; mainL.intensity=p.main; mainL.color.set(p.mainC);
+  fillL.intensity=p.fill; fillL.color.set(p.fillC);
+  ptL.forEach(pl=>{pl.intensity=p.main*0.38; pl.color.set(p.mainC);});
+  document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function doZoom(d){tR=Math.max(4.5,Math.min(15,tR+d));}
+function resetCam(){tH=Math.PI*0.12; tV=0.44; tR=10;}
+
+// Share modal
+function openModal(){
+  const sum=`Room Type: ${roomLabels[curRoom]}\nDesign Style: ${styleLabels[curStyle]}\nFloor Material: ${floorLabels[curFloor]}`;
+  document.getElementById('modal-summary').innerHTML=
+    sum.split('\n').map(l=>`<strong style="color:var(--gold)">${l.split(':')[0]}:</strong> ${l.split(':').slice(1).join(':')}`).join('<br>');
+  const body=encodeURIComponent(
+    `Dear Eng. Adnan Saffarini Team,\n\nI have configured a room design in your 3D Design Studio and would like to discuss it further.\n\nMy design selections:\n• ${sum.replace(/\n/g,'\n• ')}\n\nPlease contact me to schedule a consultation.\n\nBest regards,`
+  );
+  document.getElementById('modal-link').href=
+    `mailto:saff@emirates.net.ae?subject=Design%20Studio%20Inquiry&body=${body}`;
+  document.getElementById('shareModal').classList.add('show');
+}
+function closeModal(){document.getElementById('shareModal').classList.remove('show');}
+
+// ── CAMERA INTERACTION ────────────────────
+let drag=false, lx=0, ly=0;
+cv.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;cv.style.cursor='grabbing'});
+window.addEventListener('mouseup',()=>{drag=false;cv.style.cursor='grab'});
+cv.addEventListener('mousemove',e=>{
+  if(!drag) return;
+  tH+=(e.clientX-lx)*0.008; tV+=(e.clientY-ly)*0.006;
+  tV=Math.max(0.08,Math.min(1.05,tV));
+  lx=e.clientX; ly=e.clientY;
+});
+cv.addEventListener('wheel',e=>{e.preventDefault();tR=Math.max(4.5,Math.min(15,tR+e.deltaY*0.01));},{passive:false});
+
+// Touch
+let lt0x=0,lt0y=0,lpd=0;
+cv.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){lt0x=e.touches[0].clientX;lt0y=e.touches[0].clientY}
+  if(e.touches.length===2) lpd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+});
+cv.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(e.touches.length===1){
+    tH+=(e.touches[0].clientX-lt0x)*0.008; tV+=(e.touches[0].clientY-lt0y)*0.006;
+    tV=Math.max(0.08,Math.min(1.05,tV));
+    lt0x=e.touches[0].clientX; lt0y=e.touches[0].clientY;
+  }
+  if(e.touches.length===2){
+    const nd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    tR=Math.max(4.5,Math.min(15,tR+(lpd-nd)*0.055)); lpd=nd;
+  }
+},{passive:false});
+
+// Resize
+window.addEventListener('resize',()=>{
+  renderer.setSize(wrap.clientWidth,wrap.clientHeight);
+  cam.aspect=wrap.clientWidth/wrap.clientHeight;
+  cam.updateProjectionMatrix();
+});
+
+// ── INIT ──────────────────────────────────
+function init(){
+  renderer.setSize(wrap.clientWidth,wrap.clientHeight);
+  cam.aspect=wrap.clientWidth/wrap.clientHeight;
+  cam.updateProjectionMatrix();
+  cv.style.cursor='grab';
+  buildLights();
+  shellGrp=buildShell(); scene.add(shellGrp);
+  swapFurniture('living','modern');
+  setTimeout(()=>{
+    const L=document.getElementById('loader');
+    L.style.opacity='0'; setTimeout(()=>L.style.display='none',600);
+  },900);
+  setTimeout(()=>{document.getElementById('hint').style.opacity='0';},4500);
+  loop();
+}
+
+// ── RENDER LOOP ───────────────────────────
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  clock.getDelta(); // advance
+  cH+=(tH-cH)*0.08; cV+=(tV-cV)*0.08; cR+=(tR-cR)*0.08;
+  updateCam();
+  renderer.render(scene,cam);
+}
+
+init();
+</script>
+</body>
+</html>

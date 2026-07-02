@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Floor Planner — Eng. Adnan Saffarini Office</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #243560;
+    --gold: #C4923B;
+    --gold-light: #D4A84B;
+    --white: #FFFFFF;
+    --light: #F7F8FA;
+    --border: #E2E6EE;
+    --text: #1B2A4A;
+    --text-muted: #7B8AAA;
+    --shadow: 0 4px 24px rgba(27,42,74,0.10);
+    --radius: 10px;
+    --toolbar-w: 220px;
+    --panel-w: 240px;
+    --header-h: 58px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--text); }
+
+  /* ─── HEADER ─── */
+  .fp-header {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+    background: var(--navy); color: #fff;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .fp-logo { display: flex; align-items: center; gap: 10px; }
+  .fp-logo-icon { width: 36px; height: 36px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .fp-logo-icon i { font-size: 20px; color: #fff; }
+  .fp-logo-text { font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
+  .fp-logo-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 400; }
+  .fp-header-sep { width: 1px; height: 32px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+  .fp-title { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); }
+  .fp-header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .fp-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 7px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; transition: all .18s;
+  }
+  .fp-btn-ghost { background: rgba(255,255,255,0.10); color: #fff; }
+  .fp-btn-ghost:hover { background: rgba(255,255,255,0.18); }
+  .fp-btn-gold { background: var(--gold); color: #fff; }
+  .fp-btn-gold:hover { background: var(--gold-light); }
+  .fp-btn-navy { background: var(--navy-light); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
+  .fp-btn-navy:hover { background: #2d4070; }
+  .fp-btn i { font-size: 16px; }
+
+  /* ─── LAYOUT ─── */
+  .fp-layout {
+    display: flex; height: calc(100vh - var(--header-h));
+    margin-top: var(--header-h);
+  }
+
+  /* ─── LEFT TOOLBAR ─── */
+  .fp-toolbar {
+    width: var(--toolbar-w); background: #fff; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+    box-shadow: 2px 0 10px rgba(27,42,74,0.05);
+  }
+  .fp-section { padding: 14px 14px 0; }
+  .fp-section-title {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 10px;
+  }
+  /* Tools */
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+  .tool-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 10px 6px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--light); cursor: pointer; transition: all .15s; font-size: 11px; font-weight: 600;
+    color: var(--text-muted); user-select: none;
+  }
+  .tool-btn i { font-size: 20px; }
+  .tool-btn:hover { border-color: var(--gold); color: var(--gold); background: #fffbf5; }
+  .tool-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .tool-btn.active i { color: var(--gold); }
+
+  /* Room types */
+  .room-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .room-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--light); cursor: pointer; transition: all .15s; font-size: 12px; font-weight: 600;
+    color: var(--text);
+  }
+  .room-item i { font-size: 16px; color: var(--text-muted); }
+  .room-item:hover { border-color: var(--gold); background: #fffbf5; }
+  .room-item.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .room-item.selected i { color: var(--gold); }
+  .room-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+
+  /* Furniture */
+  .furniture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 14px; }
+  .furn-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 8px 4px; border-radius: 7px; border: 1.5px solid var(--border);
+    background: var(--light); cursor: pointer; transition: all .15s; font-size: 10px; font-weight: 600;
+    color: var(--text-muted); text-align: center;
+  }
+  .furn-btn i { font-size: 18px; }
+  .furn-btn:hover { border-color: var(--navy); color: var(--navy); background: #f0f3fa; }
+
+  /* ─── CANVAS AREA ─── */
+  .fp-canvas-wrap {
+    flex: 1; position: relative; overflow: hidden; background: #e8ecf4;
+    background-image: radial-gradient(circle, #c8cfe0 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  #fp-canvas {
+    position: absolute; top: 0; left: 0; cursor: crosshair;
+    image-rendering: pixelated;
+  }
+  .fp-canvas-wrap.tool-select #fp-canvas { cursor: default; }
+  .fp-canvas-wrap.tool-erase #fp-canvas { cursor: cell; }
+  .fp-canvas-wrap.tool-measure #fp-canvas { cursor: crosshair; }
+  .fp-canvas-wrap.tool-pan #fp-canvas { cursor: grab; }
+
+  /* Canvas overlay controls */
+  .fp-zoom-controls {
+    position: absolute; bottom: 18px; right: 18px;
+    display: flex; flex-direction: column; gap: 4px; z-index: 10;
+  }
+  .fp-zoom-btn {
+    width: 34px; height: 34px; background: #fff; border: 1px solid var(--border);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: var(--shadow); font-size: 18px; color: var(--navy);
+    transition: background .15s;
+  }
+  .fp-zoom-btn:hover { background: var(--navy); color: #fff; }
+  .fp-zoom-label {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 4px 8px; font-size: 11px; font-weight: 700; color: var(--navy);
+    text-align: center; box-shadow: var(--shadow);
+  }
+
+  /* Info bar */
+  .fp-infobar {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    background: rgba(27,42,74,0.90); color: #fff; border-radius: 8px;
+    padding: 6px 16px; font-size: 12px; pointer-events: none; z-index: 10;
+    display: none; white-space: nowrap; backdrop-filter: blur(4px);
+  }
+  .fp-infobar.visible { display: block; }
+
+  /* Status bar */
+  .fp-statusbar {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.95); border: 1px solid var(--border);
+    border-radius: 8px; padding: 5px 14px; font-size: 11px; color: var(--text-muted);
+    z-index: 10; box-shadow: var(--shadow); display: flex; gap: 12px;
+  }
+  .fp-statusbar span strong { color: var(--navy); }
+
+  /* ─── RIGHT PANEL ─── */
+  .fp-panel {
+    width: var(--panel-w); background: #fff; border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+    box-shadow: -2px 0 10px rgba(27,42,74,0.05);
+  }
+  .fp-panel-head {
+    padding: 14px 14px 12px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .fp-panel-head i { font-size: 16px; color: var(--gold); }
+  .fp-prop-row { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .fp-prop-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 5px; }
+  .fp-prop-val { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .fp-prop-input {
+    width: 100%; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+    font-size: 13px; font-weight: 600; color: var(--navy); background: var(--light);
+    outline: none; transition: border-color .15s;
+  }
+  .fp-prop-input:focus { border-color: var(--gold); }
+  .fp-prop-select {
+    width: 100%; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+    font-size: 13px; color: var(--navy); background: var(--light);
+    outline: none;
+  }
+  .fp-no-selection {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--text-muted); gap: 10px; padding: 24px;
+  }
+  .fp-no-selection i { font-size: 36px; color: var(--border); }
+  .fp-no-selection p { font-size: 12px; text-align: center; line-height: 1.5; }
+
+  /* Stats */
+  .fp-stats { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .fp-stat-card {
+    background: var(--light); border-radius: 8px; padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .fp-stat-val { font-size: 18px; font-weight: 800; color: var(--navy); }
+  .fp-stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Delete btn */
+  .fp-del-btn {
+    margin: 10px 14px; padding: 8px; border-radius: 7px; border: none;
+    background: #fff0f0; color: #d94040; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background .15s;
+  }
+  .fp-del-btn:hover { background: #ffe0e0; }
+  .fp-del-btn i { font-size: 16px; }
+
+  /* Export modal */
+  .fp-modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .fp-modal-overlay.open { display: flex; }
+  .fp-modal {
+    background: #fff; border-radius: 16px; padding: 28px; max-width: 420px; width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .fp-modal h3 { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .fp-modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+  .fp-modal-summary {
+    background: var(--light); border-radius: 10px; padding: 14px;
+    font-size: 12px; color: var(--text); line-height: 1.8; margin-bottom: 18px;
+    border: 1px solid var(--border); white-space: pre-line;
+  }
+  .fp-modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="fp-header">
+  <div class="fp-logo">
+    <div class="fp-logo-icon"><i class="ti ti-building-arch"></i></div>
+    <div>
+      <div class="fp-logo-text">Eng. Adnan Saffarini Office</div>
+      <div class="fp-logo-sub">Architects &amp; Consultants · Dubai, UAE</div>
+    </div>
+  </div>
+  <div class="fp-header-sep"></div>
+  <span class="fp-title"><i class="ti ti-layout-grid" style="margin-right:6px;font-size:16px;vertical-align:-2px;"></i>Home Floor Planner</span>
+  <div class="fp-header-actions">
+    <button class="fp-btn fp-btn-ghost" onclick="clearAll()" title="New plan"><i class="ti ti-file-plus"></i> New</button>
+    <button class="fp-btn fp-btn-navy" onclick="undoAction()" title="Undo"><i class="ti ti-arrow-back-up"></i></button>
+    <button class="fp-btn fp-btn-gold" onclick="openExport()"><i class="ti ti-share"></i> Export Plan</button>
+    <a href="/" class="fp-btn fp-btn-ghost" style="text-decoration:none;"><i class="ti ti-arrow-left"></i> Portal</a>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="fp-layout">
+
+  <!-- LEFT TOOLBAR -->
+  <aside class="fp-toolbar" id="fp-toolbar">
+
+    <div class="fp-section" style="margin-top:14px;">
+      <div class="fp-section-title">Tools</div>
+      <div class="tool-grid">
+        <div class="tool-btn active" id="tool-draw" onclick="setTool('draw')" title="Draw Room">
+          <i class="ti ti-pencil"></i>Draw
+        </div>
+        <div class="tool-btn" id="tool-select" onclick="setTool('select')" title="Select & Move">
+          <i class="ti ti-cursor-text"></i>Select
+        </div>
+        <div class="tool-btn" id="tool-furniture" onclick="setTool('furniture')" title="Add Furniture">
+          <i class="ti ti-armchair"></i>Furniture
+        </div>
+        <div class="tool-btn" id="tool-erase" onclick="setTool('erase')" title="Delete">
+          <i class="ti ti-eraser"></i>Delete
+        </div>
+        <div class="tool-btn" id="tool-measure" onclick="setTool('measure')" title="Measure">
+          <i class="ti ti-ruler"></i>Measure
+        </div>
+        <div class="tool-btn" id="tool-pan" onclick="setTool('pan')" title="Pan / Move View">
+          <i class="ti ti-hand-move"></i>Pan
+        </div>
+      </div>
+    </div>
+
+    <div class="fp-section">
+      <div class="fp-section-title">Room Type</div>
+      <div class="room-list" id="room-list">
+        <div class="room-item selected" onclick="setRoomType('living')" data-room="living">
+          <div class="room-swatch" style="background:#d4e6f1;"></div>
+          <i class="ti ti-sofa"></i>Living Room
+        </div>
+        <div class="room-item" onclick="setRoomType('master')" data-room="master">
+          <div class="room-swatch" style="background:#f9d5e5;"></div>
+          <i class="ti ti-bed"></i>Master Bedroom
+        </div>
+        <div class="room-item" onclick="setRoomType('bedroom')" data-room="bedroom">
+          <div class="room-swatch" style="background:#e8d5f9;"></div>
+          <i class="ti ti-bed-flat"></i>Bedroom
+        </div>
+        <div class="room-item" onclick="setRoomType('kitchen')" data-room="kitchen">
+          <div class="room-swatch" style="background:#fff3cd;"></div>
+          <i class="ti ti-chef-hat"></i>Kitchen
+        </div>
+        <div class="room-item" onclick="setRoomType('dining')" data-room="dining">
+          <div class="room-swatch" style="background:#fde5ce;"></div>
+          <i class="ti ti-building-community"></i>Dining Room
+        </div>
+        <div class="room-item" onclick="setRoomType('bathroom')" data-room="bathroom">
+          <div class="room-swatch" style="background:#d5f5e3;"></div>
+          <i class="ti ti-bath"></i>Bathroom
+        </div>
+        <div class="room-item" onclick="setRoomType('toilet')" data-room="toilet">
+          <div class="room-swatch" style="background:#d5f5ec;"></div>
+          <i class="ti ti-toilet-paper"></i>Toilet
+        </div>
+        <div class="room-item" onclick="setRoomType('office')" data-room="office">
+          <div class="room-swatch" style="background:#d5e8f5;"></div>
+          <i class="ti ti-device-desktop"></i>Home Office
+        </div>
+        <div class="room-item" onclick="setRoomType('balcony')" data-room="balcony">
+          <div class="room-swatch" style="background:#e8f5d5;"></div>
+          <i class="ti ti-sun"></i>Balcony / Terrace
+        </div>
+        <div class="room-item" onclick="setRoomType('hallway')" data-room="hallway">
+          <div class="room-swatch" style="background:#f5f5d5;"></div>
+          <i class="ti ti-door"></i>Hallway / Entry
+        </div>
+        <div class="room-item" onclick="setRoomType('garage')" data-room="garage">
+          <div class="room-swatch" style="background:#e0e0e0;"></div>
+          <i class="ti ti-car"></i>Garage
+        </div>
+        <div class="room-item" onclick="setRoomType('store')" data-room="store">
+          <div class="room-swatch" style="background:#ede5d5;"></div>
+          <i class="ti ti-package"></i>Storage
+        </div>
+      </div>
+    </div>
+
+    <div class="fp-section" id="furniture-section" style="display:none;">
+      <div class="fp-section-title">Furniture</div>
+      <div class="furniture-grid">
+        <div class="furn-btn" onclick="placeFurniture('sofa')" title="Sofa"><i class="ti ti-armchair"></i>Sofa</div>
+        <div class="furn-btn" onclick="placeFurniture('bed-double')" title="Double Bed"><i class="ti ti-bed"></i>Dbl Bed</div>
+        <div class="furn-btn" onclick="placeFurniture('bed-single')" title="Single Bed"><i class="ti ti-bed-flat"></i>Sgl Bed</div>
+        <div class="furn-btn" onclick="placeFurniture('table')" title="Dining Table"><i class="ti ti-table"></i>Table</div>
+        <div class="furn-btn" onclick="placeFurniture('desk')" title="Work Desk"><i class="ti ti-layout-board"></i>Desk</div>
+        <div class="furn-btn" onclick="placeFurniture('chair')" title="Chair"><i class="ti ti-armchair-2"></i>Chair</div>
+        <div class="furn-btn" onclick="placeFurniture('wardrobe')" title="Wardrobe"><i class="ti ti-hanger"></i>Wardrobe</div>
+        <div class="furn-btn" onclick="placeFurniture('bathtub')" title="Bathtub"><i class="ti ti-bath"></i>Bathtub</div>
+        <div class="furn-btn" onclick="placeFurniture('toilet')" title="Toilet"><i class="ti ti-toilet-paper"></i>Toilet</div>
+        <div class="furn-btn" onclick="placeFurniture('sink')" title="Sink"><i class="ti ti-droplet"></i>Sink</div>
+        <div class="furn-btn" onclick="placeFurniture('tv')" title="TV / Screen"><i class="ti ti-device-tv"></i>TV</div>
+        <div class="furn-btn" onclick="placeFurniture('plant')" title="Plant"><i class="ti ti-leaf"></i>Plant</div>
+        <div class="furn-btn" onclick="placeFurniture('stairs')" title="Stairs"><i class="ti ti-stairs"></i>Stairs</div>
+        <div class="furn-btn" onclick="placeFurniture('door')" title="Door"><i class="ti ti-door"></i>Door</div>
+      </div>
+    </div>
+
+    <div style="height:20px;"></div>
+  </aside>
+
+  <!-- CANVAS -->
+  <div class="fp-canvas-wrap tool-draw" id="canvas-wrap">
+    <canvas id="fp-canvas"></canvas>
+
+    <!-- Status bar -->
+    <div class="fp-statusbar">
+      <span>Rooms: <strong id="stat-rooms">0</strong></span>
+      <span>Area: <strong id="stat-area">0 m²</strong></span>
+      <span>Furniture: <strong id="stat-furn">0</strong></span>
+      <span id="stat-hint" style="color:var(--gold);font-weight:700;">Click &amp; drag to draw a room</span>
+    </div>
+
+    <!-- Zoom controls -->
+    <div class="fp-zoom-controls">
+      <div class="fp-zoom-btn" onclick="zoom(1.2)" title="Zoom In"><i class="ti ti-plus"></i></div>
+      <div class="fp-zoom-label" id="zoom-label">100%</div>
+      <div class="fp-zoom-btn" onclick="zoom(1/1.2)" title="Zoom Out"><i class="ti ti-minus"></i></div>
+      <div class="fp-zoom-btn" onclick="resetView()" title="Fit to Screen"><i class="ti ti-maximize"></i></div>
+    </div>
+
+    <!-- Info bar (drag info) -->
+    <div class="fp-infobar" id="fp-infobar">Drawing...</div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <aside class="fp-panel" id="fp-panel">
+    <div class="fp-panel-head"><i class="ti ti-info-circle"></i>Properties</div>
+    <div id="panel-content">
+      <div class="fp-no-selection">
+        <i class="ti ti-click"></i>
+        <p>Select a room or furniture item to edit its properties here.</p>
+      </div>
+      <div class="fp-stats">
+        <div class="fp-stat-card">
+          <div class="fp-stat-val" id="total-area-stat">0 m²</div>
+          <div class="fp-stat-lbl">Total Floor Area</div>
+        </div>
+        <div class="fp-stat-card">
+          <div class="fp-stat-val" id="total-rooms-stat">0</div>
+          <div class="fp-stat-lbl">Rooms</div>
+        </div>
+        <div class="fp-stat-card">
+          <div class="fp-stat-val" id="total-furn-stat">0</div>
+          <div class="fp-stat-lbl">Furniture Items</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="fp-modal-overlay" id="export-modal">
+  <div class="fp-modal">
+    <h3><i class="ti ti-share" style="color:var(--gold);margin-right:8px;"></i>Export Floor Plan</h3>
+    <p>Your design summary is ready. You can save or print this plan.</p>
+    <div class="fp-modal-summary" id="modal-summary"></div>
+    <div class="fp-modal-actions">
+      <button class="fp-btn fp-btn-ghost" style="color:var(--navy);border:1.5px solid var(--border);" onclick="closeExport()">Close</button>
+      <button class="fp-btn fp-btn-gold" onclick="printPlan()"><i class="ti ti-printer"></i> Print Plan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ─────────────────────────────────────────────────────────────
+const GRID = 20;          // pixels per grid cell
+const SCALE = 0.05;       // 1 cell = 0.05m → 20 cells = 1m → grid at zoom=1: 1m = 20px
+// At zoom=1: 1 grid cell = 20px = 0.05m → to show 1m/cell you'd need 20x scale
+// Let's define: 1 grid cell = 0.5m → so 1m = 2 grid cells = 40px at zoom=1
+const CELL_M = 0.5;       // meters per grid cell
+
+const ROOM_COLORS = {
+  living:   { fill: '#d4e6f1', stroke: '#5a9bbf', label: 'Living Room' },
+  master:   { fill: '#f9d5e5', stroke: '#bf5a85', label: 'Master Bedroom' },
+  bedroom:  { fill: '#e8d5f9', stroke: '#8a5abf', label: 'Bedroom' },
+  kitchen:  { fill: '#fff3cd', stroke: '#bf9a2a', label: 'Kitchen' },
+  dining:   { fill: '#fde5ce', stroke: '#bf7a3a', label: 'Dining Room' },
+  bathroom: { fill: '#d5f5e3', stroke: '#2abf6a', label: 'Bathroom' },
+  toilet:   { fill: '#d5f5ec', stroke: '#2abf8a', label: 'Toilet' },
+  office:   { fill: '#d5e8f5', stroke: '#3a7abf', label: 'Home Office' },
+  balcony:  { fill: '#e8f5d5', stroke: '#7abf3a', label: 'Balcony / Terrace' },
+  hallway:  { fill: '#f5f5d5', stroke: '#aaaa3a', label: 'Hallway / Entry' },
+  garage:   { fill: '#e0e0e0', stroke: '#8a8a8a', label: 'Garage' },
+  store:    { fill: '#ede5d5', stroke: '#9a7a4a', label: 'Storage' },
+};
+
+const FURNITURE_DEF = {
+  sofa:       { w: 4, h: 2, label: 'Sofa',        color: '#7a9dbf' },
+  'bed-double':{ w:3, h:4, label:'Double Bed',    color: '#bf7a9d' },
+  'bed-single':{ w:2, h:3, label:'Single Bed',    color: '#bf9dbf' },
+  table:      { w: 3, h: 2, label: 'Dining Table',color: '#bfaa7a' },
+  desk:       { w: 3, h: 2, label: 'Desk',        color: '#7abfaa' },
+  chair:      { w: 1, h: 1, label: 'Chair',        color: '#9dbfaa' },
+  wardrobe:   { w: 3, h: 1, label: 'Wardrobe',    color: '#9d7abf' },
+  bathtub:    { w: 2, h: 4, label: 'Bathtub',     color: '#7abfbf' },
+  toilet:     { w: 1, h: 2, label: 'Toilet',      color: '#7abfaa' },
+  sink:       { w: 1, h: 1, label: 'Sink',         color: '#7aabdf' },
+  tv:         { w: 3, h: 1, label: 'TV',           color: '#3a3a5a' },
+  plant:      { w: 1, h: 1, label: 'Plant',        color: '#4abf4a' },
+  stairs:     { w: 3, h: 3, label: 'Stairs',       color: '#aaaaaa' },
+  door:       { w: 2, h: 1, label: 'Door',         color: '#c4923b' },
+};
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let rooms = [];
+let furniture = [];
+let history = [];
+let selectedId = null;
+let activeTool = 'draw';
+let activeRoomType = 'living';
+let pendingFurniture = null;
+
+let viewX = 0, viewY = 0, viewZoom = 1;
+
+// Drawing state
+let isDrawing = false;
+let drawStart = null;
+let drawCurrent = null;
+
+// Select/drag state
+let isDragging = false;
+let dragStart = null;
+let dragObjStart = null;
+
+// Pan state
+let isPanning = false;
+let panStart = null;
+let panViewStart = null;
+
+let idCounter = 1;
+const canvas = document.getElementById('fp-canvas');
+const ctx = canvas.getContext('2d');
+
+// ─── INIT ──────────────────────────────────────────────────────────────────
+function init() {
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  canvas.addEventListener('mousedown', onMouseDown);
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mouseup', onMouseUp);
+  canvas.addEventListener('mouseleave', onMouseLeave);
+  canvas.addEventListener('wheel', onWheel, { passive: false });
+  document.addEventListener('keydown', onKeyDown);
+  // Center view
+  viewX = canvas.width / 2 - 10 * GRID;
+  viewY = canvas.height / 2 - 8 * GRID;
+  render();
+}
+
+function resizeCanvas() {
+  const wrap = document.getElementById('canvas-wrap');
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  render();
+}
+
+// ─── COORDINATE HELPERS ────────────────────────────────────────────────────
+function screenToWorld(sx, sy) {
+  return { x: (sx - viewX) / viewZoom, y: (sy - viewY) / viewZoom };
+}
+function worldToScreen(wx, wy) {
+  return { x: wx * viewZoom + viewX, y: wy * viewZoom + viewY };
+}
+function snapGrid(v) { return Math.round(v / GRID) * GRID; }
+function snapWorld(p) { return { x: snapGrid(p.x), y: snapGrid(p.y) }; }
+function cellsToMeters(cells) { return (cells * CELL_M).toFixed(1); }
+function gridDimM(cells) { return cellsToMeters(Math.abs(cells) / GRID); }
+
+// ─── TOOL SELECTION ────────────────────────────────────────────────────────
+function setTool(tool) {
+  activeTool = tool;
+  // Update UI
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('tool-' + tool);
+  if (btn) btn.classList.add('active');
+  const wrap = document.getElementById('canvas-wrap');
+  wrap.className = 'fp-canvas-wrap tool-' + tool;
+  // Show/hide furniture section
+  document.getElementById('furniture-section').style.display = tool === 'furniture' ? '' : 'none';
+  document.getElementById('room-list').parentElement.style.display = tool === 'furniture' ? 'none' : '';
+  // Hint
+  const hints = {
+    draw: 'Click &amp; drag to draw a room',
+    select: 'Click to select · Drag to move',
+    furniture: 'Choose furniture below, then click to place',
+    erase: 'Click on any room or item to delete',
+    measure: 'Click &amp; drag to measure distance',
+    pan: 'Click &amp; drag to pan the view',
+  };
+  document.getElementById('stat-hint').innerHTML = hints[tool] || '';
+}
+
+function setRoomType(type) {
+  activeRoomType = type;
+  document.querySelectorAll('.room-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.room === type);
+  });
+}
+
+function placeFurniture(type) {
+  pendingFurniture = type;
+  document.getElementById('stat-hint').innerHTML = 'Click on the canvas to place ' + FURNITURE_DEF[type].label;
+}
+
+// ─── MOUSE EVENTS ──────────────────────────────────────────────────────────
+function getMousePos(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+function onMouseDown(e) {
+  const ms = getMousePos(e);
+  const mw = screenToWorld(ms.x, ms.y);
+  const snapped = snapWorld(mw);
+
+  if (activeTool === 'pan') {
+    isPanning = true;
+    panStart = ms;
+    panViewStart = { x: viewX, y: viewY };
+    return;
+  }
+
+  if (activeTool === 'draw') {
+    pushHistory();
+    isDrawing = true;
+    drawStart = snapped;
+    drawCurrent = snapped;
+    return;
+  }
+
+  if (activeTool === 'measure') {
+    isDrawing = true;
+    drawStart = snapped;
+    drawCurrent = snapped;
+    return;
+  }
+
+  if (activeTool === 'select') {
+    const hit = hitTest(mw);
+    if (hit) {
+      selectedId = hit.id;
+      isDragging = true;
+      dragStart = mw;
+      dragObjStart = { x: hit.x, y: hit.y };
+      showProperties(hit);
+      render();
+    } else {
+      selectedId = null;
+      showNoSelection();
+      render();
+    }
+    return;
+  }
+
+  if (activeTool === 'erase') {
+    const hit = hitTest(mw);
+    if (hit) {
+      pushHistory();
+      if (hit._type === 'room') rooms = rooms.filter(r => r.id !== hit.id);
+      else furniture = furniture.filter(f => f.id !== hit.id);
+      selectedId = null;
+      showNoSelection();
+      updateStats();
+      render();
+    }
+    return;
+  }
+
+  if (activeTool === 'furniture' && pendingFurniture) {
+    pushHistory();
+    const def = FURNITURE_DEF[pendingFurniture];
+    furniture.push({
+      id: 'f' + idCounter++,
+      _type: 'furniture',
+      kind: pendingFurniture,
+      x: snapped.x,
+      y: snapped.y,
+      w: def.w * GRID,
+      h: def.h * GRID,
+      rotation: 0,
+    });
+    updateStats();
+    render();
+    return;
+  }
+}
+
+function onMouseMove(e) {
+  const ms = getMousePos(e);
+  const mw = screenToWorld(ms.x, ms.y);
+
+  if (isPanning) {
+    viewX = panViewStart.x + (ms.x - panStart.x);
+    viewY = panViewStart.y + (ms.y - panStart.y);
+    render();
+    return;
+  }
+
+  if (isDrawing && activeTool === 'draw') {
+    drawCurrent = snapWorld(mw);
+    const dx = Math.abs(drawCurrent.x - drawStart.x);
+    const dy = Math.abs(drawCurrent.y - drawStart.y);
+    const wM = gridDimM(dx); const hM = gridDimM(dy);
+    showInfobar(`${wM}m × ${hM}m   (${dx/GRID} × ${dy/GRID} cells)`);
+    render();
+    return;
+  }
+
+  if (isDrawing && activeTool === 'measure') {
+    drawCurrent = snapWorld(mw);
+    const dx = drawCurrent.x - drawStart.x;
+    const dy = drawCurrent.y - drawStart.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const distM = (dist / GRID * CELL_M).toFixed(2);
+    showInfobar(`Distance: ${distM} m`);
+    render();
+    return;
+  }
+
+  if (isDragging && activeTool === 'select' && selectedId) {
+    const dx = mw.x - dragStart.x;
+    const dy = mw.y - dragStart.y;
+    const obj = findById(selectedId);
+    if (obj) {
+      obj.x = snapGrid(dragObjStart.x + dx);
+      obj.y = snapGrid(dragObjStart.y + dy);
+      showProperties(obj);
+      render();
+    }
+    return;
+  }
+}
+
+function onMouseUp(e) {
+  if (isPanning) { isPanning = false; return; }
+
+  if (isDrawing && activeTool === 'draw') {
+    isDrawing = false;
+    hideInfobar();
+    const x1 = Math.min(drawStart.x, drawCurrent.x);
+    const y1 = Math.min(drawStart.y, drawCurrent.y);
+    const x2 = Math.max(drawStart.x, drawCurrent.x);
+    const y2 = Math.max(drawStart.y, drawCurrent.y);
+    if ((x2 - x1) >= GRID && (y2 - y1) >= GRID) {
+      rooms.push({
+        id: 'r' + idCounter++,
+        _type: 'room',
+        type: activeRoomType,
+        x: x1, y: y1, w: x2 - x1, h: y2 - y1,
+        label: ROOM_COLORS[activeRoomType].label,
+      });
+      updateStats();
+    }
+    drawStart = null; drawCurrent = null;
+    render();
+    return;
+  }
+
+  if (isDrawing && activeTool === 'measure') {
+    isDrawing = false;
+    hideInfobar();
+    drawStart = null; drawCurrent = null;
+    render();
+    return;
+  }
+
+  if (isDragging) { isDragging = false; }
+}
+
+function onMouseLeave() {
+  isDrawing = false; isDragging = false; isPanning = false;
+  hideInfobar();
+  if (drawStart) { drawStart = null; drawCurrent = null; render(); }
+}
+
+function onWheel(e) {
+  e.preventDefault();
+  const ms = getMousePos(e);
+  const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+  const before = screenToWorld(ms.x, ms.y);
+  viewZoom *= factor;
+  viewZoom = Math.max(0.2, Math.min(5, viewZoom));
+  const after = screenToWorld(ms.x, ms.y);
+  viewX += (after.x - before.x) * viewZoom;
+  viewY += (after.y - before.y) * viewZoom;
+  document.getElementById('zoom-label').textContent = Math.round(viewZoom * 100) + '%';
+  render();
+}
+
+function onKeyDown(e) {
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (selectedId && document.activeElement === document.body) {
+      pushHistory();
+      rooms = rooms.filter(r => r.id !== selectedId);
+      furniture = furniture.filter(f => f.id !== selectedId);
+      selectedId = null;
+      showNoSelection();
+      updateStats();
+      render();
+    }
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undoAction(); }
+  if (e.key === 'r' && selectedId) { rotateSelected(); }
+}
+
+// ─── HIT TEST ──────────────────────────────────────────────────────────────
+function hitTest(p) {
+  // Check furniture first (on top)
+  for (let i = furniture.length - 1; i >= 0; i--) {
+    const f = furniture[i];
+    if (p.x >= f.x && p.x <= f.x + f.w && p.y >= f.y && p.y <= f.y + f.h) return f;
+  }
+  // Then rooms
+  for (let i = rooms.length - 1; i >= 0; i--) {
+    const r = rooms[i];
+    if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) return r;
+  }
+  return null;
+}
+
+function findById(id) {
+  return rooms.find(r => r.id === id) || furniture.find(f => f.id === id);
+}
+
+// ─── RENDER ────────────────────────────────────────────────────────────────
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(viewX, viewY);
+  ctx.scale(viewZoom, viewZoom);
+
+  drawGrid();
+
+  // Rooms
+  rooms.forEach(r => {
+    const c = ROOM_COLORS[r.type] || ROOM_COLORS.living;
+    const selected = r.id === selectedId;
+    ctx.fillStyle = c.fill + (selected ? 'ff' : 'cc');
+    ctx.strokeStyle = selected ? '#1B2A4A' : c.stroke;
+    ctx.lineWidth = selected ? 3 / viewZoom : 1.5 / viewZoom;
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+
+    // Selection handles
+    if (selected) {
+      const hs = 6 / viewZoom;
+      ctx.fillStyle = '#1B2A4A';
+      [[r.x,r.y],[r.x+r.w,r.y],[r.x,r.y+r.h],[r.x+r.w,r.y+r.h]].forEach(([hx,hy])=>{
+        ctx.fillRect(hx - hs/2, hy - hs/2, hs, hs);
+      });
+    }
+
+    // Label
+    ctx.fillStyle = c.stroke;
+    ctx.font = `bold ${14/viewZoom}px 'Segoe UI', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const cx = r.x + r.w/2, cy = r.y + r.h/2;
+    ctx.fillText(r.label, cx, cy - 8/viewZoom);
+
+    // Dimension labels
+    ctx.font = `${11/viewZoom}px 'Segoe UI', sans-serif`;
+    ctx.fillStyle = '#666';
+    const wM = gridDimM(r.w), hM = gridDimM(r.h);
+    ctx.fillText(`${wM}m × ${hM}m`, cx, cy + 10/viewZoom);
+  });
+
+  // Furniture
+  furniture.forEach(f => {
+    const def = FURNITURE_DEF[f.kind] || { color: '#aaa', label: '?' };
+    const selected = f.id === selectedId;
+    ctx.fillStyle = def.color + '55';
+    ctx.strokeStyle = selected ? '#1B2A4A' : def.color;
+    ctx.lineWidth = selected ? 2.5 / viewZoom : 1.5 / viewZoom;
+    ctx.fillRect(f.x, f.y, f.w, f.h);
+    ctx.strokeRect(f.x, f.y, f.w, f.h);
+    // Icon-like cross lines
+    ctx.strokeStyle = def.color + 'aa';
+    ctx.lineWidth = 0.5 / viewZoom;
+    ctx.beginPath();
+    ctx.moveTo(f.x, f.y); ctx.lineTo(f.x + f.w, f.y + f.h);
+    ctx.moveTo(f.x + f.w, f.y); ctx.lineTo(f.x, f.y + f.h);
+    ctx.stroke();
+    // Label
+    ctx.fillStyle = def.color;
+    ctx.font = `bold ${10/viewZoom}px 'Segoe UI', sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(def.label, f.x + f.w/2, f.y + f.h/2);
+  });
+
+  // Drawing preview
+  if (isDrawing && drawStart && drawCurrent) {
+    if (activeTool === 'draw') {
+      const x1 = Math.min(drawStart.x, drawCurrent.x);
+      const y1 = Math.min(drawStart.y, drawCurrent.y);
+      const x2 = Math.max(drawStart.x, drawCurrent.x);
+      const y2 = Math.max(drawStart.y, drawCurrent.y);
+      const c = ROOM_COLORS[activeRoomType];
+      ctx.fillStyle = c.fill + '88';
+      ctx.strokeStyle = c.stroke;
+      ctx.lineWidth = 2 / viewZoom;
+      ctx.setLineDash([6/viewZoom, 3/viewZoom]);
+      ctx.fillRect(x1, y1, x2-x1, y2-y1);
+      ctx.strokeRect(x1, y1, x2-x1, y2-y1);
+      ctx.setLineDash([]);
+    }
+    if (activeTool === 'measure') {
+      ctx.strokeStyle = '#C4923B';
+      ctx.lineWidth = 2 / viewZoom;
+      ctx.setLineDash([8/viewZoom, 4/viewZoom]);
+      ctx.beginPath();
+      ctx.moveTo(drawStart.x, drawStart.y);
+      ctx.lineTo(drawCurrent.x, drawCurrent.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Endpoint dots
+      ctx.fillStyle = '#C4923B';
+      ctx.beginPath(); ctx.arc(drawStart.x, drawStart.y, 4/viewZoom, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(drawCurrent.x, drawCurrent.y, 4/viewZoom, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawGrid() {
+  const step = GRID;
+  const left = -viewX / viewZoom;
+  const top  = -viewY / viewZoom;
+  const right  = (canvas.width  - viewX) / viewZoom;
+  const bottom = (canvas.height - viewY) / viewZoom;
+
+  ctx.strokeStyle = 'rgba(27,42,74,0.06)';
+  ctx.lineWidth = 1 / viewZoom;
+
+  const startX = Math.floor(left / step) * step;
+  const startY = Math.floor(top  / step) * step;
+
+  for (let x = startX; x < right; x += step) {
+    ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
+  }
+  for (let y = startY; y < bottom; y += step) {
+    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+  }
+
+  // Major grid every 2 cells (= 1m)
+  ctx.strokeStyle = 'rgba(27,42,74,0.12)';
+  ctx.lineWidth = 1 / viewZoom;
+  for (let x = startX; x < right; x += step*2) {
+    ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
+  }
+  for (let y = startY; y < bottom; y += step*2) {
+    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+  }
+
+  // Meter labels every 2m
+  if (viewZoom > 0.5) {
+    ctx.fillStyle = 'rgba(27,42,74,0.25)';
+    ctx.font = `${10/viewZoom}px 'Segoe UI', sans-serif`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    for (let x = startX; x < right; x += step*4) {
+      ctx.fillText(`${((x/GRID)*CELL_M).toFixed(0)}m`, x + 2/viewZoom, top + 2/viewZoom);
+    }
+  }
+}
+
+// ─── ZOOM / PAN ────────────────────────────────────────────────────────────
+function zoom(factor) {
+  const cx = canvas.width/2, cy = canvas.height/2;
+  const before = screenToWorld(cx, cy);
+  viewZoom = Math.max(0.2, Math.min(5, viewZoom * factor));
+  const after = screenToWorld(cx, cy);
+  viewX += (after.x - before.x) * viewZoom;
+  viewY += (after.y - before.y) * viewZoom;
+  document.getElementById('zoom-label').textContent = Math.round(viewZoom * 100) + '%';
+  render();
+}
+
+function resetView() {
+  viewZoom = 1;
+  viewX = canvas.width/2 - 10*GRID;
+  viewY = canvas.height/2 - 8*GRID;
+  document.getElementById('zoom-label').textContent = '100%';
+  render();
+}
+
+// ─── PROPERTIES PANEL ──────────────────────────────────────────────────────
+function showNoSelection() {
+  document.getElementById('panel-content').innerHTML = `
+    <div class="fp-no-selection">
+      <i class="ti ti-click"></i>
+      <p>Select a room or furniture item to edit its properties here.</p>
+    </div>
+    <div class="fp-stats">
+      <div class="fp-stat-card">
+        <div class="fp-stat-val" id="total-area-stat">${getTotalArea()} m²</div>
+        <div class="fp-stat-lbl">Total Floor Area</div>
+      </div>
+      <div class="fp-stat-card">
+        <div class="fp-stat-val" id="total-rooms-stat">${rooms.length}</div>
+        <div class="fp-stat-lbl">Rooms</div>
+      </div>
+      <div class="fp-stat-card">
+        <div class="fp-stat-val" id="total-furn-stat">${furniture.length}</div>
+        <div class="fp-stat-lbl">Furniture Items</div>
+      </div>
+    </div>`;
+}
+
+function showProperties(obj) {
+  if (obj._type === 'room') {
+    const wM = gridDimM(obj.w), hM = gridDimM(obj.h);
+    const area = (parseFloat(wM) * parseFloat(hM)).toFixed(1);
+    document.getElementById('panel-content').innerHTML = `
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Room Name</div>
+        <input class="fp-prop-input" value="${obj.label}" onchange="updateRoomLabel(this.value,'${obj.id}')">
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Room Type</div>
+        <select class="fp-prop-select" onchange="updateRoomType(this.value,'${obj.id}')">
+          ${Object.keys(ROOM_COLORS).map(k=>`<option value="${k}" ${k===obj.type?'selected':''}>${ROOM_COLORS[k].label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Width</div>
+        <div class="fp-prop-val">${wM} m (${obj.w/GRID} cells)</div>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Height</div>
+        <div class="fp-prop-val">${hM} m (${obj.h/GRID} cells)</div>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Area</div>
+        <div class="fp-prop-val" style="color:var(--gold);font-size:18px;">${area} m²</div>
+      </div>
+      <button class="fp-del-btn" onclick="deleteSelected()"><i class="ti ti-trash"></i> Remove Room</button>`;
+  } else {
+    const def = FURNITURE_DEF[obj.kind] || {};
+    document.getElementById('panel-content').innerHTML = `
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Item</div>
+        <div class="fp-prop-val">${def.label || obj.kind}</div>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Width</div>
+        <div class="fp-prop-val">${gridDimM(obj.w)} m</div>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Depth</div>
+        <div class="fp-prop-val">${gridDimM(obj.h)} m</div>
+      </div>
+      <div class="fp-prop-row">
+        <div class="fp-prop-label">Tip</div>
+        <div class="fp-prop-val" style="font-size:11px;color:var(--text-muted);">Press R to rotate 90°</div>
+      </div>
+      <button class="fp-del-btn" onclick="deleteSelected()"><i class="ti ti-trash"></i> Remove Item</button>`;
+  }
+}
+
+function updateRoomLabel(val, id) {
+  const r = rooms.find(r=>r.id===id);
+  if (r) { r.label = val; render(); }
+}
+function updateRoomType(val, id) {
+  const r = rooms.find(r=>r.id===id);
+  if (r) { r.type = val; r.label = ROOM_COLORS[val].label; showProperties(r); render(); }
+}
+
+function deleteSelected() {
+  if (!selectedId) return;
+  pushHistory();
+  rooms = rooms.filter(r => r.id !== selectedId);
+  furniture = furniture.filter(f => f.id !== selectedId);
+  selectedId = null;
+  showNoSelection();
+  updateStats();
+  render();
+}
+
+function rotateSelected() {
+  const obj = findById(selectedId);
+  if (obj) {
+    const tmp = obj.w;
+    obj.w = obj.h;
+    obj.h = tmp;
+    showProperties(obj);
+    render();
+  }
+}
+
+// ─── STATS ─────────────────────────────────────────────────────────────────
+function getTotalArea() {
+  return rooms.reduce((sum, r) => {
+    return sum + parseFloat(gridDimM(r.w)) * parseFloat(gridDimM(r.h));
+  }, 0).toFixed(1);
+}
+
+function updateStats() {
+  const totalArea = getTotalArea();
+  document.getElementById('stat-rooms').textContent = rooms.length;
+  document.getElementById('stat-area').textContent = totalArea + ' m²';
+  document.getElementById('stat-furn').textContent = furniture.length;
+  // Also update panel stats if visible
+  const ts = document.getElementById('total-area-stat');
+  if (ts) ts.textContent = totalArea + ' m²';
+  const tr = document.getElementById('total-rooms-stat');
+  if (tr) tr.textContent = rooms.length;
+  const tf = document.getElementById('total-furn-stat');
+  if (tf) tf.textContent = furniture.length;
+}
+
+// ─── HISTORY ───────────────────────────────────────────────────────────────
+function pushHistory() {
+  history.push({ rooms: JSON.parse(JSON.stringify(rooms)), furniture: JSON.parse(JSON.stringify(furniture)) });
+  if (history.length > 50) history.shift();
+}
+
+function undoAction() {
+  if (!history.length) return;
+  const prev = history.pop();
+  rooms = prev.rooms;
+  furniture = prev.furniture;
+  selectedId = null;
+  showNoSelection();
+  updateStats();
+  render();
+}
+
+// ─── CLEAR ─────────────────────────────────────────────────────────────────
+function clearAll() {
+  if (rooms.length === 0 && furniture.length === 0) return;
+  if (!confirm('Start a new floor plan? This will clear everything.')) return;
+  pushHistory();
+  rooms = []; furniture = []; selectedId = null;
+  showNoSelection(); updateStats(); render();
+}
+
+// ─── EXPORT ────────────────────────────────────────────────────────────────
+function openExport() {
+  const lines = [
+    `Floor Plan Design Summary`,
+    `Generated by Eng. Adnan Saffarini Office — ${new Date().toLocaleDateString()}`,
+    ``,
+    `ROOMS (${rooms.length})`,
+    ...rooms.map(r => {
+      const wM = gridDimM(r.w), hM = gridDimM(r.h);
+      const area = (parseFloat(wM) * parseFloat(hM)).toFixed(1);
+      return `  • ${r.label}: ${wM}m × ${hM}m = ${area} m²`;
+    }),
+    ``,
+    `TOTAL FLOOR AREA: ${getTotalArea()} m²`,
+    ``,
+    `FURNITURE (${furniture.length})`,
+    ...furniture.map(f => {
+      const def = FURNITURE_DEF[f.kind] || {};
+      return `  • ${def.label || f.kind}: ${gridDimM(f.w)}m × ${gridDimM(f.h)}m`;
+    }),
+    ``,
+    `Designed with Eng. Adnan Saffarini Office Home Floor Planner`,
+    `www.saffarinidxb.com`,
+  ];
+  document.getElementById('modal-summary').textContent = lines.join('\n');
+  document.getElementById('export-modal').classList.add('open');
+}
+
+function closeExport() {
+  document.getElementById('export-modal').classList.remove('open');
+}
+
+function printPlan() {
+  window.print();
+}
+
+// ─── INFOBAR ───────────────────────────────────────────────────────────────
+function showInfobar(msg) {
+  const bar = document.getElementById('fp-infobar');
+  bar.textContent = msg;
+  bar.classList.add('visible');
+}
+function hideInfobar() {
+  document.getElementById('fp-infobar').classList.remove('visible');
+}
+
+// ─── KEYBOARD SHORTCUT DISPLAY WORKAROUND ──────────────────────────────────
+// Suppress room-list hide when furniture tool not active
+document.getElementById('room-list').parentElement.style.display = '';
+
+// ─── START ─────────────────────────────────────────────────────────────────
+init();
+updateStats();
+</script>
+</body>
+</html>

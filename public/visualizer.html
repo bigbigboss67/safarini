@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Studio — Eng. Adnan Saffarini Office</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{
+  --bg:#080b10;--bg2:#0c1018;--surface:#141a24;
+  --accent:#00e5ff;--accent2:#00b8d4;
+  --gold:#c9963a;--gold2:#e8c84a;
+  --red:#cc2222;--green:#22cc66;--orange:#e89830;
+  --text:#e8eef4;--muted:#7a96b0;--dim:#3e5570;
+  --border:rgba(255,255,255,0.08);--glass:rgba(12,16,24,0.82);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(0,229,255,0.08)}50%{box-shadow:0 0 40px rgba(0,229,255,0.16)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Viewport ── */
+#viewport{position:fixed;inset:0;z-index:0;cursor:grab}
+#viewport:active{cursor:grabbing}
+#viewport canvas{display:block}
+
+/* ── Header ── */
+.header{position:fixed;top:0;left:0;right:0;z-index:20;height:52px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.header-brand{display:flex;align-items:center;gap:10px}
+.h-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--red),#e63333);border-radius:7px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.h-logo::after{content:'';position:absolute;top:50%;left:50%;width:12px;height:12px;border:2px solid rgba(255,255,255,0.85);transform:translate(-50%,-50%) rotate(45deg)}
+.header-brand .title{font-size:13px;font-weight:700;letter-spacing:.3px}
+.header-brand .sub{font-size:9px;color:var(--dim)}
+.header-actions{display:flex;gap:6px}
+.h-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;font-weight:600;display:flex;align-items:center;gap:5px}
+.h-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,0.04)}
+.h-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,0.08)}
+
+/* ── Floating Panels ── */
+.panel{position:fixed;z-index:15;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:14px;padding:20px;overflow-y:auto;animation:fadeUp .5s ease both,glow 6s ease-in-out 2s infinite}
+.panel::-webkit-scrollbar{width:3px}.panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.panel-left{top:64px;left:14px;width:220px;bottom:74px}
+.panel-right{top:64px;right:14px;width:200px;bottom:74px}
+.panel h4{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;margin-top:16px}
+.panel h4:first-child{margin-top:0}
+
+/* ── Controls ── */
+.ctrl{margin-bottom:10px}
+.ctrl label{display:block;font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.ctrl input[type="number"],.ctrl select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;transition:border-color .2s;font-family:inherit}
+.ctrl input:focus,.ctrl select:focus{border-color:var(--accent)}
+.ctrl select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%233e5570'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.ctrl select option{background:var(--bg2);color:var(--text)}
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ctrl .unit{font-size:9px;color:var(--dim);margin-top:2px}
+.ctrl input[type="range"]{width:100%;-webkit-appearance:none;background:rgba(255,255,255,0.06);height:4px;border-radius:2px;outline:none;margin:6px 0 2px}
+.ctrl input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.range-val{font-size:11px;color:var(--accent);font-weight:700}
+
+/* ── Stats ── */
+.stat-item{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.stat-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.stat-value{font-size:18px;font-weight:800;letter-spacing:-.5px}
+.stat-value.cyan{color:var(--accent)}.stat-value.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-value.green{color:var(--green)}.stat-value.white{color:var(--text)}
+.stat-sub{font-size:10px;color:var(--dim);margin-top:1px}
+.stat-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:6px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease}
+
+/* ── Generate Button ── */
+.gen-bar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:8px;animation:fadeUp .6s ease .3s both}
+.btn-gen{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);border:none;padding:12px 32px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:all .2s;display:flex;align-items:center;gap:8px}
+.btn-gen:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,229,255,0.25)}
+.btn-gen:active{transform:translateY(0)}
+.btn-cta{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 24px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-cta:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── Design Narrative ── */
+.narrative{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:10px;margin-top:12px}
+.narrative p{font-size:10px;color:var(--muted);line-height:1.6;font-style:italic}
+
+/* ── Mobile ── */
+@media(max-width:900px){
+  .panel-left{width:180px;padding:14px}.panel-right{width:170px;padding:14px}
+}
+@media(max-width:700px){
+  .panel-left{left:6px;width:160px;font-size:11px}
+  .panel-right{display:none}
+  .header-brand .sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <div class="h-logo"></div>
+    <div><div class="title">Saffarini Design Studio</div><div class="sub">3D Concept Visualizer</div></div>
+  </div>
+  <div class="header-actions">
+    <button class="h-btn" id="btnDayNight" title="Toggle Day/Night">&#9788; Day</button>
+    <button class="h-btn" id="btnScreenshot" title="Screenshot">&#128247; Capture</button>
+    <a class="h-btn" href="/showcase.html">&larr; Back</a>
+  </div>
+</div>
+
+<!-- LEFT PANEL — Config -->
+<div class="panel panel-left">
+  <h4>Plot Dimensions</h4>
+  <div class="ctrl-row">
+    <div class="ctrl"><label>Width</label><input type="number" id="plotW" value="40" min="10" max="200" step="1"><div class="unit">meters</div></div>
+    <div class="ctrl"><label>Depth</label><input type="number" id="plotD" value="50" min="10" max="200" step="1"><div class="unit">meters</div></div>
+  </div>
+  <div class="ctrl"><label>Plot Area</label><div style="font-size:14px;font-weight:700;color:var(--gold)" id="plotArea">2,000 m²</div></div>
+
+  <h4>Building Type</h4>
+  <div class="ctrl"><select id="buildType">
+    <option value="villa">Villa</option>
+    <option value="tower" selected>Residential Tower</option>
+    <option value="commercial">Commercial Block</option>
+    <option value="mixed">Mixed-Use</option>
+    <option value="compound">Compound</option>
+  </select></div>
+
+  <h4>Design Style</h4>
+  <div class="ctrl"><select id="buildStyle">
+    <option value="modern">Modern Minimalist</option>
+    <option value="arabic">Neo-Arabic</option>
+    <option value="glass">Glass Curtain</option>
+    <option value="mediterranean">Mediterranean</option>
+    <option value="futuristic" selected>Futuristic</option>
+  </select></div>
+
+  <h4>Parameters</h4>
+  <div class="ctrl"><label>Floors: <span class="range-val" id="floorVal">12</span></label>
+    <input type="range" id="floors" min="1" max="50" value="12"></div>
+  <div class="ctrl"><label>Coverage: <span class="range-val" id="covVal">30%</span></label>
+    <input type="range" id="coverage" min="10" max="80" value="30"></div>
+  <div class="ctrl"><label>Setback: <span class="range-val" id="setVal">5m</span></label>
+    <input type="range" id="setback" min="1" max="20" value="5"></div>
+
+  <h4>Environment</h4>
+  <div class="ctrl"><label><input type="checkbox" id="showTrees" checked> Landscaping</label></div>
+  <div class="ctrl"><label><input type="checkbox" id="showRoad" checked> Access Road</label></div>
+  <div class="ctrl"><label><input type="checkbox" id="showContext" checked> Surroundings</label></div>
+</div>
+
+<!-- RIGHT PANEL — Stats -->
+<div class="panel panel-right">
+  <h4>Design Analysis</h4>
+  <div class="stat-item"><div class="stat-label">Gross Floor Area</div><div class="stat-value cyan" id="stGFA">—</div><div class="stat-sub">total built-up area</div></div>
+  <div class="stat-item"><div class="stat-label">Floor Area Ratio</div><div class="stat-value white" id="stFAR">—</div><div class="stat-bar"><div class="stat-bar-fill" id="stFARbar" style="width:0%"></div></div></div>
+  <div class="stat-item"><div class="stat-label">Site Coverage</div><div class="stat-value white" id="stCov">—</div></div>
+  <div class="stat-item"><div class="stat-label">Building Height</div><div class="stat-value cyan" id="stHeight">—</div></div>
+  <div class="stat-item"><div class="stat-label">Open Space</div><div class="stat-value green" id="stOpen">—</div></div>
+
+  <h4>Cost Estimate</h4>
+  <div class="stat-item"><div class="stat-label">Estimated Range</div><div class="stat-value gold" id="stCost">—</div><div class="stat-sub" id="stCostUnit">indicative, excl. land</div></div>
+
+  <h4>AI Insight</h4>
+  <div class="narrative"><p id="narrative">Configure your plot and click Generate to receive an AI concept design analysis.</p></div>
+</div>
+
+<!-- 3D VIEWPORT -->
+<div id="viewport"></div>
+
+<!-- BOTTOM BAR -->
+<div class="gen-bar">
+  <button class="btn-gen" id="btnGenerate">&#9881; Generate Design</button>
+  <a class="btn-cta" href="mailto:saff@emirates.net.ae?subject=Design%20Consultation%20Request">Request Consultation</a>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   THREE.JS SCENE SETUP
+   ═══════════════════════════════════════════════════════════════════════ */
+const container=document.getElementById('viewport');
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x080b10,0.008);
+
+const camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.5,500);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.0;
+renderer.outputEncoding=THREE.sRGBEncoding;
+container.appendChild(renderer.domElement);
+
+/* ── Lights ── */
+const ambientLight=new THREE.HemisphereLight(0x88bbff,0x443322,0.5);
+scene.add(ambientLight);
+
+const sunLight=new THREE.DirectionalLight(0xfff5e0,1.8);
+sunLight.position.set(40,60,30);
+sunLight.castShadow=true;
+sunLight.shadow.mapSize.set(2048,2048);
+sunLight.shadow.camera.left=-80;sunLight.shadow.camera.right=80;
+sunLight.shadow.camera.top=80;sunLight.shadow.camera.bottom=-80;
+sunLight.shadow.camera.near=1;sunLight.shadow.camera.far=200;
+sunLight.shadow.bias=-0.001;
+scene.add(sunLight);
+
+const fillLight=new THREE.PointLight(0x00e5ff,0.3,100);
+fillLight.position.set(-20,15,-10);
+scene.add(fillLight);
+
+const warmLight=new THREE.PointLight(0xc9963a,0.2,80);
+warmLight.position.set(15,5,20);
+scene.add(warmLight);
+
+/* ── Sky ── */
+const skyGeo=new THREE.SphereGeometry(200,32,16);
+const skyMat=new THREE.MeshBasicMaterial({
+  color:0x080b10,side:THREE.BackSide,
+  vertexColors:false
+});
+const sky=new THREE.Mesh(skyGeo,skyMat);
+scene.add(sky);
+
+function updateSky(isNight){
+  if(isNight){
+    skyMat.color.setHex(0x040608);
+    scene.fog.color.setHex(0x040608);
+    sunLight.intensity=0.3;sunLight.color.setHex(0x4466aa);
+    ambientLight.intensity=0.15;
+    renderer.toneMappingExposure=0.5;
+  }else{
+    skyMat.color.setHex(0x1a2a44);
+    scene.fog.color.setHex(0x080b10);
+    sunLight.intensity=1.8;sunLight.color.setHex(0xfff5e0);
+    ambientLight.intensity=0.5;
+    renderer.toneMappingExposure=1.0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ORBIT CONTROLS (inline — no external dependency)
+   ═══════════════════════════════════════════════════════════════════════ */
+let camTheta=Math.PI*0.25,camPhi=Math.PI*0.28,camRadius=60;
+const camTarget=new THREE.Vector3(0,5,0);
+let isDrag=false,isPan=false,prevMX=0,prevMY=0;
+
+function updateCam(){
+  camera.position.x=camTarget.x+camRadius*Math.sin(camPhi)*Math.cos(camTheta);
+  camera.position.y=camTarget.y+camRadius*Math.cos(camPhi);
+  camera.position.z=camTarget.z+camRadius*Math.sin(camPhi)*Math.sin(camTheta);
+  camera.lookAt(camTarget);
+}
+
+container.addEventListener('mousedown',e=>{if(e.button===0)isDrag=true;if(e.button===2)isPan=true;prevMX=e.clientX;prevMY=e.clientY});
+window.addEventListener('mousemove',e=>{
+  const dx=e.clientX-prevMX,dy=e.clientY-prevMY;prevMX=e.clientX;prevMY=e.clientY;
+  if(isDrag){camTheta-=dx*0.005;camPhi=Math.max(0.15,Math.min(1.45,camPhi-dy*0.005));updateCam()}
+  if(isPan){
+    const r=new THREE.Vector3();camera.getWorldDirection(r);r.cross(camera.up).normalize();
+    camTarget.addScaledVector(r,-dx*camRadius*0.0008);camTarget.y=Math.max(0,camTarget.y+dy*camRadius*0.0008);updateCam();
+  }
+});
+window.addEventListener('mouseup',()=>{isDrag=false;isPan=false});
+container.addEventListener('wheel',e=>{e.preventDefault();camRadius=Math.max(8,Math.min(200,camRadius+e.deltaY*0.06));updateCam()},{passive:false});
+container.addEventListener('contextmenu',e=>e.preventDefault());
+
+// Touch support
+let touchDist=0;
+container.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){isDrag=true;prevMX=e.touches[0].clientX;prevMY=e.touches[0].clientY}
+  if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;touchDist=Math.sqrt(dx*dx+dy*dy)}
+},{passive:true});
+container.addEventListener('touchmove',e=>{
+  if(e.touches.length===1&&isDrag){
+    const dx=e.touches[0].clientX-prevMX,dy=e.touches[0].clientY-prevMY;
+    prevMX=e.touches[0].clientX;prevMY=e.touches[0].clientY;
+    camTheta-=dx*0.005;camPhi=Math.max(0.15,Math.min(1.45,camPhi-dy*0.005));updateCam();
+  }
+  if(e.touches.length===2){
+    const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
+    const d=Math.sqrt(dx*dx+dy*dy);camRadius=Math.max(8,Math.min(200,camRadius-(d-touchDist)*0.15));touchDist=d;updateCam();
+  }
+},{passive:true});
+container.addEventListener('touchend',()=>{isDrag=false});
+
+updateCam();
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MATERIALS PER STYLE
+   ═══════════════════════════════════════════════════════════════════════ */
+function getMaterials(style){
+  const S={
+    modern:{
+      wall:new THREE.MeshPhysicalMaterial({color:0xeeeeee,roughness:0.75,metalness:0}),
+      glass:new THREE.MeshPhysicalMaterial({color:0x88ccff,roughness:0.05,metalness:0.2,transparent:true,opacity:0.35,clearcoat:1,clearcoatRoughness:0.05}),
+      accent:new THREE.MeshPhysicalMaterial({color:0x333333,roughness:0.25,metalness:0.7}),
+      floor:new THREE.MeshPhysicalMaterial({color:0xcccccc,roughness:0.6,metalness:0.1}),
+      roof:new THREE.MeshPhysicalMaterial({color:0xdddddd,roughness:0.5,metalness:0.1}),
+      ground:new THREE.MeshPhysicalMaterial({color:0x556644,roughness:0.95}),
+      warm:0xeeeeee
+    },
+    arabic:{
+      wall:new THREE.MeshPhysicalMaterial({color:0xd4b896,roughness:0.85,metalness:0}),
+      glass:new THREE.MeshPhysicalMaterial({color:0xddcc88,roughness:0.1,metalness:0.15,transparent:true,opacity:0.35,clearcoat:0.8}),
+      accent:new THREE.MeshPhysicalMaterial({color:0xc9963a,roughness:0.35,metalness:0.65}),
+      floor:new THREE.MeshPhysicalMaterial({color:0xc4a880,roughness:0.7}),
+      roof:new THREE.MeshPhysicalMaterial({color:0xb8956a,roughness:0.8}),
+      ground:new THREE.MeshPhysicalMaterial({color:0x887755,roughness:0.95}),
+      warm:0xd4b896
+    },
+    glass:{
+      wall:new THREE.MeshPhysicalMaterial({color:0x444455,roughness:0.3,metalness:0.4}),
+      glass:new THREE.MeshPhysicalMaterial({color:0xaaddff,roughness:0.02,metalness:0.35,transparent:true,opacity:0.28,clearcoat:1,clearcoatRoughness:0.02}),
+      accent:new THREE.MeshPhysicalMaterial({color:0x667788,roughness:0.2,metalness:0.6}),
+      floor:new THREE.MeshPhysicalMaterial({color:0x556666,roughness:0.4,metalness:0.3}),
+      roof:new THREE.MeshPhysicalMaterial({color:0x334455,roughness:0.3,metalness:0.4}),
+      ground:new THREE.MeshPhysicalMaterial({color:0x445544,roughness:0.9}),
+      warm:0x556677
+    },
+    mediterranean:{
+      wall:new THREE.MeshPhysicalMaterial({color:0xfff5e6,roughness:0.85,metalness:0}),
+      glass:new THREE.MeshPhysicalMaterial({color:0xccddee,roughness:0.08,metalness:0.1,transparent:true,opacity:0.3,clearcoat:0.6}),
+      accent:new THREE.MeshPhysicalMaterial({color:0x886644,roughness:0.6,metalness:0.1}),
+      floor:new THREE.MeshPhysicalMaterial({color:0xeeddcc,roughness:0.7}),
+      roof:new THREE.MeshPhysicalMaterial({color:0xcc6633,roughness:0.8}),
+      ground:new THREE.MeshPhysicalMaterial({color:0x668844,roughness:0.95}),
+      warm:0xfff5e6
+    },
+    futuristic:{
+      wall:new THREE.MeshPhysicalMaterial({color:0x1a1a2e,roughness:0.3,metalness:0.5}),
+      glass:new THREE.MeshPhysicalMaterial({color:0x00e5ff,roughness:0.05,metalness:0.3,transparent:true,opacity:0.25,clearcoat:1,clearcoatRoughness:0.02}),
+      accent:new THREE.MeshPhysicalMaterial({color:0x00e5ff,roughness:0.15,metalness:0.8,emissive:0x003344,emissiveIntensity:0.3}),
+      floor:new THREE.MeshPhysicalMaterial({color:0x222233,roughness:0.4,metalness:0.4}),
+      roof:new THREE.MeshPhysicalMaterial({color:0x111122,roughness:0.25,metalness:0.5}),
+      ground:new THREE.MeshPhysicalMaterial({color:0x334433,roughness:0.9}),
+      warm:0x1a1a2e
+    }
+  };
+  return S[style]||S.modern;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUILDING GENERATORS
+   ═══════════════════════════════════════════════════════════════════════ */
+const FLOOR_H=3.2;
+
+function addMullions(group,w,d,h,mat,spacing){
+  spacing=spacing||2.5;
+  const nW=Math.max(2,Math.floor(w/spacing)),nD=Math.max(2,Math.floor(d/spacing));
+  // Horizontal floor lines
+  for(let f=0;f<=Math.ceil(h/FLOOR_H);f++){
+    const y=Math.min(f*FLOOR_H,h);
+    const line=new THREE.Mesh(new THREE.BoxGeometry(w+0.06,0.06,d+0.06),mat);
+    line.position.y=y;group.add(line);
+  }
+  // Vertical mullions — front/back
+  for(let i=0;i<=nW;i++){
+    const x=-w/2+i*(w/nW);
+    const mf=new THREE.Mesh(new THREE.BoxGeometry(0.05,h,0.05),mat);
+    mf.position.set(x,h/2,d/2);group.add(mf);
+    const mb=mf.clone();mb.position.z=-d/2;group.add(mb);
+  }
+  // Vertical mullions — sides
+  for(let i=0;i<=nD;i++){
+    const z=-d/2+i*(d/nD);
+    const ml=new THREE.Mesh(new THREE.BoxGeometry(0.05,h,0.05),mat);
+    ml.position.set(w/2,h/2,z);group.add(ml);
+    const mr=ml.clone();mr.position.x=-w/2;group.add(mr);
+  }
+}
+
+/* ── Villa ── */
+function buildVilla(cfg,mat){
+  const g=new THREE.Group();
+  const {bw,bd,floors}=cfg;
+  const h=floors*FLOOR_H;
+  const wingW=bw*0.6,wingD=bd*0.45;
+
+  // Main block
+  const core=new THREE.Mesh(new THREE.BoxGeometry(bw,h,bd),mat.wall);
+  core.position.y=h/2;core.castShadow=true;core.receiveShadow=true;g.add(core);
+
+  // Glass overlay
+  const glass=new THREE.Mesh(new THREE.BoxGeometry(bw+0.02,h,bd+0.02),mat.glass);
+  glass.position.y=h/2;g.add(glass);
+  addMullions(g,bw,bd,h,mat.accent,2.0);
+
+  // L-wing (if >= 2 floors)
+  if(floors>=2){
+    const wh=FLOOR_H;
+    const wing=new THREE.Mesh(new THREE.BoxGeometry(wingW,wh,wingD),mat.wall);
+    wing.position.set(bw/2-wingW/2+wingW*0.5,wh/2,-bd/2+wingD/2);wing.castShadow=true;g.add(wing);
+    const wg=new THREE.Mesh(new THREE.BoxGeometry(wingW+0.02,wh,wingD+0.02),mat.glass);
+    wg.position.copy(wing.position);g.add(wg);
+  }
+
+  // Roof parapet
+  const parapet=new THREE.Mesh(new THREE.BoxGeometry(bw+0.4,0.6,bd+0.4),mat.roof);
+  parapet.position.y=h+0.3;g.add(parapet);
+
+  // Entrance canopy
+  const canopy=new THREE.Mesh(new THREE.BoxGeometry(3,0.15,2),mat.accent);
+  canopy.position.set(0,FLOOR_H-0.3,bd/2+1);canopy.castShadow=true;g.add(canopy);
+  const canopyPost1=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,FLOOR_H-0.3,8),mat.accent);
+  canopyPost1.position.set(-1.2,(FLOOR_H-0.3)/2,bd/2+1.8);g.add(canopyPost1);
+  const canopyPost2=canopyPost1.clone();canopyPost2.position.x=1.2;g.add(canopyPost2);
+
+  // Balcony (upper floors)
+  for(let f=1;f<floors;f++){
+    const balc=new THREE.Mesh(new THREE.BoxGeometry(bw*0.5,0.12,1.5),mat.floor);
+    balc.position.set(0,f*FLOOR_H,bd/2+0.75);balc.castShadow=true;g.add(balc);
+    const rail=new THREE.Mesh(new THREE.BoxGeometry(bw*0.5,0.8,0.05),mat.glass);
+    rail.position.set(0,f*FLOOR_H+0.4,bd/2+1.45);g.add(rail);
+  }
+
+  return g;
+}
+
+/* ── Tower ── */
+function buildTower(cfg,mat){
+  const g=new THREE.Group();
+  const {bw,bd,floors}=cfg;
+  const podiumFloors=Math.min(3,Math.floor(floors*0.15));
+  const towerFloors=floors-podiumFloors;
+  const podiumH=podiumFloors*FLOOR_H;
+  const towerH=towerFloors*FLOOR_H;
+  const podW=bw*1.3,podD=bd*1.3;
+  const towW=bw,towD=bd;
+
+  // Podium
+  if(podiumFloors>0){
+    const pod=new THREE.Mesh(new THREE.BoxGeometry(podW,podiumH,podD),mat.wall);
+    pod.position.y=podiumH/2;pod.castShadow=true;pod.receiveShadow=true;g.add(pod);
+    const podG=new THREE.Mesh(new THREE.BoxGeometry(podW+0.02,podiumH,podD+0.02),mat.glass);
+    podG.position.y=podiumH/2;g.add(podG);
+    addMullions(g,podW,podD,podiumH,mat.accent,3);
+  }
+
+  // Tower core
+  const core=new THREE.Mesh(new THREE.BoxGeometry(towW-0.4,towerH,towD-0.4),mat.wall);
+  core.position.y=podiumH+towerH/2;core.castShadow=true;g.add(core);
+
+  // Tower glass
+  const tGlass=new THREE.Mesh(new THREE.BoxGeometry(towW,towerH,towD),mat.glass);
+  tGlass.position.y=podiumH+towerH/2;g.add(tGlass);
+
+  // Tower mullions
+  const tMullG=new THREE.Group();tMullG.position.y=podiumH;g.add(tMullG);
+  addMullions(tMullG,towW,towD,towerH,mat.accent);
+
+  // Crown / mechanical floor
+  const crown=new THREE.Mesh(new THREE.BoxGeometry(towW+0.6,FLOOR_H*0.7,towD+0.6),mat.accent);
+  crown.position.y=podiumH+towerH+FLOOR_H*0.35;crown.castShadow=true;g.add(crown);
+
+  // Balconies (every 3 floors on front)
+  for(let f=1;f<towerFloors;f+=3){
+    const balc=new THREE.Mesh(new THREE.BoxGeometry(towW*0.4,0.1,1.2),mat.floor);
+    balc.position.set(0,podiumH+f*FLOOR_H,towD/2+0.6);balc.castShadow=true;g.add(balc);
+  }
+
+  // Entrance
+  const ent=new THREE.Mesh(new THREE.BoxGeometry(5,0.2,3),mat.accent);
+  ent.position.set(0,4,podD/2+1.5);ent.castShadow=true;g.add(ent);
+
+  return g;
+}
+
+/* ── Commercial ── */
+function buildCommercial(cfg,mat){
+  const g=new THREE.Group();
+  const {bw,bd,floors}=cfg;
+  const h=floors*FLOOR_H;
+  const retailH=FLOOR_H*1.2;
+
+  // Ground floor (retail — taller, more glass)
+  const retail=new THREE.Mesh(new THREE.BoxGeometry(bw,retailH,bd),mat.glass);
+  retail.position.y=retailH/2;g.add(retail);
+  const retailFrame=new THREE.Mesh(new THREE.BoxGeometry(bw+0.1,0.15,bd+0.1),mat.accent);
+  retailFrame.position.y=retailH;g.add(retailFrame);
+
+  // Upper floors
+  const upperH=h-retailH;
+  if(upperH>0){
+    const upper=new THREE.Mesh(new THREE.BoxGeometry(bw-0.2,upperH,bd-0.2),mat.wall);
+    upper.position.y=retailH+upperH/2;upper.castShadow=true;upper.receiveShadow=true;g.add(upper);
+    const upperG=new THREE.Mesh(new THREE.BoxGeometry(bw,upperH,bd),mat.glass);
+    upperG.position.y=retailH+upperH/2;g.add(upperG);
+    const mG=new THREE.Group();mG.position.y=retailH;g.add(mG);
+    addMullions(mG,bw,bd,upperH,mat.accent,2.8);
+  }
+
+  // Solid spandrel bands
+  for(let f=1;f<floors;f++){
+    const sp=new THREE.Mesh(new THREE.BoxGeometry(bw+0.04,0.4,bd+0.04),mat.wall);
+    sp.position.y=retailH+(f-1)*FLOOR_H+FLOOR_H*0.35;g.add(sp);
+  }
+
+  // Roof
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(bw+0.4,0.5,bd+0.4),mat.roof);
+  roof.position.y=h+0.25;g.add(roof);
+
+  return g;
+}
+
+/* ── Mixed-Use ── */
+function buildMixed(cfg,mat){
+  const g=new THREE.Group();
+  const {bw,bd,floors}=cfg;
+  const podFloors=Math.max(2,Math.floor(floors*0.2));
+  const towerFloors=floors-podFloors;
+  const podH=podFloors*(FLOOR_H*1.1);
+  const towerH=towerFloors*FLOOR_H;
+  const podW=bw*1.15,podD=bd*1.15;
+  const towW=bw*0.7,towD=bd*0.7;
+
+  // Retail podium
+  const pod=new THREE.Mesh(new THREE.BoxGeometry(podW,podH,podD),mat.wall);
+  pod.position.y=podH/2;pod.castShadow=true;g.add(pod);
+  const podG=new THREE.Mesh(new THREE.BoxGeometry(podW+0.02,podH,podD+0.02),mat.glass);
+  podG.position.y=podH/2;g.add(podG);
+  addMullions(g,podW,podD,podH,mat.accent,3.5);
+
+  // Tower
+  if(towerFloors>0){
+    const tc=new THREE.Mesh(new THREE.BoxGeometry(towW-0.3,towerH,towD-0.3),mat.wall);
+    tc.position.y=podH+towerH/2;tc.castShadow=true;g.add(tc);
+    const tg=new THREE.Mesh(new THREE.BoxGeometry(towW,towerH,towD),mat.glass);
+    tg.position.y=podH+towerH/2;g.add(tg);
+    const tmg=new THREE.Group();tmg.position.y=podH;g.add(tmg);
+    addMullions(tmg,towW,towD,towerH,mat.accent,2.2);
+    // Crown
+    const cr=new THREE.Mesh(new THREE.BoxGeometry(towW+0.4,1.5,towD+0.4),mat.accent);
+    cr.position.y=podH+towerH+0.75;g.add(cr);
+  }
+
+  return g;
+}
+
+/* ── Compound ── */
+function buildCompound(cfg,mat){
+  const g=new THREE.Group();
+  const {bw,bd,floors,envW,envD}=cfg;
+  const unitW=Math.min(bw,12),unitD=Math.min(bd,14);
+  const unitH=Math.min(floors,3)*FLOOR_H;
+  const gapX=3,gapZ=4;
+  const cols=Math.max(1,Math.floor((envW+gapX)/(unitW+gapX)));
+  const rows=Math.max(1,Math.floor((envD+gapZ)/(unitD+gapZ)));
+  const totalW=cols*unitW+(cols-1)*gapX;
+  const totalD=rows*unitD+(rows-1)*gapZ;
+
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const unit=new THREE.Group();
+      const x=-totalW/2+c*(unitW+gapX)+unitW/2;
+      const z=-totalD/2+r*(unitD+gapZ)+unitD/2;
+      // Building
+      const core=new THREE.Mesh(new THREE.BoxGeometry(unitW,unitH,unitD),mat.wall);
+      core.position.y=unitH/2;core.castShadow=true;core.receiveShadow=true;unit.add(core);
+      const gl=new THREE.Mesh(new THREE.BoxGeometry(unitW+0.02,unitH,unitD+0.02),mat.glass);
+      gl.position.y=unitH/2;unit.add(gl);
+      addMullions(unit,unitW,unitD,unitH,mat.accent,1.8);
+      // Roof
+      const rf=new THREE.Mesh(new THREE.BoxGeometry(unitW+0.2,0.3,unitD+0.2),mat.roof);
+      rf.position.y=unitH+0.15;unit.add(rf);
+      unit.position.set(x,0,z);
+      g.add(unit);
+    }
+  }
+
+  // Internal pathway
+  if(rows>1){
+    const path=new THREE.Mesh(new THREE.BoxGeometry(totalW+4,0.05,2),new THREE.MeshPhysicalMaterial({color:0x888888,roughness:0.9}));
+    path.position.y=0.03;g.add(path);
+  }
+
+  return g;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ENVIRONMENT GENERATORS
+   ═══════════════════════════════════════════════════════════════════════ */
+function createTree(h){
+  h=h||4+Math.random()*2;
+  const g=new THREE.Group();
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.18,h*0.35,6),new THREE.MeshPhysicalMaterial({color:0x6b4226,roughness:0.9}));
+  trunk.position.y=h*0.175;trunk.castShadow=true;g.add(trunk);
+  const canopy=new THREE.Mesh(new THREE.SphereGeometry(h*0.32,6,5),new THREE.MeshPhysicalMaterial({color:0x1a5a1e+Math.floor(Math.random()*0x224422),roughness:0.85}));
+  canopy.position.y=h*0.55;canopy.castShadow=true;g.add(canopy);
+  return g;
+}
+
+function createPalmTree(h){
+  h=h||6+Math.random()*2;
+  const g=new THREE.Group();
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.22,h*0.7,6),new THREE.MeshPhysicalMaterial({color:0x8b6914,roughness:0.9}));
+  trunk.position.y=h*0.35;trunk.castShadow=true;g.add(trunk);
+  // Fronds (simplified as cones)
+  for(let i=0;i<5;i++){
+    const frond=new THREE.Mesh(new THREE.ConeGeometry(1.5,2.5,4),new THREE.MeshPhysicalMaterial({color:0x228833,roughness:0.8}));
+    frond.position.y=h*0.72;
+    frond.rotation.z=Math.PI*0.25;
+    frond.rotation.y=i*Math.PI*0.4;
+    frond.castShadow=true;g.add(frond);
+  }
+  return g;
+}
+
+/* ── Ground Plane, Plot Boundary, Road, Pool ── */
+function buildEnvironment(plotW,plotD,mat,opts){
+  const g=new THREE.Group();
+
+  // Large ground
+  const gnd=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshPhysicalMaterial({color:0x2a3328,roughness:1}));
+  gnd.rotation.x=-Math.PI/2;gnd.position.y=-0.05;gnd.receiveShadow=true;g.add(gnd);
+
+  // Plot area (lighter)
+  const plot=new THREE.Mesh(new THREE.PlaneGeometry(plotW,plotD),mat.ground);
+  plot.rotation.x=-Math.PI/2;plot.position.y=0.01;plot.receiveShadow=true;g.add(plot);
+
+  // Plot boundary lines
+  const bMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.25});
+  const bw=0.08;
+  const bn=new THREE.Mesh(new THREE.BoxGeometry(plotW,0.02,bw),bMat);bn.position.set(0,0.05,plotD/2);g.add(bn);
+  const bs=bn.clone();bs.position.z=-plotD/2;g.add(bs);
+  const be=new THREE.Mesh(new THREE.BoxGeometry(bw,0.02,plotD),bMat);be.position.set(plotW/2,0.05,0);g.add(be);
+  const bww=be.clone();bww.position.x=-plotW/2;g.add(bww);
+
+  // Corner markers
+  const cMat=new THREE.MeshBasicMaterial({color:0x00e5ff,transparent:true,opacity:0.6});
+  [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(([sx,sz])=>{
+    const c=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,0.3,8),cMat);
+    c.position.set(sx*plotW/2,0.15,sz*plotD/2);g.add(c);
+  });
+
+  // Road
+  if(opts.road){
+    const road=new THREE.Mesh(new THREE.PlaneGeometry(plotW+20,8),new THREE.MeshPhysicalMaterial({color:0x333338,roughness:0.95}));
+    road.rotation.x=-Math.PI/2;road.position.set(0,0.02,plotD/2+5);road.receiveShadow=true;g.add(road);
+    // Road markings
+    for(let i=-Math.floor(plotW/6);i<=Math.floor(plotW/6);i++){
+      const mark=new THREE.Mesh(new THREE.BoxGeometry(2,0.01,0.15),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.4}));
+      mark.position.set(i*4,0.04,plotD/2+5);g.add(mark);
+    }
+    // Sidewalk
+    const sw=new THREE.Mesh(new THREE.BoxGeometry(plotW+20,0.12,2),new THREE.MeshPhysicalMaterial({color:0x666666,roughness:0.9}));
+    sw.position.set(0,0.06,plotD/2+0.5);g.add(sw);
+  }
+
+  // Trees
+  if(opts.trees){
+    const treePositions=[];
+    // Along plot edges
+    for(let x=-plotW/2+2;x<=plotW/2-2;x+=6+Math.random()*3){
+      treePositions.push([x,-plotD/2-2]);
+      if(!opts.road)treePositions.push([x,plotD/2+2]);
+    }
+    for(let z=-plotD/2+2;z<=plotD/2-2;z+=5+Math.random()*3){
+      treePositions.push([-plotW/2-2,z]);
+      treePositions.push([plotW/2+2,z]);
+    }
+    treePositions.forEach(([x,z])=>{
+      const tree=Math.random()>0.4?createPalmTree():createTree();
+      tree.position.set(x,0,z);g.add(tree);
+    });
+  }
+
+  // Context buildings (neighbors)
+  if(opts.context){
+    const ctxMat=new THREE.MeshPhysicalMaterial({color:0x2a2a35,roughness:0.8,metalness:0.1});
+    const positions=[
+      [-plotW/2-15,0,-plotD/2+10,8,12,10],
+      [plotW/2+12,0,0,10,18,12],
+      [-plotW/2-18,0,plotD/2-5,12,8,14],
+      [plotW*0.3,0,-plotD/2-14,15,22,10],
+    ];
+    positions.forEach(([x,y,z,w,h,d])=>{
+      const ctx=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),ctxMat);
+      ctx.position.set(x,h/2,z);ctx.castShadow=true;ctx.receiveShadow=true;g.add(ctx);
+      // windows glow
+      const ctxG=new THREE.Mesh(new THREE.BoxGeometry(w+0.02,h,d+0.02),
+        new THREE.MeshPhysicalMaterial({color:0xffee99,transparent:true,opacity:0.03}));
+      ctxG.position.copy(ctx.position);g.add(ctxG);
+    });
+  }
+
+  return g;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCENE MANAGEMENT
+   ═══════════════════════════════════════════════════════════════════════ */
+let buildingGroup=null,envGroup=null;
+let targetScale=1,currentScale=1;
+let isAnimating=false;
+
+function clearScene(){
+  if(buildingGroup){scene.remove(buildingGroup);buildingGroup=null}
+  if(envGroup){scene.remove(envGroup);envGroup=null}
+}
+
+function generateDesign(){
+  // Read config
+  const plotW=Number(document.getElementById('plotW').value)||40;
+  const plotD=Number(document.getElementById('plotD').value)||50;
+  const type=document.getElementById('buildType').value;
+  const style=document.getElementById('buildStyle').value;
+  const floors=Number(document.getElementById('floors').value)||8;
+  const coverage=Number(document.getElementById('coverage').value)||30;
+  const setback=Number(document.getElementById('setback').value)||5;
+
+  const mat=getMaterials(style);
+
+  // Calculate building envelope
+  const envW=plotW-2*setback;
+  const envD=plotD-2*setback;
+  const maxFoot=envW*envD;
+  const targetFoot=maxFoot*(coverage/100);
+
+  // Building dimensions based on type
+  let bw,bd;
+  if(type==='villa'){
+    const ratio=1.4;
+    bw=Math.min(envW,Math.sqrt(targetFoot*ratio));
+    bd=Math.min(envD,targetFoot/bw);
+  }else if(type==='tower'){
+    bw=Math.min(envW*0.55,Math.sqrt(targetFoot));
+    bd=Math.min(envD*0.55,targetFoot/bw);
+  }else if(type==='compound'){
+    bw=envW;bd=envD;
+  }else{
+    bw=Math.min(envW,Math.sqrt(targetFoot*1.2));
+    bd=Math.min(envD,targetFoot/bw);
+  }
+
+  bw=Math.max(6,bw);bd=Math.max(6,bd);
+
+  const cfg={bw,bd,floors:type==='villa'?Math.min(floors,4):floors,envW,envD};
+
+  // Animate out old building
+  clearScene();
+
+  // Build environment
+  envGroup=buildEnvironment(plotW,plotD,mat,{
+    trees:document.getElementById('showTrees').checked,
+    road:document.getElementById('showRoad').checked,
+    context:document.getElementById('showContext').checked
+  });
+  scene.add(envGroup);
+
+  // Build new building
+  const builders={villa:buildVilla,tower:buildTower,commercial:buildCommercial,mixed:buildMixed,compound:buildCompound};
+  buildingGroup=(builders[type]||buildTower)(cfg,mat);
+  buildingGroup.scale.set(0.01,0.01,0.01);
+  scene.add(buildingGroup);
+
+  // Animate in
+  targetScale=1;currentScale=0.01;isAnimating=true;
+
+  // Adjust camera
+  const buildH=cfg.floors*FLOOR_H;
+  camTarget.set(0,buildH*0.35,0);
+  camRadius=Math.max(buildH*1.5,Math.max(plotW,plotD)*1.2);
+  camPhi=Math.PI*0.28;
+  updateCam();
+
+  // Update stats
+  updateStats(plotW,plotD,bw,bd,cfg.floors,coverage,type,style);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATS & NARRATIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+function fmtN(n){return n.toLocaleString('en-US',{maximumFractionDigits:0})}
+function fmtM(v){if(v>=1e9)return'AED '+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'AED '+(v/1e6).toFixed(1)+'M';if(v>=1e3)return'AED '+(v/1e3).toFixed(0)+'K';return'AED '+v}
+
+const COST_RANGES={villa:[2500,4500],tower:[3000,5500],commercial:[2800,4000],mixed:[3200,5000],compound:[2200,3800]};
+const STYLE_MULT={modern:1.0,arabic:1.15,glass:1.2,mediterranean:0.95,futuristic:1.3};
+const TYPE_LABELS={villa:'Luxury Villa',tower:'Residential Tower',commercial:'Commercial Block',mixed:'Mixed-Use Development',compound:'Residential Compound'};
+const STYLE_LABELS={modern:'Modern Minimalist',arabic:'Neo-Arabic',glass:'Glass Curtain',mediterranean:'Mediterranean',futuristic:'Futuristic'};
+
+function updateStats(plotW,plotD,bw,bd,floors,coverage,type,style){
+  const plotArea=plotW*plotD;
+  const footprint=bw*bd;
+  const gfa=footprint*floors;
+  const far=gfa/plotArea;
+  const actualCov=(footprint/plotArea)*100;
+  const height=floors*FLOOR_H;
+  const openSpace=plotArea-footprint;
+  const openPct=(openSpace/plotArea)*100;
+
+  document.getElementById('stGFA').textContent=fmtN(Math.round(gfa))+' m²';
+  document.getElementById('stFAR').textContent=far.toFixed(2);
+  document.getElementById('stFARbar').style.width=Math.min(100,far*25)+'%';
+  document.getElementById('stCov').textContent=Math.round(actualCov)+'%';
+  document.getElementById('stHeight').textContent=Math.round(height)+' m ('+floors+' floors)';
+  document.getElementById('stOpen').textContent=fmtN(Math.round(openSpace))+' m² ('+Math.round(openPct)+'%)';
+
+  // Cost estimate
+  const range=COST_RANGES[type]||[3000,5000];
+  const mult=STYLE_MULT[style]||1.0;
+  const costLow=gfa*range[0]*mult;
+  const costHigh=gfa*range[1]*mult;
+  document.getElementById('stCost').textContent=fmtM(costLow)+' – '+fmtM(costHigh);
+
+  // AI Narrative
+  const narratives=generateNarrative(plotW,plotD,bw,bd,floors,type,style,far,actualCov,gfa);
+  document.getElementById('narrative').textContent=narratives;
+
+  document.getElementById('plotArea').textContent=fmtN(plotArea)+' m²';
+}
+
+function generateNarrative(pW,pD,bW,bD,floors,type,style,far,cov,gfa){
+  const tl=TYPE_LABELS[type],sl=STYLE_LABELS[style];
+  const orient=pW>pD?'landscape-oriented':'portrait-oriented';
+  const density=far>2?'high-density':far>1?'medium-density':'low-density';
+
+  let n=`${tl} concept in ${sl} style. `;
+  n+=`The ${orient} plot yields a ${density} configuration with ${Math.round(gfa).toLocaleString()} m² GFA. `;
+
+  if(type==='villa')n+=`The design maximises garden space with ${Math.round(100-cov)}% open area, featuring an L-shaped layout for natural cross-ventilation and private courtyard.`;
+  else if(type==='tower')n+=`The slim tower profile on a retail podium optimises views while the ${Math.round(100-cov)}% open ground creates a generous landscaped plaza.`;
+  else if(type==='commercial')n+=`Maximum floorplate efficiency with a clear-span structure. Ground retail activates the street frontage along the northern edge.`;
+  else if(type==='mixed')n+=`Stepped massing with retail podium and residential tower creates distinct zones. The setback tower preserves light access at street level.`;
+  else if(type==='compound')n+=`Individual units provide privacy while shared infrastructure reduces costs. Internal road network provides access to all units.`;
+
+  if(style==='futuristic')n+=' Parametric facade with integrated photovoltaic cladding and smart glass responds to solar angle.';
+  else if(style==='arabic')n+=' Mashrabiya-inspired screen elements filter harsh sunlight while maintaining privacy traditions.';
+
+  return n;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UI EVENT HANDLERS
+   ═══════════════════════════════════════════════════════════════════════ */
+// Range sliders
+document.getElementById('floors').addEventListener('input',e=>{document.getElementById('floorVal').textContent=e.target.value});
+document.getElementById('coverage').addEventListener('input',e=>{document.getElementById('covVal').textContent=e.target.value+'%'});
+document.getElementById('setback').addEventListener('input',e=>{document.getElementById('setVal').textContent=e.target.value+'m'});
+
+// Auto-adjust floor range based on type
+document.getElementById('buildType').addEventListener('change',e=>{
+  const fl=document.getElementById('floors');
+  const ranges={villa:[1,4,2],tower:[5,50,15],commercial:[2,12,5],mixed:[4,30,10],compound:[1,3,2]};
+  const r=ranges[e.target.value]||[1,50,8];
+  fl.min=r[0];fl.max=r[1];fl.value=r[2];
+  document.getElementById('floorVal').textContent=r[2];
+});
+
+// Plot area live update
+['plotW','plotD'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    const a=Number(document.getElementById('plotW').value)*Number(document.getElementById('plotD').value);
+    document.getElementById('plotArea').textContent=a.toLocaleString('en-US')+' m²';
+  });
+});
+
+// Generate button
+document.getElementById('btnGenerate').addEventListener('click',generateDesign);
+
+// Day/Night toggle
+let isNight=false;
+document.getElementById('btnDayNight').addEventListener('click',()=>{
+  isNight=!isNight;
+  updateSky(isNight);
+  document.getElementById('btnDayNight').innerHTML=isNight?'&#9790; Night':'&#9788; Day';
+  document.getElementById('btnDayNight').classList.toggle('active',isNight);
+});
+
+// Screenshot
+document.getElementById('btnScreenshot').addEventListener('click',()=>{
+  renderer.render(scene,camera);
+  const link=document.createElement('a');
+  link.download='saffarini-design-'+Date.now()+'.png';
+  link.href=renderer.domElement.toDataURL('image/png');
+  link.click();
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESIZE & ANIMATE
+   ═══════════════════════════════════════════════════════════════════════ */
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+let lastFrame=0;
+function animate(now){
+  requestAnimationFrame(animate);
+  if(now-lastFrame<33)return; // ~30fps cap
+  lastFrame=now;
+
+  // Scale animation
+  if(isAnimating&&buildingGroup){
+    currentScale+=(targetScale-currentScale)*0.08;
+    if(Math.abs(currentScale-targetScale)<0.005){currentScale=targetScale;isAnimating=false}
+    buildingGroup.scale.set(currentScale,currentScale,currentScale);
+  }
+
+  renderer.render(scene,camera);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════════════ */
+animate(0);
+// Auto-generate on load
+setTimeout(generateDesign,300);
+</script>
+</body>
+</html>

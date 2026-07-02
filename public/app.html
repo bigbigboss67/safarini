@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Dashboard — Eng. Adnan Saffarini Office</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{
+  /* ── Light palette ── */
+  --sky:#2B9EB3;--sky2:#3BBDD4;--sky-light:#E8F7FA;
+  --amber:#E8873A;--amber-light:#FEF3EA;
+  --green:#3DA882;--green-light:#E8F7F2;
+  --sand:#F5EEE4;--cream:#FFFBF5;
+  --terra:#C4704F;
+  --dark:#2C3E50;--mid:#5A6A7A;--muted-txt:#8FA0B0;
+  --border-c:#E2ECF0;
+  /* ── Aliases (keeps template literals working) ── */
+  --bg:var(--cream);--bg2:var(--sand);--bg3:#EDE9E0;--surface:#fff;
+  --accent:var(--sky);--accent2:var(--sky2);--accent-glow:rgba(43,158,179,0.08);
+  --gold:var(--amber);--gold2:#F4A55A;--gold-glow:rgba(232,135,58,0.08);
+  --red:var(--terra);--orange:#D4803A;--purple:#6E6BC8;
+  --text:var(--dark);--muted:var(--mid);--dim:var(--muted-txt);
+  --border:var(--border-c);--glass:rgba(255,251,245,0.9);
+  --sidebar:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{height:100%;background:var(--bg);color:var(--text);overflow:hidden}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ══ LAYOUT ══ */
+.app{display:flex;height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .25s}
+.sb-brand{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sb-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--sky),var(--sky2));border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(43,158,179,0.25)}
+.sb-logo i{font-size:18px;color:#fff}
+.sb-brand-text .name{font-size:12px;font-weight:700;color:var(--dark);white-space:nowrap}
+.sb-brand-text .sub{font-size:9px;color:var(--dim);white-space:nowrap}
+.sb-nav{flex:1;overflow-y:auto;padding:12px 10px}
+.sb-nav::-webkit-scrollbar{width:3px}.sb-nav::-webkit-scrollbar-thumb{background:var(--border-c);border-radius:3px}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);padding:16px 10px 6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap}
+.sb-item:hover{background:rgba(43,158,179,0.06);color:var(--sky)}
+.sb-item.active{background:rgba(43,158,179,0.1);color:var(--sky);font-weight:600}
+.sb-item .icon{width:18px;text-align:center;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-item .badge{margin-left:auto;background:var(--terra);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sb-footer{padding:14px 18px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:10px}
+.sb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--sky),var(--sky2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-user-info .uname{font-size:12px;font-weight:600;color:var(--dark)}
+.sb-user-info .urole{font-size:10px;color:var(--dim);text-transform:capitalize}
+.sb-logout{margin-top:10px;display:block;width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;padding:7px;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
+.sb-logout:hover{border-color:var(--terra);color:var(--terra);background:rgba(196,112,79,0.05)}
+
+/* ── Main Content ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:10px;color:var(--dark)}
+.topbar-title .page-icon{font-size:18px;color:var(--sky)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-time{font-size:11px;color:var(--dim);letter-spacing:.3px}
+.topbar-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);letter-spacing:.3px}
+.topbar-status .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2.5s infinite}
+
+.content{flex:1;overflow-y:auto;padding:28px;animation:fadeUp .4s ease}
+.content::-webkit-scrollbar{width:5px}.content::-webkit-scrollbar-thumb{background:var(--border-c);border-radius:4px}
+
+/* ══ CARDS / GRID ══ */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 20px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.stat-card:hover{border-color:rgba(43,158,179,0.3);transform:translateY(-2px);box-shadow:0 6px 20px rgba(43,158,179,0.10)}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:800;letter-spacing:-1px}
+.stat-val.cyan{color:var(--sky)}.stat-val.gold{color:var(--amber)}
+.stat-val.green{color:var(--green)}.stat-val.white{color:var(--dark)}
+.stat-sub{font-size:11px;color:var(--dim);margin-top:4px}
+
+/* ── Section headers ── */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.sec-title{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--dark)}
+.sec-sub{font-size:12px;color:var(--dim)}
+
+/* ── Table ── */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(43,158,179,0.03)}
+td{padding:13px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--dark)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(43,158,179,0.03)}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-lead{background:rgba(43,158,179,0.1);color:var(--sky)}
+.badge-viewing{background:rgba(110,107,200,0.1);color:var(--purple)}
+.badge-negotiating{background:rgba(212,128,58,0.12);color:var(--orange)}
+.badge-under_contract{background:rgba(232,135,58,0.12);color:var(--amber)}
+.badge-closing{background:rgba(61,168,130,0.12);color:var(--green)}
+.badge-closed{background:rgba(61,168,130,0.18);color:var(--green)}
+.badge-pending{background:rgba(212,128,58,0.12);color:var(--orange)}
+.badge-done{background:rgba(61,168,130,0.12);color:var(--green)}
+.badge-in_progress{background:rgba(43,158,179,0.1);color:var(--sky)}
+.badge-urgent{background:rgba(196,112,79,0.12);color:var(--terra)}
+.badge-high{background:rgba(212,128,58,0.12);color:var(--orange)}
+.badge-medium{background:rgba(43,158,179,0.1);color:var(--sky)}
+.badge-low{background:rgba(90,106,122,0.08);color:var(--muted)}
+.badge-paid{background:rgba(61,168,130,0.15);color:var(--green)}
+.badge-published{background:rgba(61,168,130,0.12);color:var(--green)}
+.badge-draft{background:rgba(90,106,122,0.08);color:var(--muted)}
+
+/* ── Pipeline ── */
+.pipeline{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.pipe-col{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.03)}
+.pipe-stage{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.pipe-count{font-size:24px;font-weight:800;color:var(--sky)}
+.pipe-value{font-size:11px;color:var(--amber);margin-top:2px}
+
+/* ── Activity ── */
+.activity-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:border-color .2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.activity-item:hover{border-color:rgba(43,158,179,0.25)}
+.act-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.act-icon.closed{background:rgba(61,168,130,0.12);color:var(--green)}
+.act-icon.lead{background:rgba(43,158,179,0.1);color:var(--sky)}
+.act-icon.contract{background:rgba(232,135,58,0.12);color:var(--amber)}
+.act-icon.viewing{background:rgba(110,107,200,0.1);color:var(--purple)}
+.act-icon.task{background:rgba(212,128,58,0.12);color:var(--orange)}
+.act-title{font-size:13px;font-weight:600;color:var(--dark)}.act-desc{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* ── Avatar chip ── */
+.avatar-sm{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.avatar-sm.blue{background:#3388dd}.avatar-sm.teal{background:#22aaaa}
+.avatar-sm.amber{background:#cc8833}.avatar-sm.pink{background:#cc5588}
+.avatar-sm.green{background:#22aa66}
+
+/* ── Forms / Modals ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,62,80,0.3);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;width:480px;max-width:92vw;max-height:85vh;overflow-y:auto;animation:fadeUp .3s ease;box-shadow:0 20px 60px rgba(43,158,179,0.12)}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:20px;letter-spacing:-.3px;color:var(--dark)}
+.modal .field{margin-bottom:14px}
+.modal label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.modal input,.modal select,.modal textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--dark);font-size:13px;outline:none;transition:border-color .2s;font-family:inherit}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(43,158,179,0.1)}
+.modal textarea{resize:vertical;min-height:70px}
+.modal select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238FA0B0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.modal select option{background:#fff;color:var(--dark)}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions button{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-save{background:linear-gradient(135deg,var(--sky),var(--sky2));color:#fff}
+.btn-save:hover{opacity:.9}
+.btn-cancel{background:transparent;border:1.5px solid var(--border)!important;color:var(--muted)}
+.btn-cancel:hover{border-color:var(--terra)!important;color:var(--terra)}
+.btn-add{background:linear-gradient(135deg,var(--sky),var(--sky2));color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(43,158,179,0.2)}
+.btn-add:hover{opacity:.9;box-shadow:0 5px 16px rgba(43,158,179,0.28)}
+.btn-del{background:transparent;border:1px solid rgba(196,112,79,0.25);color:var(--terra);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-del:hover{background:rgba(196,112,79,0.08);border-color:var(--terra)}
+
+/* ── Empty / Loading ── */
+.empty{text-align:center;padding:48px 20px;color:var(--dim);font-size:13px}
+.loading-box{text-align:center;padding:48px 20px;color:var(--dim)}
+.loader{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--sky);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 10px}
+
+/* ── Two Column ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* ── Kanban ── */
+.kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;min-height:300px}
+.kanban::-webkit-scrollbar{height:4px}.kanban::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.kanban-col{min-width:260px;flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.kanban-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kanban-header h4{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+.kanban-header .count{font-size:10px;color:var(--sky);font-weight:700}
+.kanban-body{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:400px}
+.kanban-body::-webkit-scrollbar{width:3px}.kanban-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.kanban-card{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:default;transition:all .15s}
+.kanban-card:hover{border-color:rgba(43,158,179,0.3);box-shadow:0 2px 10px rgba(43,158,179,0.08)}
+.kc-title{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--dark)}.kc-client{font-size:11px;color:var(--muted);margin-bottom:8px}
+.kc-footer{display:flex;justify-content:space-between;align-items:center}
+.kc-value{font-size:13px;font-weight:700;color:var(--amber)}.kc-loc{font-size:10px;color:var(--dim)}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .sidebar{width:60px}
+  .sb-brand-text,.sb-section,.sb-item span:not(.icon):not(.badge),.sb-user-info,.sb-logout span{display:none}
+  .sb-brand{padding:14px 12px;justify-content:center}.sb-item{justify-content:center;padding:10px}
+  .sb-footer{padding:10px 6px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .two-col,.pipeline{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:0 16px}
+}
+@media(max-width:480px){.stat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo"><i class="ti ti-building-community"></i></div>
+      <div class="sb-brand-text">
+        <div class="name">Saffarini CRM</div>
+        <div class="sub">Management Portal</div>
+      </div>
+    </div>
+    <div class="sb-nav" id="sidebarNav">
+      <div class="sb-section">Overview</div>
+      <div class="sb-item active" data-page="dashboard"><span class="icon"><i class="ti ti-dashboard"></i></span> Dashboard</div>
+
+      <div class="sb-section">Business</div>
+      <div class="sb-item" data-page="deals"><span class="icon"><i class="ti ti-briefcase"></i></span> Deals <span class="badge" id="dealsBadge">0</span></div>
+      <div class="sb-item" data-page="tasks"><span class="icon"><i class="ti ti-checklist"></i></span> Tasks <span class="badge" id="tasksBadge">0</span></div>
+      <div class="sb-item" data-page="appointments"><span class="icon"><i class="ti ti-calendar"></i></span> Appointments</div>
+
+      <div class="sb-section">Team</div>
+      <div class="sb-item" data-page="agents"><span class="icon"><i class="ti ti-users"></i></span> Agents</div>
+      <div class="sb-item" data-page="commissions"><span class="icon"><i class="ti ti-coin"></i></span> Commissions</div>
+
+      <div class="sb-section">Tools</div>
+      <div class="sb-item" onclick="window.open('visualizer.html','_blank')" style="cursor:pointer"><span class="icon"><i class="ti ti-cube-3d-sphere"></i></span> 3D Visualizer</div>
+
+      <div class="sb-section">Content</div>
+      <div class="sb-item" data-page="portfolio"><span class="icon"><i class="ti ti-building"></i></span> Portfolio</div>
+      <div class="sb-item" data-page="testimonials"><span class="icon"><i class="ti ti-message-circle"></i></span> Testimonials</div>
+      <div class="sb-item" data-page="documents"><span class="icon"><i class="ti ti-file-description"></i></span> Documents</div>
+      <div class="sb-item" data-page="followups"><span class="icon"><i class="ti ti-send"></i></span> Follow-ups</div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="userAvatar">--</div>
+        <div class="sb-user-info">
+          <div class="uname" id="userName">User</div>
+          <div class="urole" id="userRole">role</div>
+        </div>
+      </div>
+      <button class="sb-logout" id="logoutBtn"><span>Sign Out</span></button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title"><span class="page-icon" id="pageIcon"></span> <span id="pageTitle">Dashboard</span></div>
+      <div class="topbar-right">
+        <span class="topbar-time" id="topbarTime"></span>
+        <span class="topbar-status"><span class="dot"></span> Online</span>
+      </div>
+    </div>
+    <div class="content" id="content">
+      <div class="loading-box"><div class="loader"></div>Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   AUTH & GLOBALS
+   ═══════════════════════════════════════════════════════════════════════ */
+const TOKEN=localStorage.getItem('sf_token');
+let USER={};
+try{USER=JSON.parse(localStorage.getItem('sf_user')||'{}');}catch(e){localStorage.removeItem('sf_user');USER={};}
+if(!TOKEN){window.location.href='/login.html';}
+
+function api(url,opts={}){
+  return fetch(url,{...opts,headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN,...(opts.headers||{})}})
+    .then(async r=>{
+      if(r.status===401){localStorage.removeItem('sf_token');localStorage.removeItem('sf_user');window.location.href='/login.html';throw new Error('Unauthorized');}
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.error||'API error');
+      return d;
+    });
+}
+
+function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML}
+function fmtM(v){if(!v||v===0)return'--';v=Number(v);if(v>=1e9)return'AED '+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'AED '+(v/1e6).toFixed(1)+'M';if(v>=1e3)return'AED '+(v/1e3).toFixed(0)+'K';return'AED '+v}
+// Parse date strings as local time (append T12:00 to avoid UTC midnight rollover in UTC+ timezones)
+function parseLocalDate(d){if(!d)return null;if(d.includes('T'))return new Date(d);return new Date(d+'T12:00:00')}
+function fmtDate(d){const dt=parseLocalDate(d);if(!dt||isNaN(dt))return'--';return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function fmtShort(d){const dt=parseLocalDate(d);if(!dt||isNaN(dt))return'--';return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+
+/* ═══ USER INFO ═══ */
+document.getElementById('userAvatar').textContent=USER.initials||'??';
+document.getElementById('userName').textContent=USER.name||'User';
+document.getElementById('userRole').textContent=USER.role||'viewer';
+document.getElementById('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('sf_token');localStorage.removeItem('sf_user');window.location.href='/login.html'});
+
+/* ═══ TIME ═══ */
+function updateTime(){document.getElementById('topbarTime').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' - '+new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
+updateTime();setInterval(updateTime,30000);
+
+/* ═══ MODAL ═══ */
+const overlay=document.getElementById('modalOverlay');
+const modalBody=document.getElementById('modalBody');
+function openModal(html){modalBody.innerHTML=html;overlay.classList.add('show')}
+function closeModal(){overlay.classList.remove('show');modalBody.innerHTML=''}
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* ═══ CACHED DATA ═══ */
+let AGENTS=[];
+let DEAL_CACHE={};  // id → deal object, avoids inline JSON in onclick attrs
+async function loadAgents(){if(AGENTS.length)return AGENTS;try{AGENTS=await api('/api/agents');return AGENTS}catch(e){return[]}}
+function agentOptions(sel){return AGENTS.map(a=>`<option value="${a.id}" ${a.id==sel?'selected':''}>${esc(a.name)}</option>`).join('')}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE ROUTER
+   ═══════════════════════════════════════════════════════════════════════ */
+const PAGE_ICONS={
+  dashboard:'<i class="ti ti-dashboard"></i>',
+  deals:'<i class="ti ti-briefcase"></i>',
+  tasks:'<i class="ti ti-checklist"></i>',
+  appointments:'<i class="ti ti-calendar"></i>',
+  agents:'<i class="ti ti-users"></i>',
+  commissions:'<i class="ti ti-coin"></i>',
+  portfolio:'<i class="ti ti-building"></i>',
+  testimonials:'<i class="ti ti-message-circle"></i>',
+  documents:'<i class="ti ti-file-description"></i>',
+  followups:'<i class="ti ti-send"></i>'
+};
+const PAGE_TITLES={dashboard:'Dashboard',deals:'Deals Pipeline',tasks:'Task Manager',appointments:'Appointments',agents:'Team Agents',commissions:'Commission Tracker',portfolio:'Portfolio Manager',testimonials:'Testimonials',documents:'Documents',followups:'Follow-ups'};
+
+let currentPage='dashboard';
+
+document.getElementById('sidebarNav').addEventListener('click',e=>{
+  const item=e.target.closest('.sb-item');
+  if(!item)return;
+  navigateTo(item.dataset.page);
+});
+
+function navigateTo(page){
+  currentPage=page;
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.toggle('active',i.dataset.page===page));
+  document.getElementById('pageIcon').innerHTML=PAGE_ICONS[page]||'';
+  document.getElementById('pageTitle').textContent=PAGE_TITLES[page]||page;
+  const content=document.getElementById('content');
+  content.innerHTML='<div class="loading-box"><div class="loader"></div>Loading...</div>';
+  content.scrollTop=0;
+  const loaders={dashboard:loadDashboard,deals:loadDeals,tasks:loadTasks,appointments:loadAppointments,agents:loadAgentsPage,commissions:loadCommissions,portfolio:loadPortfolio,testimonials:loadTestimonials,documents:loadDocuments,followups:loadFollowups};
+  (loaders[page]||loadDashboard)();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadDashboard(){
+  try{
+    const [stats,activity]=await Promise.all([api('/api/dashboard/stats'),api('/api/dashboard/activity')]);
+    const c=document.getElementById('content');
+    const pipeline=stats.pipeline||[];
+
+    // badges
+    document.getElementById('dealsBadge').textContent=stats.project_count||0;
+    document.getElementById('tasksBadge').textContent=stats.tasks_due_today||0;
+
+    c.innerHTML=`
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Total Portfolio</div><div class="stat-val gold">${fmtM(stats.total_value)}</div><div class="stat-sub">across all deals</div></div>
+        <div class="stat-card"><div class="stat-label">Active Deals</div><div class="stat-val cyan">${stats.project_count||0}</div><div class="stat-sub">in pipeline</div></div>
+        <div class="stat-card"><div class="stat-label">Clients</div><div class="stat-val white">${stats.client_count||0}</div><div class="stat-sub">unique contacts</div></div>
+        <div class="stat-card"><div class="stat-label">Tasks Due Today</div><div class="stat-val ${stats.tasks_due_today>0?'green':'white'}">${stats.tasks_due_today||0}</div><div class="stat-sub">remaining today</div></div>
+      </div>
+
+      <div class="sec-header"><div class="sec-title">Deal Pipeline</div></div>
+      <div class="pipeline" id="pipelineGrid"></div>
+
+      <div class="two-col">
+        <div>
+          <div class="sec-header"><div class="sec-title">Recent Activity</div></div>
+          <div class="activity-list" id="activityList"></div>
+        </div>
+        <div>
+          <div class="sec-header"><div class="sec-title">Pipeline Breakdown</div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Stage</th><th>Count</th><th>Value</th></tr></thead><tbody id="pipelineTable"></tbody></table></div>
+        </div>
+      </div>
+    `;
+
+    // Pipeline cards
+    const stages=['lead','viewing','negotiating','under_contract','closing','closed'];
+    const stageLabels={lead:'Lead',viewing:'Viewing',negotiating:'Negotiating',under_contract:'Under Contract',closing:'Closing',closed:'Closed'};
+    const pipeMap={};pipeline.forEach(p=>pipeMap[p.stage]=p);
+    document.getElementById('pipelineGrid').innerHTML=stages.map(s=>{
+      const p=pipeMap[s]||{count:0,value:0};
+      return`<div class="pipe-col"><div class="pipe-stage">${stageLabels[s]||s}</div><div class="pipe-count">${p.count}</div><div class="pipe-value">${fmtM(p.value)}</div></div>`;
+    }).join('');
+
+    document.getElementById('pipelineTable').innerHTML=stages.map(s=>{
+      const p=pipeMap[s]||{count:0,value:0};
+      return`<tr><td><span class="badge badge-${s}">${stageLabels[s]||s}</span></td><td>${p.count}</td><td style="color:var(--amber)">${fmtM(p.value)}</td></tr>`;
+    }).join('');
+
+    // Activity
+    const actIcons={
+      closed:'<i class="ti ti-check"></i>',
+      lead:'<i class="ti ti-star"></i>',
+      contract:'<i class="ti ti-pencil"></i>',
+      viewing:'<i class="ti ti-eye"></i>',
+      task:'<i class="ti ti-checkbox"></i>'
+    };
+    document.getElementById('activityList').innerHTML=(activity||[]).map(a=>`
+      <div class="activity-item">
+        <div class="act-icon ${a.type||''}">${actIcons[a.type]||'<i class="ti ti-point"></i>'}</div>
+        <div><div class="act-title">${esc(a.title)}</div><div class="act-desc">${esc(a.description)}</div></div>
+      </div>`).join('')||'<div class="empty">No recent activity.</div>';
+
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load dashboard. '+esc(e.message)+'</div>'}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEALS (Kanban)
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadDeals(){
+  try{
+    const [deals]=await Promise.all([api('/api/deals'),loadAgents()]);
+    const c=document.getElementById('content');
+
+    const stages=['lead','viewing','negotiating','under_contract','closing','closed'];
+    const stageLabels={lead:'Lead',viewing:'Viewing',negotiating:'Negotiating',under_contract:'Under Contract',closing:'Closing',closed:'Closed'};
+    const grouped={};stages.forEach(s=>grouped[s]=[]);
+    deals.forEach(d=>{if(grouped[d.stage])grouped[d.stage].push(d);else{if(!grouped.other)grouped.other=[];grouped.other.push(d)}});
+
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Deals Pipeline</div><div class="sec-sub">${deals.length} total deals</div></div>
+        <button class="btn-add" onclick="openDealForm()"><i class="ti ti-plus"></i> New Deal</button>
+      </div>
+      <div class="kanban" id="kanban"></div>
+    `;
+
+    document.getElementById('kanban').innerHTML=stages.map(s=>`
+      <div class="kanban-col">
+        <div class="kanban-header"><h4>${stageLabels[s]}</h4><span class="count">${grouped[s].length}</span></div>
+        <div class="kanban-body">${grouped[s].map(d=>`
+          <div class="kanban-card" onclick="openDealDetail(${d.id})">
+            <div class="kc-title">${esc(d.title)}</div>
+            <div class="kc-client">${esc(d.client_name)}</div>
+            <div class="kc-footer"><span class="kc-value">${fmtM(d.value)}</span><span class="kc-loc">${esc(d.location)}</span></div>
+          </div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--dim);font-size:11px">No deals</div>'}
+        </div>
+      </div>`).join('');
+
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load deals.</div>'}
+}
+
+window.openDealForm=function(deal){
+  loadAgents().then(()=>{
+    openModal(`
+      <h3>${deal?'Edit Deal':'New Deal'}</h3>
+      <div class="field"><label>Title</label><input id="m_title" value="${deal?esc(deal.title):''}" placeholder="Deal title"></div>
+      <div class="field"><label>Client</label><input id="m_client" value="${deal?esc(deal.client_name):''}" placeholder="Client name"></div>
+      <div class="field"><label>Value (AED)</label><input type="number" id="m_value" value="${deal?deal.value:''}" placeholder="0"></div>
+      <div class="field"><label>Stage</label><select id="m_stage">
+        <option value="lead" ${deal&&deal.stage==='lead'?'selected':''}>Lead</option>
+        <option value="viewing" ${deal&&deal.stage==='viewing'?'selected':''}>Viewing</option>
+        <option value="negotiating" ${deal&&deal.stage==='negotiating'?'selected':''}>Negotiating</option>
+        <option value="under_contract" ${deal&&deal.stage==='under_contract'?'selected':''}>Under Contract</option>
+        <option value="closing" ${deal&&deal.stage==='closing'?'selected':''}>Closing</option>
+        <option value="closed" ${deal&&deal.stage==='closed'?'selected':''}>Closed</option>
+      </select></div>
+      <div class="field"><label>Assigned To</label><select id="m_agent"><option value="">-- Unassigned --</option>${agentOptions(deal?deal.assigned_to:'')}</select></div>
+      <div class="field"><label>Location</label><input id="m_loc" value="${deal?esc(deal.location):''}" placeholder="Location"></div>
+      <div class="field"><label>Property Type</label><input id="m_ptype" value="${deal?esc(deal.property_type):''}" placeholder="Residential, Commercial..."></div>
+      <div class="field"><label>Notes</label><textarea id="m_notes">${deal?esc(deal.notes||''):''}</textarea></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveDeal(${deal?deal.id:'null'})">Save Deal</button>
+      </div>
+    `);
+  });
+};
+
+window.saveDeal=async function(id){
+  const body={title:document.getElementById('m_title').value,client_name:document.getElementById('m_client').value,value:Number(document.getElementById('m_value').value)||0,stage:document.getElementById('m_stage').value,assigned_to:document.getElementById('m_agent').value||null,location:document.getElementById('m_loc').value,property_type:document.getElementById('m_ptype').value,notes:document.getElementById('m_notes').value};
+  if(!body.title)return alert('Title is required');
+  try{
+    if(id)await api('/api/deals/'+id,{method:'PUT',body:JSON.stringify(body)});
+    else await api('/api/deals',{method:'POST',body:JSON.stringify(body)});
+    closeModal();loadDeals();
+  }catch(e){alert(e.message)}
+};
+
+window.openDealDetail=async function(id){
+  try{
+    const deal=await api('/api/deals/'+id);
+    DEAL_CACHE[id]=deal;  // store in cache — no inline JSON needed
+    openModal(`
+      <h3>${esc(deal.title)}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Client</div><div style="font-size:13px">${esc(deal.client_name)}</div></div>
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Value</div><div style="font-size:13px;color:var(--amber)">${fmtM(deal.value)}</div></div>
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Stage</div><div><span class="badge badge-${esc(deal.stage)}">${esc(deal.stage)}</span></div></div>
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Agent</div><div style="font-size:13px">${esc(deal.agent_name||'Unassigned')}</div></div>
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Location</div><div style="font-size:13px">${esc(deal.location)}</div></div>
+        <div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Type</div><div style="font-size:13px">${esc(deal.property_type)}</div></div>
+      </div>
+      ${deal.notes?`<div style="font-size:12px;color:var(--muted);margin-bottom:16px;padding:12px;background:var(--sky-light);border-radius:8px">${esc(deal.notes)}</div>`:''}
+      ${deal.commissions&&deal.commissions.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:6px">Commissions</div>${deal.commissions.map(c=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)">${esc(c.agent_name)} - ${fmtM(c.amount)} <span class="badge badge-${esc(c.status)}">${esc(c.status)}</span></div>`).join('')}</div>`:''}
+      ${deal.documents&&deal.documents.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:6px">Documents</div>${deal.documents.map(d=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)">${esc(d.name)} <span style="color:var(--dim)">${esc(d.notes||'')}</span></div>`).join('')}</div>`:''}
+      <div class="modal-actions">
+        <button class="btn-del" onclick="deleteDeal(${id})">Delete</button>
+        <button class="btn-cancel" onclick="closeModal()">Close</button>
+        <button class="btn-save" onclick="closeModal();openDealForm(DEAL_CACHE[${id}])">Edit</button>
+      </div>
+    `);
+  }catch(e){alert('Failed to load deal details')}
+};
+
+window.deleteDeal=async function(id){
+  if(!confirm('Delete this deal and all related records?'))return;
+  try{await api('/api/deals/'+id,{method:'DELETE'});closeModal();loadDeals();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TASKS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadTasks(){
+  try{
+    const [tasks]=await Promise.all([api('/api/tasks'),loadAgents()]);
+    const c=document.getElementById('content');
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Task Manager</div><div class="sec-sub">${tasks.length} tasks</div></div>
+        <button class="btn-add" onclick="openTaskForm()"><i class="ti ti-plus"></i> New Task</button>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Task</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Due</th><th>Actions</th></tr></thead>
+      <tbody>${tasks.map(t=>`<tr>
+        <td style="font-weight:600">${esc(t.title)}</td>
+        <td><span class="badge badge-${t.priority}">${t.priority}</span></td>
+        <td><span class="badge badge-${t.status}">${t.status}</span></td>
+        <td>${t.agent_initials?`<span class="avatar-sm blue">${esc(t.agent_initials)}</span> ${esc(t.agent_name)}`:'<span style="color:var(--dim)">--</span>'}</td>
+        <td style="white-space:nowrap">${fmtShort(t.due_date)} ${t.due_time||''}</td>
+        <td>
+          ${t.status!=='done'?`<button class="btn-add" style="padding:4px 10px;font-size:10px" onclick="completeTask(${t.id})"><i class="ti ti-check"></i></button>`:''}&nbsp;
+          <button class="btn-del" style="padding:4px 10px" onclick="deleteTask(${t.id})"><i class="ti ti-trash"></i></button>
+        </td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">No tasks found.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load tasks.</div>'}
+}
+
+window.openTaskForm=function(){
+  loadAgents().then(()=>{
+    const today=new Date().toISOString().split('T')[0];
+    openModal(`
+      <h3>New Task</h3>
+      <div class="field"><label>Title</label><input id="m_title" placeholder="Task title"></div>
+      <div class="field"><label>Priority</label><select id="m_priority"><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select></div>
+      <div class="field"><label>Assigned To</label><select id="m_agent"><option value="">-- Unassigned --</option>${agentOptions()}</select></div>
+      <div class="field"><label>Due Date</label><input type="date" id="m_date" value="${today}"></div>
+      <div class="field"><label>Due Time</label><input type="time" id="m_time"></div>
+      <div class="field"><label>Notes</label><textarea id="m_notes" placeholder="Optional notes"></textarea></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveTask()">Save Task</button>
+      </div>
+    `);
+  });
+};
+
+window.saveTask=async function(){
+  const body={title:document.getElementById('m_title').value,priority:document.getElementById('m_priority').value,assigned_to:document.getElementById('m_agent').value||null,due_date:document.getElementById('m_date').value||null,due_time:document.getElementById('m_time').value||null,notes:document.getElementById('m_notes').value||null};
+  if(!body.title)return alert('Title is required');
+  try{await api('/api/tasks',{method:'POST',body:JSON.stringify(body)});closeModal();loadTasks();}catch(e){alert(e.message)}
+};
+
+window.completeTask=async function(id){
+  try{await api('/api/tasks/'+id,{method:'PUT',body:JSON.stringify({status:'done'})});loadTasks();}catch(e){alert(e.message)}
+};
+
+window.deleteTask=async function(id){
+  if(!confirm('Delete this task?'))return;
+  try{await api('/api/tasks/'+id,{method:'DELETE'});loadTasks();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPOINTMENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadAppointments(){
+  try{
+    const [appts]=await Promise.all([api('/api/appointments'),loadAgents()]);
+    const c=document.getElementById('content');
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Appointments</div><div class="sec-sub">${appts.length} scheduled</div></div>
+        <button class="btn-add" onclick="openApptForm()"><i class="ti ti-plus"></i> New Appointment</button>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Client</th><th>Date</th><th>Time</th><th>Agent</th><th>Location</th><th>Type</th></tr></thead>
+      <tbody>${appts.map(a=>`<tr>
+        <td style="font-weight:600">${esc(a.title)}</td>
+        <td>${esc(a.client_name)}</td>
+        <td>${fmtShort(a.date)}</td>
+        <td>${a.time||'--'}</td>
+        <td>${a.agent_initials?`<span class="avatar-sm teal">${esc(a.agent_initials)}</span> ${esc(a.agent_name)}`:'--'}</td>
+        <td>${esc(a.location)}</td>
+        <td><span class="badge badge-${a.type}">${a.type}</span></td>
+      </tr>`).join('')||'<tr><td colspan="7" class="empty">No appointments.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load appointments.</div>'}
+}
+
+window.openApptForm=function(){
+  loadAgents().then(()=>{
+    openModal(`
+      <h3>New Appointment</h3>
+      <div class="field"><label>Title</label><input id="m_title" placeholder="Appointment title"></div>
+      <div class="field"><label>Client</label><input id="m_client" placeholder="Client name"></div>
+      <div class="field"><label>Date</label><input type="date" id="m_date"></div>
+      <div class="field"><label>Time</label><input type="time" id="m_time"></div>
+      <div class="field"><label>Agent</label><select id="m_agent"><option value="">-- Select --</option>${agentOptions()}</select></div>
+      <div class="field"><label>Location</label><input id="m_loc" placeholder="Location"></div>
+      <div class="field"><label>Type</label><select id="m_type"><option value="viewing">Viewing</option><option value="meeting">Meeting</option><option value="signing">Signing</option><option value="valuation">Valuation</option></select></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveAppt()">Save</button>
+      </div>
+    `);
+  });
+};
+
+window.saveAppt=async function(){
+  const body={title:document.getElementById('m_title').value,client_name:document.getElementById('m_client').value,date:document.getElementById('m_date').value,time:document.getElementById('m_time').value,agent_id:document.getElementById('m_agent').value||null,location:document.getElementById('m_loc').value,type:document.getElementById('m_type').value};
+  if(!body.title)return alert('Title is required');
+  try{await api('/api/appointments',{method:'POST',body:JSON.stringify(body)});closeModal();loadAppointments();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AGENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadAgentsPage(){
+  try{
+    AGENTS=await api('/api/agents');
+    const c=document.getElementById('content');
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Team Agents</div><div class="sec-sub">${AGENTS.length} agents</div></div>
+        <button class="btn-add" onclick="openAgentForm()"><i class="ti ti-user-plus"></i> Add Agent</button>
+      </div>
+      <div class="stat-grid">${AGENTS.map(a=>`
+        <div class="stat-card" style="cursor:default">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <span class="avatar-sm ${a.color||'blue'}" style="width:40px;height:40px;font-size:13px;border-radius:10px">${esc(a.initials)}</span>
+            <div><div style="font-weight:700;font-size:14px">${esc(a.name)}</div><div style="font-size:11px;color:var(--dim)">${esc(a.role)}</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px">
+            ${a.email?`<div>${esc(a.email)}</div>`:''}
+            ${a.phone?`<div>${esc(a.phone)}</div>`:''}
+          </div>
+        </div>`).join('')||'<div class="empty">No agents yet.</div>'}</div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load agents.</div>'}
+}
+
+window.openAgentForm=function(){
+  openModal(`
+    <h3>Add Agent</h3>
+    <div class="field"><label>Name</label><input id="m_name" placeholder="Full name"></div>
+    <div class="field"><label>Initials</label><input id="m_init" maxlength="3" placeholder="AB"></div>
+    <div class="field"><label>Role</label><input id="m_role" value="Agent" placeholder="Role"></div>
+    <div class="field"><label>Email</label><input type="email" id="m_email" placeholder="email@example.com"></div>
+    <div class="field"><label>Phone</label><input id="m_phone" placeholder="+971 50 xxx xxxx"></div>
+    <div class="field"><label>Color</label><select id="m_color"><option value="blue">Blue</option><option value="teal">Teal</option><option value="amber">Amber</option><option value="pink">Pink</option><option value="green">Green</option></select></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveAgent()">Save Agent</button>
+    </div>
+  `);
+};
+
+window.saveAgent=async function(){
+  const body={name:document.getElementById('m_name').value,initials:document.getElementById('m_init').value,role:document.getElementById('m_role').value,email:document.getElementById('m_email').value,phone:document.getElementById('m_phone').value,color:document.getElementById('m_color').value};
+  if(!body.name)return alert('Name is required');
+  try{await api('/api/agents',{method:'POST',body:JSON.stringify(body)});closeModal();AGENTS=[];loadAgentsPage();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMMISSIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadCommissions(){
+  try{
+    const comms=await api('/api/commissions');
+    const c=document.getElementById('content');
+    const totalPaid=comms.filter(c=>c.status==='paid').reduce((s,c)=>s+c.amount,0);
+    const totalPending=comms.filter(c=>c.status==='pending').reduce((s,c)=>s+c.amount,0);
+
+    c.innerHTML=`
+      <div class="sec-header"><div><div class="sec-title">Commission Tracker</div><div class="sec-sub">${comms.length} records</div></div></div>
+      <div class="stat-grid" style="margin-bottom:24px">
+        <div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-val green">${fmtM(totalPaid)}</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-val gold">${fmtM(totalPending)}</div></div>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Deal</th><th>Agent</th><th>Amount</th><th>Rate</th><th>Status</th><th>Paid</th></tr></thead>
+      <tbody>${comms.map(c=>`<tr>
+        <td style="font-weight:600">${esc(c.deal_title)}</td>
+        <td>${esc(c.agent_name)}</td>
+        <td style="color:var(--amber)">${fmtM(c.amount)}</td>
+        <td>${c.rate}%</td>
+        <td><span class="badge badge-${c.status}">${c.status}</span></td>
+        <td>${c.paid_at?fmtShort(c.paid_at):'--'}</td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">No commissions recorded.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load commissions.</div>'}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PORTFOLIO
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadPortfolio(){
+  try{
+    const items=await api('/api/portfolio');
+    const c=document.getElementById('content');
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Portfolio Manager</div><div class="sec-sub">${items.length} projects</div></div>
+        <button class="btn-add" onclick="openPortfolioForm()"><i class="ti ti-plus"></i> Add Project</button>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Project</th><th>Type</th><th>Location</th><th>Value</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${items.map(p=>`<tr>
+        <td style="font-weight:600">${esc(p.title)}</td>
+        <td>${esc(p.property_type)}</td>
+        <td>${esc(p.location)}</td>
+        <td style="color:var(--amber)">${fmtM(p.value)}</td>
+        <td><span class="badge badge-${p.status}">${p.status}</span></td>
+        <td>${fmtShort(p.completion_date)}</td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">No portfolio projects.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load portfolio.</div>'}
+}
+
+window.openPortfolioForm=function(){
+  openModal(`
+    <h3>Add Portfolio Project</h3>
+    <div class="field"><label>Title</label><input id="m_title" placeholder="Project title"></div>
+    <div class="field"><label>Property Type</label><input id="m_ptype" placeholder="Residential, Commercial..."></div>
+    <div class="field"><label>Location</label><input id="m_loc" placeholder="Location"></div>
+    <div class="field"><label>Value (AED)</label><input type="number" id="m_value" placeholder="0"></div>
+    <div class="field"><label>Description</label><textarea id="m_desc" placeholder="Project description"></textarea></div>
+    <div class="field"><label>Client</label><input id="m_client" placeholder="Client name"></div>
+    <div class="field"><label>Completion Date</label><input type="date" id="m_date"></div>
+    <div class="field"><label>Status</label><select id="m_status"><option value="draft">Draft</option><option value="published">Published</option></select></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="savePortfolio()">Save Project</button>
+    </div>
+  `);
+};
+
+window.savePortfolio=async function(){
+  const body={title:document.getElementById('m_title').value,property_type:document.getElementById('m_ptype').value,location:document.getElementById('m_loc').value,value:Number(document.getElementById('m_value').value)||0,description:document.getElementById('m_desc').value,client_name:document.getElementById('m_client').value,completion_date:document.getElementById('m_date').value||null,status:document.getElementById('m_status').value};
+  if(!body.title)return alert('Title is required');
+  try{await api('/api/portfolio',{method:'POST',body:JSON.stringify(body)});closeModal();loadPortfolio();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TESTIMONIALS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadTestimonials(){
+  try{
+    const items=await api('/api/testimonials');
+    const c=document.getElementById('content');
+    c.innerHTML=`
+      <div class="sec-header">
+        <div><div class="sec-title">Testimonials</div><div class="sec-sub">${items.length} reviews</div></div>
+        <button class="btn-add" onclick="openTestimonialForm()"><i class="ti ti-plus"></i> Add Testimonial</button>
+      </div>
+      <div class="stat-grid">${items.map(t=>`
+        <div class="stat-card" style="cursor:default">
+          <div style="color:var(--amber);font-size:16px;margin-bottom:8px;letter-spacing:2px">${'★'.repeat(t.rating||5)}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:12px">${esc(t.text)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:13px;font-weight:700">${esc(t.client_name)}</div>
+            <span class="badge ${t.published?'badge-published':'badge-draft'}">${t.published?'Published':'Draft'}</span>
+          </div>
+        </div>`).join('')||'<div class="empty">No testimonials.</div>'}</div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load testimonials.</div>'}
+}
+
+window.openTestimonialForm=function(){
+  openModal(`
+    <h3>Add Testimonial</h3>
+    <div class="field"><label>Client Name</label><input id="m_name" placeholder="Client name"></div>
+    <div class="field"><label>Testimonial Text</label><textarea id="m_text" placeholder="What did the client say?"></textarea></div>
+    <div class="field"><label>Rating (1-5)</label><input type="number" id="m_rating" min="1" max="5" value="5"></div>
+    <div class="field"><label>Published</label><select id="m_pub"><option value="0">Draft</option><option value="1">Published</option></select></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveTestimonial()">Save</button>
+    </div>
+  `);
+};
+
+window.saveTestimonial=async function(){
+  const body={client_name:document.getElementById('m_name').value,text:document.getElementById('m_text').value,rating:Number(document.getElementById('m_rating').value)||5,published:Number(document.getElementById('m_pub').value)};
+  if(!body.client_name||!body.text)return alert('Client name and text are required');
+  try{await api('/api/testimonials',{method:'POST',body:JSON.stringify(body)});closeModal();loadTestimonials();}catch(e){alert(e.message)}
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DOCUMENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadDocuments(){
+  try{
+    const docs=await api('/api/documents');
+    const c=document.getElementById('content');
+    const typeIcons={
+      contract:'<i class="ti ti-file-description"></i>',
+      nda:'<i class="ti ti-lock"></i>',
+      title_deed:'<i class="ti ti-home"></i>',
+      valuation:'<i class="ti ti-chart-bar"></i>',
+      other:'<i class="ti ti-file"></i>'
+    };
+    c.innerHTML=`
+      <div class="sec-header"><div><div class="sec-title">Documents</div><div class="sec-sub">${docs.length} files</div></div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Document</th><th>Type</th><th>Deal</th><th>Uploaded By</th><th>Notes</th><th>Date</th></tr></thead>
+      <tbody>${docs.map(d=>`<tr>
+        <td style="font-weight:600">${typeIcons[d.type]||'<i class="ti ti-file"></i>'} ${esc(d.name)}</td>
+        <td><span class="badge badge-medium">${d.type}</span></td>
+        <td>${esc(d.deal_title||'--')}</td>
+        <td>${esc(d.uploader_name||'--')}</td>
+        <td style="color:var(--dim);font-size:12px">${esc(d.notes||'')}</td>
+        <td>${fmtShort(d.created_at)}</td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">No documents uploaded.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load documents.</div>'}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOLLOW-UPS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadFollowups(){
+  try{
+    const fups=await api('/api/followups');
+    const c=document.getElementById('content');
+    const typeIcons={
+      email:'<i class="ti ti-mail"></i>',
+      whatsapp:'<i class="ti ti-brand-whatsapp"></i>',
+      call:'<i class="ti ti-phone"></i>',
+      sms:'<i class="ti ti-message"></i>'
+    };
+    c.innerHTML=`
+      <div class="sec-header"><div><div class="sec-title">Follow-ups</div><div class="sec-sub">${fups.length} scheduled</div></div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Type</th><th>Deal</th><th>Agent</th><th>Message</th><th>Scheduled</th><th>Status</th></tr></thead>
+      <tbody>${fups.map(f=>`<tr>
+        <td>${typeIcons[f.type]||''} ${f.type}</td>
+        <td style="font-weight:600">${esc(f.deal_title||'--')}</td>
+        <td>${esc(f.agent_name||'--')}</td>
+        <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12px">${esc(f.message)}</td>
+        <td>${fmtShort(f.scheduled_at)}</td>
+        <td><span class="badge badge-${f.status}">${f.status}</span></td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">No follow-ups scheduled.</td></tr>'}</tbody></table></div>
+    `;
+  }catch(e){document.getElementById('content').innerHTML='<div class="empty">Failed to load follow-ups.</div>'}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════════════ */
+navigateTo('dashboard');
+</script>
+</body>
+</html>

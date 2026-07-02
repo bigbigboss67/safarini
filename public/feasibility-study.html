@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Feasibility Study — Eng. Adnan Saffarini Office</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{
+  --navy:#1B2B4B;--navy2:#243660;--gold:#C9973A;--gold-lt:#F5EDDA;--gold-bd:#E8D5A3;
+  --cream:#F8F6F1;--white:#fff;--border:#E2D9C8;--text:#1A1A2E;--muted:#6B7280;
+  --green:#2D7D46;--amber:#D97706;--red:#DC2626;
+  --sh:0 2px 12px rgba(27,43,75,.10);--sh2:0 8px 32px rgba(27,43,75,.14);
+  --r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hdr-in{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo img{height:40px;width:auto;object-fit:contain}
+.logo-txt h1{font-size:14px;font-weight:700;letter-spacing:.02em;line-height:1.2}
+.logo-txt p{font-size:10px;opacity:.55;letter-spacing:.08em;text-transform:uppercase}
+.hdr-center{flex:1;text-align:center}
+.hdr-center h2{font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.hdr-center p{font-size:11px;opacity:.5;margin-top:2px}
+.hdr-acts{display:flex;gap:8px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rs);border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;font-family:inherit;text-decoration:none}
+.btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#b07d28;box-shadow:0 4px 12px rgba(201,151,58,.4)}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)}.btn-outline:hover{background:rgba(255,255,255,.1)}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy2)}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.prog-wrap{height:3px;background:rgba(255,255,255,.1)}
+.prog-fill{height:100%;background:var(--gold);transition:width .4s ease;width:0%}
+
+/* ── TABS ── */
+.tabs-wrap{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:71px;z-index:90;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.tabs-in{max-width:1200px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:11px 16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;flex-shrink:0}
+.tab i{font-size:15px}
+.tab:hover{color:var(--navy);background:var(--cream)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:700}
+.tab-num{width:16px;height:16px;border-radius:50%;background:var(--muted);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.tab.active .tab-num{background:var(--gold)}
+.tab.done .tab-num{background:var(--green)}
+
+/* ── MAIN ── */
+.main{max-width:1200px;margin:0 auto;padding:28px 24px 60px}
+.panel{display:none;animation:fadeIn .25s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION TITLE ── */
+.sec-title{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid var(--gold-bd)}
+.sec-icon{width:42px;height:42px;background:var(--gold-lt);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;flex-shrink:0}
+.sec-title h2{font-size:19px;font-weight:800;color:var(--navy)}
+.sec-title p{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:var(--r);padding:22px;box-shadow:var(--sh);margin-bottom:18px;border:1px solid var(--border)}
+.card-hd{font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:7px;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.card-hd i{color:var(--gold);font-size:15px}
+
+/* ── FORM ── */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.gfull{grid-column:1/-1}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+.fg{display:flex;flex-direction:column;gap:5px}
+.lbl{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.04em}
+.lbl span{color:var(--red)}
+.hint{font-size:11px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.fc{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+.fc:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,151,58,.12)}
+.fc[readonly]{background:var(--gold-lt);color:var(--navy);font-weight:700;border-color:var(--gold-bd);cursor:default}
+select.fc{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
+textarea.fc{resize:vertical;min-height:80px}
+.ig{display:flex}
+.ig .fc{border-radius:var(--rs) 0 0 var(--rs)}
+.ig-sfx{padding:8px 10px;background:var(--gold-lt);border:1.5px solid var(--gold-bd);border-left:none;border-radius:0 var(--rs) var(--rs) 0;font-size:11px;font-weight:700;color:var(--navy);white-space:nowrap;display:flex;align-items:center}
+
+/* ── PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);transition:all .2s;user-select:none}
+.pill input{display:none}
+.pill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pill i{font-size:13px}
+
+/* ── COST TABLE ── */
+.cost-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.cost-tbl th{background:var(--navy);color:#fff;padding:9px 13px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.cost-tbl th:nth-child(n+3){text-align:right}
+.cost-tbl td{padding:9px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.cost-tbl tr:hover td{background:var(--cream)}
+.cost-tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+.cost-tbl .sec td{background:var(--cream);font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);padding:6px 13px}
+.cost-tbl .tot td{background:var(--gold-lt);font-weight:800;border-top:2px solid var(--gold-bd);color:var(--navy)}
+.cost-tbl .grand td{background:var(--navy);color:#fff;font-weight:800;font-size:15px}
+.ci{width:90px;padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;text-align:right;font-family:inherit;background:#fff;outline:none}
+.ci:focus{border-color:var(--gold)}
+.ci-pct{width:60px}
+
+/* ── KPI CARDS ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:#fff;border-radius:var(--r);padding:18px 14px;box-shadow:var(--sh);border:1px solid var(--border);text-align:center;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.gold::before{background:var(--gold)}
+.kpi.navy::before{background:var(--navy)}
+.kpi.green::before{background:var(--green)}
+.kpi.amber::before{background:var(--amber)}
+.kpi.red::before{background:var(--red)}
+.kpi i{font-size:26px;margin-bottom:6px;display:block}
+.kpi.gold i{color:var(--gold)}.kpi.navy i{color:var(--navy)}.kpi.green i{color:var(--green)}.kpi.amber i{color:var(--amber)}
+.kpi-val{font-size:20px;font-weight:900;color:var(--navy);line-height:1;margin-bottom:3px}
+.kpi-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+/* ── COST BAR ── */
+.cost-bar{display:flex;height:18px;border-radius:6px;overflow:hidden;margin:14px 0 6px;gap:2px}
+.cost-bar-leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.cb-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.cb-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── TIMELINE ── */
+.tl-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tl-tbl th{background:var(--navy);color:#fff;padding:9px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.tl-tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tl-tbl tr:hover td{background:var(--cream)}
+.ph-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.bar-wrap{height:16px;background:var(--border);border-radius:4px;overflow:hidden}
+.bar-seg{height:100%;border-radius:4px;transition:width .5s ease}
+.tl-dur{width:70px;padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:12px;text-align:center;font-family:inherit;outline:none}
+.tl-dur:focus{border-color:var(--gold)}
+
+/* ── RISK ── */
+.risk-list{display:flex;flex-direction:column;gap:8px}
+.risk-row{display:grid;grid-template-columns:1fr 120px 120px 1fr;gap:10px;align-items:center;padding:10px 13px;background:var(--cream);border-radius:var(--rs);border:1px solid var(--border);font-size:12px}
+.risk-badge{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700;text-align:center}
+.risk-low{background:#dcfce7;color:#166534}
+.risk-med{background:#fef9c3;color:#854d0e}
+.risk-hi{background:#fee2e2;color:#991b1b}
+.risk-crit{background:#7f1d1d;color:#fff}
+.risk-matrix-wrap{display:inline-grid;grid-template-columns:30px repeat(4,1fr);grid-template-rows:24px repeat(4,1fr);gap:3px;margin-bottom:20px}
+.rm{border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-height:44px;text-align:center;padding:4px;line-height:1.2}
+.rm-hdr{background:var(--navy);color:#fff;min-height:24px}
+.rm-l{background:#dcfce7;color:#166534}
+.rm-m{background:#fef9c3;color:#854d0e}
+.rm-h{background:#fee2e2;color:#991b1b}
+.rm-c{background:#7f1d1d;color:#fff}
+.rm-axis{background:var(--navy);color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;letter-spacing:.05em}
+
+/* ── REC OPTIONS ── */
+.rec-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.rec-opt{padding:14px;border:2px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:10px}
+.rec-opt:hover{border-color:var(--gold);background:var(--gold-lt)}
+.rec-opt.sel{border-color:var(--navy);background:#eef1f8}
+.rec-opt input{display:none}
+.rec-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.rec-ico.g{background:#dcfce7;color:var(--green)}
+.rec-ico.a{background:#fef9c3;color:var(--amber)}
+.rec-ico.b{background:#fee2e2;color:var(--red)}
+.rec-ico.n{background:var(--gold-lt);color:var(--gold)}
+.rec-txt strong{display:block;font-size:13px;color:var(--navy);margin-bottom:2px}
+.rec-txt span{font-size:11px;color:var(--muted)}
+
+/* ── NAV BUTTONS ── */
+.nav-btns{display:flex;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* ── REFERENCE BOX ── */
+.ref-box{background:var(--gold-lt);border:1px solid var(--gold-bd);border-radius:var(--rs);padding:8px 12px;font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:18px}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:18px 0}
+
+/* ── SUMMARY PRINT TABLE ── */
+.sum-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:18px}
+.sum-tbl th{background:var(--navy);color:#fff;padding:9px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;text-align:left}
+.sum-tbl td{padding:9px 14px;border-bottom:1px solid var(--border)}
+.sum-tbl tr:nth-child(even) td{background:var(--cream)}
+.sum-tbl .bold td{font-weight:800;background:var(--gold-lt) !important;color:var(--navy)}
+
+/* ── TAG ── */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.tag-navy{background:#eef1f8;color:var(--navy)}.tag-gold{background:var(--gold-lt);color:#7a5a00}.tag-green{background:#dcfce7;color:var(--green)}.tag-red{background:#fee2e2;color:var(--red)}
+
+/* ── PRINT ── */
+@media print{
+  .hdr{position:relative}.tabs-wrap,.nav-btns,.hdr-acts,.no-print{display:none!important}
+  .panel{display:block!important;page-break-after:always}
+  body{background:#fff}.card{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ HEADER ════════════════ -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <img src="img/logo.png" alt="Saffarini" onerror="this.style.display='none'">
+      <div class="logo-txt">
+        <h1>Eng. Adnan Saffarini Office</h1>
+        <p>Architects &amp; Consultants · Est. 1988</p>
+      </div>
+    </div>
+    <div class="hdr-center">
+      <h2><i class="ti ti-file-analytics"></i> Project Feasibility Assessment</h2>
+      <p id="refLine">REF: — &nbsp;|&nbsp; DATE: —</p>
+    </div>
+    <div class="hdr-acts no-print">
+      <button class="btn btn-outline" onclick="clearForm()"><i class="ti ti-refresh"></i> Clear</button>
+      <button class="btn btn-outline" onclick="saveForm()"><i class="ti ti-device-floppy"></i> Save</button>
+      <button class="btn btn-gold" onclick="window.print()"><i class="ti ti-printer"></i> Print / PDF</button>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="progBar"></div></div>
+</header>
+
+<!-- ════════════════ TABS ════════════════ -->
+<div class="tabs-wrap no-print">
+  <div class="tabs-in" id="tabsEl"></div>
+</div>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<main class="main">
+
+<!-- ══ PANEL 0 — PROJECT IDENTITY ══ -->
+<div class="panel active" id="p0">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-clipboard-list"></i></div>
+    <div><h2>Project Identity</h2><p>Client information, project name, type and location</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-id-badge"></i> Reference & Date</div>
+    <div class="grid g3">
+      <div class="fg">
+        <label class="lbl">Reference No.</label>
+        <input class="fc fc-readonly" id="refNo" readonly value="">
+      </div>
+      <div class="fg">
+        <label class="lbl">Assessment Date <span>*</span></label>
+        <input class="fc" type="date" id="assessDate" oninput="updateRef()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Prepared By <span>*</span></label>
+        <input class="fc" id="preparedBy" placeholder="Consultant name / engineer">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-user-circle"></i> Client / Developer</div>
+    <div class="grid g3">
+      <div class="fg gfull" style="grid-column:span 1">
+        <label class="lbl">Client / Developer Name <span>*</span></label>
+        <input class="fc" id="clientName" placeholder="Full legal name">
+      </div>
+      <div class="fg">
+        <label class="lbl">Contact Person</label>
+        <input class="fc" id="contactPerson" placeholder="Name & title">
+      </div>
+      <div class="fg">
+        <label class="lbl">Phone / WhatsApp</label>
+        <input class="fc" id="clientPhone" placeholder="+971 …">
+      </div>
+      <div class="fg">
+        <label class="lbl">Email</label>
+        <input class="fc" type="email" id="clientEmail" placeholder="email@domain.com">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-building"></i> Project Details</div>
+    <div class="grid g2">
+      <div class="fg">
+        <label class="lbl">Project Name <span>*</span></label>
+        <input class="fc" id="projName" placeholder="e.g. Al Noor Residential Tower" oninput="updateRef()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Project Type <span>*</span></label>
+        <select class="fc" id="projType" oninput="calcCost()">
+          <option value="">— Select —</option>
+          <option value="villa">Residential Villa / Townhouse</option>
+          <option value="compound">Residential Compound</option>
+          <option value="apartment">Apartment Building</option>
+          <option value="commercial">Commercial Office Tower</option>
+          <option value="retail">Retail / Shopping Mall</option>
+          <option value="mixed">Mixed-Use Development</option>
+          <option value="hotel">Hotel / Hospitality</option>
+          <option value="industrial">Industrial / Warehouse</option>
+          <option value="institutional">Institutional / Healthcare</option>
+          <option value="infrastructure">Infrastructure / Civil</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Country <span>*</span></label>
+        <select class="fc" id="country" oninput="updateCountryFlag()">
+          <option value="">— Select Country —</option>
+          <option value="ae" data-flag="🇦🇪">United Arab Emirates</option>
+          <option value="sa" data-flag="🇸🇦">Saudi Arabia</option>
+          <option value="kw" data-flag="🇰🇼">Kuwait</option>
+          <option value="qa" data-flag="🇶🇦">Qatar</option>
+          <option value="bh" data-flag="🇧🇭">Bahrain</option>
+          <option value="om" data-flag="🇴🇲">Oman</option>
+          <option value="jo" data-flag="🇯🇴">Jordan</option>
+          <option value="eg" data-flag="🇪🇬">Egypt</option>
+          <option value="lb" data-flag="🇱🇧">Lebanon</option>
+          <option value="ma" data-flag="🇲🇦">Morocco</option>
+          <option value="iq" data-flag="🇮🇶">Iraq</option>
+          <option value="ly" data-flag="🇱🇾">Libya</option>
+          <option value="other" data-flag="🌍">Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">City / Emirate</label>
+        <input class="fc" id="city" placeholder="e.g. Dubai, Abu Dhabi, Riyadh">
+      </div>
+      <div class="fg">
+        <label class="lbl">Project Address / Location</label>
+        <input class="fc" id="projAddress" placeholder="Street, district, coordinates">
+      </div>
+      <div class="fg">
+        <label class="lbl">Currency</label>
+        <select class="fc" id="currency" oninput="calcCost()">
+          <option value="AED">AED — UAE Dirham</option>
+          <option value="SAR">SAR — Saudi Riyal</option>
+          <option value="USD">USD — US Dollar</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><span></span><button class="btn btn-navy" onclick="go(1)">Site Data <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- ══ PANEL 1 — SITE DATA ══ -->
+<div class="panel" id="p1">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-map-pin"></i></div>
+    <div><h2>Site Analysis</h2><p>Plot data, zoning parameters and on-site conditions</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-file-certificate"></i> Plot Registration</div>
+    <div class="grid g3">
+      <div class="fg"><label class="lbl">Plot / Parcel No.</label><input class="fc" id="plotNo" placeholder="e.g. 123-4567"></div>
+      <div class="fg"><label class="lbl">Deed / Title No.</label><input class="fc" id="deedNo" placeholder="Title deed reference"></div>
+      <div class="fg"><label class="lbl">Competent Authority</label><input class="fc" id="authority" placeholder="e.g. Dubai Municipality, ADRA"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-ruler-measure"></i> Plot Dimensions &amp; Zoning</div>
+    <div class="grid g4">
+      <div class="fg">
+        <label class="lbl">Total Land Area <span>*</span></label>
+        <div class="ig"><input class="fc" type="number" id="landArea" placeholder="0" oninput="calcGFA();calcCost()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Zoning Classification</label>
+        <select class="fc" id="zoning">
+          <option value="">— Select —</option>
+          <option>Residential (R)</option><option>Commercial (C)</option><option>Mixed-Use (MU)</option>
+          <option>Industrial (I)</option><option>Institutional (IN)</option><option>Tourism (T)</option><option>Special Use</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Plot Ratio / FAR <span class="hint">(e.g. 2.0 = 200%)</span></label>
+        <input class="fc" type="number" step="0.1" id="far" placeholder="e.g. 2.5" oninput="calcGFA()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Ground Coverage Ratio</label>
+        <div class="ig"><input class="fc" type="number" id="gcr" placeholder="e.g. 50" oninput="calcGFA()"><span class="ig-sfx">%</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Max Building Height</label>
+        <div class="ig"><input class="fc" type="number" id="maxHeight" placeholder="0"><span class="ig-sfx">m</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Front Setback</label>
+        <div class="ig"><input class="fc" type="number" id="sbFront" placeholder="0"><span class="ig-sfx">m</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Rear Setback</label>
+        <div class="ig"><input class="fc" type="number" id="sbRear" placeholder="0"><span class="ig-sfx">m</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Side Setback (each)</label>
+        <div class="ig"><input class="fc" type="number" id="sbSide" placeholder="0"><span class="ig-sfx">m</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-topology-full"></i> Site Conditions</div>
+    <div class="grid g3">
+      <div class="fg">
+        <label class="lbl">Site Topography</label>
+        <select class="fc" id="topo">
+          <option value="">— Select —</option>
+          <option>Flat (&lt;2%)</option><option>Gently Sloped (2–5%)</option><option>Steeply Sloped (&gt;5%)</option><option>Terraced</option><option>Coastal / Reclaimed</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Soil Conditions</label>
+        <select class="fc" id="soil">
+          <option value="">— Select —</option>
+          <option>Good (dense sand / rock)</option><option>Moderate (medium sand)</option><option>Poor (soft clay / fill)</option><option>Unknown — investigation needed</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Existing Structures on Site</label>
+        <select class="fc" id="existing">
+          <option value="">— Select —</option>
+          <option>None — Vacant plot</option><option>To be demolished (old building)</option><option>Partially retained</option><option>Retained as-is</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Access Road Frontage</label>
+        <div class="ig"><input class="fc" type="number" id="roadFront" placeholder="0"><span class="ig-sfx">m</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Utilities Available</label>
+        <div class="pills">
+          <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-bolt"></i> Electricity</label>
+          <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-droplet"></i> Water</label>
+          <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-wave-sine"></i> Sewage</label>
+          <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-wifi"></i> Telecom</label>
+          <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-flame"></i> Gas</label>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Soil Investigation Status</label>
+        <select class="fc" id="soilStatus">
+          <option>Not yet commissioned</option><option>Commissioned — pending</option><option>Completed — report available</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(0)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(2)">Design Program <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 2 — DESIGN PROGRAM ══ -->
+<div class="panel" id="p2">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-ruler"></i></div>
+    <div><h2>Design Program &amp; Scope</h2><p>Floor breakdown, gross floor areas and unit counts</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-layers-subtract"></i> Vertical Breakdown</div>
+    <div class="grid g4">
+      <div class="fg">
+        <label class="lbl">No. of Basement Levels</label>
+        <input class="fc" type="number" id="nBasement" placeholder="0" min="0" oninput="calcGFA()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Basement Area per Level</label>
+        <div class="ig"><input class="fc" type="number" id="aBasement" placeholder="0" oninput="calcGFA()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Ground Floor Area</label>
+        <div class="ig"><input class="fc" type="number" id="aGround" placeholder="0" oninput="calcGFA()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">No. of Podium Levels</label>
+        <input class="fc" type="number" id="nPodium" placeholder="0" min="0" oninput="calcGFA()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Podium Floor Plate</label>
+        <div class="ig"><input class="fc" type="number" id="aPodium" placeholder="0" oninput="calcGFA()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">No. of Typical Floors</label>
+        <input class="fc" type="number" id="nTypical" placeholder="0" min="0" oninput="calcGFA()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Typical Floor Plate</label>
+        <div class="ig"><input class="fc" type="number" id="aTypical" placeholder="0" oninput="calcGFA()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Penthouse / Special Floors</label>
+        <div class="ig"><input class="fc" type="number" id="aPenthouse" placeholder="0" oninput="calcGFA()"><span class="ig-sfx">m²</span></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="grid g3">
+      <div class="fg">
+        <label class="lbl">Total GFA (Above Grade)</label>
+        <div class="ig"><input class="fc" id="gfaAbove" readonly><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Total GFA (Basement)</label>
+        <div class="ig"><input class="fc" id="gfaBsmt" readonly><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Total GFA (All) <span>*</span></label>
+        <div class="ig"><input class="fc" id="gfaTotal" readonly oninput="calcCost()"><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Net Usable Area Ratio</label>
+        <div class="ig"><input class="fc" type="number" id="nuaRatio" placeholder="75" value="75"><span class="ig-sfx">%</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Net Usable Area (NUA)</label>
+        <div class="ig"><input class="fc" id="nuaTotal" readonly><span class="ig-sfx">m²</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Parking Spaces (Total)</label>
+        <input class="fc" type="number" id="parking" placeholder="0">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-home"></i> Unit / Space Breakdown <span class="hint" style="font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(fill what applies)</span></div>
+    <div class="grid g4">
+      <div class="fg"><label class="lbl">Studios</label><input class="fc" type="number" id="uStudio" placeholder="0"></div>
+      <div class="fg"><label class="lbl">1-Bedroom</label><input class="fc" type="number" id="u1br" placeholder="0"></div>
+      <div class="fg"><label class="lbl">2-Bedroom</label><input class="fc" type="number" id="u2br" placeholder="0"></div>
+      <div class="fg"><label class="lbl">3-Bedroom</label><input class="fc" type="number" id="u3br" placeholder="0"></div>
+      <div class="fg"><label class="lbl">4+ Bedroom / Penthouses</label><input class="fc" type="number" id="u4br" placeholder="0"></div>
+      <div class="fg"><label class="lbl">Retail / Office Units</label><input class="fc" type="number" id="uRetail" placeholder="0"></div>
+      <div class="fg"><label class="lbl">Hotel Keys / Rooms</label><input class="fc" type="number" id="uHotel" placeholder="0"></div>
+      <div class="fg"><label class="lbl">Villas / Townhouses</label><input class="fc" type="number" id="uVilla" placeholder="0"></div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(1)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(3)">Technical Parameters <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 3 — TECHNICAL ══ -->
+<div class="panel" id="p3">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-settings"></i></div>
+    <div><h2>Technical Parameters</h2><p>Structural system, finish level, MEP complexity and special features</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-building-arch"></i> Structural &amp; Construction</div>
+    <div class="grid g3">
+      <div class="fg">
+        <label class="lbl">Structural System</label>
+        <select class="fc" id="structSys">
+          <option>RC Frame (conventional)</option><option>Flat Slab RC</option><option>Structural Steel</option><option>Steel-Concrete Composite</option><option>Precast Concrete</option><option>Masonry / Block</option><option>Hybrid</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Foundation Type</label>
+        <select class="fc" id="foundType">
+          <option>Isolated Footings</option><option>Strip Footings</option><option>Raft / Mat Foundation</option><option>Bored Piles</option><option>Driven Piles</option><option>Diaphragm Wall</option><option>Unknown — subject to SI</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Facade / External Walls</label>
+        <select class="fc" id="facadeType">
+          <option>Plastered &amp; Painted</option><option>Ceramic / Stone Cladding</option><option>Aluminum Curtain Wall</option><option>Glazed Curtain Wall</option><option>Structural Glazing</option><option>GRC Panels</option><option>Mixed / Composite</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-diamond"></i> Finish Level &amp; Quality <span class="hint" style="text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px">— directly affects cost estimate</span></div>
+    <div class="grid g2" style="gap:10px">
+      <label style="border:2px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;transition:.2s" id="fl_eco" onclick="setFinish('economy')">
+        <input type="radio" name="finish" value="economy" style="margin-top:3px">
+        <div><strong style="color:var(--navy)">Economy</strong><br><span style="font-size:11px;color:var(--muted)">AED 800–1,100/m² · Basic finishes, standard MEP</span></div>
+      </label>
+      <label style="border:2px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;transition:.2s" id="fl_std" onclick="setFinish('standard')">
+        <input type="radio" name="finish" value="standard" style="margin-top:3px">
+        <div><strong style="color:var(--navy)">Standard</strong><br><span style="font-size:11px;color:var(--muted)">AED 1,200–1,800/m² · Mid-range finishes, adequate MEP</span></div>
+      </label>
+      <label style="border:2px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;transition:.2s" id="fl_prm" onclick="setFinish('premium')">
+        <input type="radio" name="finish" value="premium" style="margin-top:3px">
+        <div><strong style="color:var(--navy)">Premium</strong><br><span style="font-size:11px;color:var(--muted)">AED 2,000–2,800/m² · High-spec finishes, enhanced MEP</span></div>
+      </label>
+      <label style="border:2px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;transition:.2s" id="fl_lux" onclick="setFinish('luxury')">
+        <input type="radio" name="finish" value="luxury" style="margin-top:3px">
+        <div><strong style="color:var(--navy)">Luxury</strong><br><span style="font-size:11px;color:var(--muted)">AED 3,500–5,500/m² · Bespoke finishes, smart systems</span></div>
+      </label>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-tool"></i> MEP &amp; Systems</div>
+    <div class="grid g3">
+      <div class="fg">
+        <label class="lbl">HVAC System</label>
+        <select class="fc" id="hvac">
+          <option>Split Units (window / split AC)</option><option>Package Units (rooftop)</option><option>Chilled Water Central System</option><option>District Cooling</option><option>VRF / VRV System</option><option>Mixed</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">No. of Elevators / Lifts</label>
+        <input class="fc" type="number" id="nLifts" placeholder="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Sustainability Target</label>
+        <select class="fc" id="sustainability">
+          <option>None</option><option>Green Building (local)</option><option>LEED Certified</option><option>LEED Silver</option><option>LEED Gold</option><option>LEED Platinum</option><option>Estidama Pearl 1</option><option>Estidama Pearl 2+</option><option>BREEAM</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-list-check"></i> Special Features</div>
+    <div class="pills">
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-swimming-pool"></i> Swimming Pool</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-activity"></i> Gym / Fitness</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-plant"></i> Landscaping</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-spa"></i> SPA / Wellness</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-smart-home"></i> Smart Home / BMS</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-solar-panel"></i> Solar / PV</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-car-garage"></i> Multi-level Parking</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-coffee"></i> F&amp;B / Restaurants</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-presentation"></i> Conference / Events</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-helicopter-landing"></i> Helipad</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-barrier-block"></i> Security Perimeter</label>
+      <label class="pill" onclick="togglePill(this)"><input type="checkbox"> <i class="ti ti-eye"></i> CCTV / Surveillance</label>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(2)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(4)">Cost Estimate <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 4 — COST ESTIMATE ══ -->
+<div class="panel" id="p4">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-coins"></i></div>
+    <div><h2>Cost Estimate</h2><p>Itemised project budget — rates auto-populated from finish level &amp; GFA, fully editable</p></div>
+  </div>
+
+  <div class="kpi-row" id="costKpis">
+    <div class="kpi gold"><i class="ti ti-building-skyscraper"></i><div class="kpi-val" id="kGFA">—</div><div class="kpi-lbl">Gross Floor Area (m²)</div></div>
+    <div class="kpi navy"><i class="ti ti-coins"></i><div class="kpi-val" id="kConst">—</div><div class="kpi-lbl">Construction Cost</div></div>
+    <div class="kpi green"><i class="ti ti-briefcase"></i><div class="kpi-val" id="kFees">—</div><div class="kpi-lbl">Professional Fees</div></div>
+    <div class="kpi amber"><i class="ti ti-receipt"></i><div class="kpi-val" id="kAuth">—</div><div class="kpi-lbl">Authority &amp; Other</div></div>
+    <div class="kpi" style="border-color:var(--navy)"><i class="ti ti-calculator" style="color:var(--navy)"></i><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">TOTAL BUDGET</div></div>
+  </div>
+
+  <!-- Cost proportional bar -->
+  <div class="cost-bar" id="costBarEl"></div>
+  <div class="cost-bar-leg" id="costBarLeg"></div>
+
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-hammer"></i> A. Construction Works</div>
+    <table class="cost-tbl">
+      <thead><tr><th style="width:35%">Item</th><th>Rate <span style="opacity:.6">(per m²)</span></th><th>Area / Qty</th><th>m² / Unit</th><th style="text-align:right">Amount (<span id="cur1">AED</span>)</th></tr></thead>
+      <tbody id="constBody">
+        <tr class="sec"><td colspan="5">Civil &amp; Structural</td></tr>
+        <tr><td>Earthworks &amp; Excavation</td><td><input class="ci" id="r_earth" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_earth" type="number" oninput="calcCost()" placeholder="m³"></td><td class="r">m³</td><td class="r" id="a_earth">—</td></tr>
+        <tr><td>Foundation Works (excl. piles)</td><td><input class="ci" id="r_found" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_found" type="number" oninput="calcCost()" placeholder="m²"></td><td class="r">m²</td><td class="r" id="a_found">—</td></tr>
+        <tr><td>Piling (if applicable)</td><td><input class="ci" id="r_pile" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_pile" type="number" oninput="calcCost()" placeholder="No."></td><td class="r">per pile</td><td class="r" id="a_pile">—</td></tr>
+        <tr><td>Superstructure (RC / Steel Frame)</td><td><input class="ci" id="r_struct" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_struct" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_struct">—</td></tr>
+        <tr class="sec"><td colspan="5">Architecture &amp; Finishes</td></tr>
+        <tr><td>External Facade &amp; Cladding</td><td><input class="ci" id="r_facade" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_facade" type="number" oninput="calcCost()" placeholder="m² facade"></td><td class="r">m² facade</td><td class="r" id="a_facade">—</td></tr>
+        <tr><td>Internal Partitions</td><td><input class="ci" id="r_part" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_part" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_part">—</td></tr>
+        <tr><td>Flooring &amp; Wall Tiling</td><td><input class="ci" id="r_floor" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_floor" type="number" oninput="calcCost()" placeholder="m² NUA"></td><td class="r">m² NUA</td><td class="r" id="a_floor">—</td></tr>
+        <tr><td>Doors, Windows &amp; Ironmongery</td><td><input class="ci" id="r_doors" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_doors" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_doors">—</td></tr>
+        <tr><td>Kitchen, Joinery &amp; Built-ins</td><td><input class="ci" id="r_kit" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_kit" type="number" oninput="calcCost()" placeholder="No. units"></td><td class="r">per unit</td><td class="r" id="a_kit">—</td></tr>
+        <tr><td>Bathroom &amp; Sanitary Fittings</td><td><input class="ci" id="r_bath" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_bath" type="number" oninput="calcCost()" placeholder="No. bathrooms"></td><td class="r">per bathroom</td><td class="r" id="a_bath">—</td></tr>
+        <tr><td>Painting &amp; Decoration</td><td><input class="ci" id="r_paint" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_paint" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_paint">—</td></tr>
+        <tr class="sec"><td colspan="5">MEP Works</td></tr>
+        <tr><td>Electrical (LV, DB, Lighting, Cabling)</td><td><input class="ci" id="r_elec" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_elec" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_elec">—</td></tr>
+        <tr><td>Mechanical / HVAC</td><td><input class="ci" id="r_hvac" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_hvac" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_hvac">—</td></tr>
+        <tr><td>Plumbing (cold, hot, drainage)</td><td><input class="ci" id="r_plumb" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_plumb" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_plumb">—</td></tr>
+        <tr><td>Fire Fighting &amp; Detection</td><td><input class="ci" id="r_fire" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_fire" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_fire">—</td></tr>
+        <tr><td>Elevators / Lifts</td><td><input class="ci" id="r_lift" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_lift" type="number" oninput="calcCost()" placeholder="No. lifts"></td><td class="r">per lift</td><td class="r" id="a_lift">—</td></tr>
+        <tr><td>Telecom, Data &amp; IT Infrastructure</td><td><input class="ci" id="r_ict" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_ict" type="number" oninput="calcCost()" placeholder="m² GFA"></td><td class="r">m² GFA</td><td class="r" id="a_ict">—</td></tr>
+        <tr class="sec"><td colspan="5">External Works</td></tr>
+        <tr><td>Site Roads, Paving &amp; Hard Landscape</td><td><input class="ci" id="r_road" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_road" type="number" oninput="calcCost()" placeholder="m² plot"></td><td class="r">m² plot</td><td class="r" id="a_road">—</td></tr>
+        <tr><td>Soft Landscaping &amp; Irrigation</td><td><input class="ci" id="r_land" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_land" type="number" oninput="calcCost()" placeholder="m²"></td><td class="r">m²</td><td class="r" id="a_land">—</td></tr>
+        <tr><td>Swimming Pool(s)</td><td><input class="ci" id="r_pool" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_pool" type="number" oninput="calcCost()" placeholder="m² pool"></td><td class="r">m²</td><td class="r" id="a_pool">—</td></tr>
+        <tr><td>Boundary Wall / Fencing</td><td><input class="ci" id="r_fence" type="number" value="0" oninput="calcCost()"></td><td><input class="ci" id="q_fence" type="number" oninput="calcCost()" placeholder="m run"></td><td class="r">m run</td><td class="r" id="a_fence">—</td></tr>
+        <tr class="sec"><td colspan="5">Preliminaries &amp; Site Overheads</td></tr>
+        <tr><td>Contractor's Preliminaries &amp; Site Setup</td><td colspan="2"><input class="ci ci-pct" id="r_prelim" type="number" value="8" oninput="calcCost()" style="width:70px"> % of direct works</td><td class="r">%</td><td class="r" id="a_prelim">—</td></tr>
+      </tbody>
+    </table>
+    <div style="text-align:right;padding:12px 0 0;font-size:13px;font-weight:800;color:var(--navy)">
+      Subtotal — Direct Construction: &nbsp;<span id="subtotalConst" style="font-size:16px;color:var(--gold)">0</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-briefcase"></i> B. Professional Fees <span class="hint" style="font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">(% of construction subtotal)</span></div>
+    <table class="cost-tbl">
+      <thead><tr><th>Discipline</th><th>% of Construction</th><th style="text-align:right">Amount (<span id="cur2">AED</span>)</th></tr></thead>
+      <tbody>
+        <tr><td>Architecture &amp; Urban Design</td><td><input class="ci ci-pct" id="f_arch" type="number" value="5" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_arch">—</td></tr>
+        <tr><td>Structural Engineering</td><td><input class="ci ci-pct" id="f_struct" type="number" value="2" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fstruct">—</td></tr>
+        <tr><td>MEP Engineering</td><td><input class="ci ci-pct" id="f_mep" type="number" value="2.5" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fmep">—</td></tr>
+        <tr><td>Project Management</td><td><input class="ci ci-pct" id="f_pm" type="number" value="3" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fpm">—</td></tr>
+        <tr><td>Construction Supervision</td><td><input class="ci ci-pct" id="f_sup" type="number" value="3" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fsup">—</td></tr>
+        <tr><td>Quantity Surveying / Cost Consultant</td><td><input class="ci ci-pct" id="f_qs" type="number" value="1" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fqs">—</td></tr>
+        <tr><td>Specialist Consultants (landscape, acoustic, fire, etc.)</td><td><input class="ci ci-pct" id="f_spec" type="number" value="1" step="0.5" oninput="calcCost()"> %</td><td class="r" id="a_fspec">—</td></tr>
+        <tr class="tot"><td colspan="2">Subtotal — Professional Fees</td><td class="r" id="subtotalFees">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-receipt-2"></i> C. Authority, Government &amp; Other Costs</div>
+    <table class="cost-tbl">
+      <thead><tr><th>Item</th><th>Amount (<span id="cur3">AED</span>)</th></tr></thead>
+      <tbody>
+        <tr><td>Municipality Building Permit Fees</td><td class="r"><input class="ci" id="a_permit" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>NOC Fees (all authorities combined)</td><td class="r"><input class="ci" id="a_noc" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Utility Connection Fees (DEWA/ADDC/SEWA etc.)</td><td class="r"><input class="ci" id="a_util" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Soil Investigation &amp; Geotechnical Study</td><td class="r"><input class="ci" id="a_soil" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Topographic &amp; Boundary Survey</td><td class="r"><input class="ci" id="a_survey" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Testing, Inspection &amp; Commissioning</td><td class="r"><input class="ci" id="a_test" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Insurance (CAR / Professional Indemnity)</td><td class="r"><input class="ci" id="a_insure" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Marketing, Sales &amp; Legals</td><td class="r"><input class="ci" id="a_mktg" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr><td>Finance / Carry Cost</td><td class="r"><input class="ci" id="a_finance" type="number" value="0" oninput="calcCost()"></td></tr>
+        <tr class="tot"><td>Subtotal — Authority &amp; Other</td><td class="r" id="subtotalAuth">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-adjustments-horizontal"></i> D. Contingency</div>
+    <div class="grid g3" style="align-items:center">
+      <div class="fg">
+        <label class="lbl">Contingency %</label>
+        <div class="ig"><input class="fc" type="number" id="contingencyPct" value="10" min="0" max="25" oninput="calcCost()"><span class="ig-sfx">%</span></div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Contingency Amount</label>
+        <div class="ig"><input class="fc" id="a_contingency" readonly><span class="ig-sfx" id="cur4">AED</span></div>
+      </div>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--navy);background:#eef1f8">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700">TOTAL PROJECT BUDGET ESTIMATE</div>
+        <div id="totalBudget" style="font-size:32px;font-weight:900;color:var(--navy);margin-top:4px">—</div>
+        <div id="ratePerSqm" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-gold" onclick="autoFillRates()"><i class="ti ti-wand"></i> Auto-Fill Rates</button>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Based on project type &amp; finish level</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(3)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(5)">Timeline <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 5 — TIMELINE ══ -->
+<div class="panel" id="p5">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-calendar-stats"></i></div>
+    <div><h2>Project Timeline</h2><p>Phase durations and key milestones</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-clock"></i> Phase Durations</div>
+    <div class="grid g3" style="margin-bottom:20px">
+      <div class="fg">
+        <label class="lbl">Target Start Date</label>
+        <input class="fc" type="date" id="startDate" oninput="calcTimeline()">
+      </div>
+      <div class="fg">
+        <label class="lbl">Estimated Completion</label>
+        <input class="fc" id="endDate" readonly>
+      </div>
+      <div class="fg">
+        <label class="lbl">Total Project Duration</label>
+        <div class="ig"><input class="fc" id="totalDur" readonly><span class="ig-sfx">weeks</span></div>
+      </div>
+    </div>
+    <table class="tl-tbl" style="width:100%">
+      <thead><tr><th>Phase</th><th>Duration (weeks)</th><th>Gantt (proportional)</th><th>Remarks</th></tr></thead>
+      <tbody id="tlBody">
+        <!-- generated by JS -->
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-flag"></i> Key Milestones</div>
+    <div class="grid g3">
+      <div class="fg"><label class="lbl">Concept Design Approval</label><input class="fc" type="date" id="m_concept"></div>
+      <div class="fg"><label class="lbl">Building Permit Issued</label><input class="fc" type="date" id="m_permit"></div>
+      <div class="fg"><label class="lbl">Contractor Appointed</label><input class="fc" type="date" id="m_contract"></div>
+      <div class="fg"><label class="lbl">Structure Completion</label><input class="fc" type="date" id="m_structure"></div>
+      <div class="fg"><label class="lbl">MEP Completion</label><input class="fc" type="date" id="m_mep"></div>
+      <div class="fg"><label class="lbl">Practical Completion / Handover</label><input class="fc" type="date" id="m_handover"></div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(4)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(6)">Risk Assessment <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 6 — RISKS ══ -->
+<div class="panel" id="p6">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-alert-triangle"></i></div>
+    <div><h2>Risk Assessment</h2><p>Identify, rate and mitigate key project risks</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-grid-dots"></i> Risk Matrix</div>
+    <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;text-align:center">Impact →</div>
+        <div class="risk-matrix-wrap">
+          <div class="rm rm-hdr"></div>
+          <div class="rm rm-hdr">Low</div><div class="rm rm-hdr">Medium</div><div class="rm rm-hdr">High</div><div class="rm rm-hdr">Critical</div>
+          <div class="rm rm-axis" style="grid-row:span 4">Likelihood ↑</div>
+          <div class="rm rm-l">Low</div><div class="rm rm-l">Low</div><div class="rm rm-m">Med</div><div class="rm rm-h">High</div>
+          <div class="rm rm-l">Low</div><div class="rm rm-m">Med</div><div class="rm rm-h">High</div><div class="rm rm-h">High</div>
+          <div class="rm rm-m">Med</div><div class="rm rm-h">High</div><div class="rm rm-h">High</div><div class="rm rm-c">CRIT</div>
+          <div class="rm rm-h">High</div><div class="rm rm-h">High</div><div class="rm rm-c">CRIT</div><div class="rm rm-c">CRIT</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:2">
+        <div><span class="tag tag-green">Low</span> &nbsp;Monitor — no immediate action required</div>
+        <div><span class="tag" style="background:#fef9c3;color:#854d0e">Medium</span> &nbsp;Mitigation plan required</div>
+        <div><span class="tag tag-red">High</span> &nbsp;Active management &amp; contingency budgeted</div>
+        <div><span class="tag" style="background:#7f1d1d;color:#fff">Critical</span> &nbsp;Escalate — stop / redesign / rescope</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-list-details"></i> Risk Register</div>
+    <div id="riskList" class="risk-list"></div>
+    <button class="btn btn-ghost" style="margin-top:12px" onclick="addRisk()"><i class="ti ti-plus"></i> Add Risk</button>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(5)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(7)">Recommendation <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 7 — RECOMMENDATION ══ -->
+<div class="panel" id="p7">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-checkup-list"></i></div>
+    <div><h2>Consultant's Recommendation</h2><p>Key findings, feasibility verdict and sign-off</p></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-notes"></i> Executive Summary &amp; Key Findings</div>
+    <div class="grid g2">
+      <div class="fg gfull">
+        <label class="lbl">Executive Summary</label>
+        <textarea class="fc" id="execSummary" style="min-height:120px" placeholder="Brief overview of the project, site, program and key considerations…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Key Opportunities / Strengths</label>
+        <textarea class="fc" id="opportunities" placeholder="Positive factors supporting feasibility…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Key Concerns / Risks</label>
+        <textarea class="fc" id="concerns" placeholder="Issues that may affect viability or require resolution…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Conditions / Pre-requisites</label>
+        <textarea class="fc" id="conditions" placeholder="What must be resolved before proceeding…"></textarea>
+      </div>
+      <div class="fg">
+        <label class="lbl">Proposed Next Steps</label>
+        <textarea class="fc" id="nextSteps" placeholder="Immediate actions recommended by consultant…"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-thumb-up"></i> Feasibility Verdict</div>
+    <div class="rec-opts" id="recOpts">
+      <label class="rec-opt" id="rec_proceed" onclick="setRec('proceed',this)">
+        <input type="radio" name="rec" value="proceed">
+        <div class="rec-ico g"><i class="ti ti-circle-check"></i></div>
+        <div class="rec-txt"><strong>Proceed as Planned</strong><span>Project is feasible as currently scoped. Recommend proceeding to detailed design.</span></div>
+      </label>
+      <label class="rec-opt" id="rec_modify" onclick="setRec('modify',this)">
+        <input type="radio" name="rec" value="modify">
+        <div class="rec-ico a"><i class="ti ti-circle-half"></i></div>
+        <div class="rec-txt"><strong>Proceed with Modifications</strong><span>Feasible subject to identified changes to scope, budget or program.</span></div>
+      </label>
+      <label class="rec-opt" id="rec_study" onclick="setRec('study',this)">
+        <input type="radio" name="rec" value="study">
+        <div class="rec-ico n"><i class="ti ti-search"></i></div>
+        <div class="rec-txt"><strong>Further Study Required</strong><span>Additional investigations (SI, traffic, heritage, etc.) needed before recommendation.</span></div>
+      </label>
+      <label class="rec-opt" id="rec_notfeas" onclick="setRec('notfeas',this)">
+        <input type="radio" name="rec" value="notfeas">
+        <div class="rec-ico b"><i class="ti ti-circle-x"></i></div>
+        <div class="rec-txt"><strong>Not Feasible as Proposed</strong><span>Project does not meet regulatory, technical or financial viability criteria.</span></div>
+      </label>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-signature"></i> Consultant Sign-Off</div>
+    <div class="grid g3">
+      <div class="fg"><label class="lbl">Consultant Name <span>*</span></label><input class="fc" id="signName" placeholder="Full name"></div>
+      <div class="fg"><label class="lbl">Title / Designation</label><input class="fc" id="signTitle" placeholder="e.g. Senior Architect, Project Director"></div>
+      <div class="fg"><label class="lbl">License / Accreditation No.</label><input class="fc" id="signLicense" placeholder="e.g. DCD-A-12345"></div>
+      <div class="fg"><label class="lbl">Date of Issue</label><input class="fc" type="date" id="signDate"></div>
+      <div class="fg"><label class="lbl">Report Version</label><input class="fc" id="signVersion" placeholder="e.g. Rev 0 — Preliminary" value="Rev 0 — Preliminary"></div>
+      <div class="fg"><label class="lbl">Validity Period</label><input class="fc" id="signValidity" placeholder="e.g. 90 days from issue date"></div>
+    </div>
+    <div class="divider"></div>
+    <p style="font-size:11px;color:var(--muted);line-height:1.8">
+      <i class="ti ti-info-circle"></i> &nbsp;This feasibility study represents a professional assessment based on the information provided and prevailing market conditions at the date of issue. Cost estimates are indicative and subject to detailed design, current market pricing, and contractor quotations. The consultants accept no liability for decisions made solely on the basis of this document without further due diligence.
+    </p>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="go(6)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-navy" onclick="go(8)">View Summary <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ══ PANEL 8 — SUMMARY ══ -->
+<div class="panel" id="p8">
+  <div class="sec-title">
+    <div class="sec-icon"><i class="ti ti-chart-bar"></i></div>
+    <div><h2>Feasibility Study Summary</h2><p>Complete executive overview — ready to print as PDF</p></div>
+  </div>
+  <div id="summaryContent">
+    <!-- Dynamically generated by buildSummary() -->
+  </div>
+  <div class="nav-btns no-print">
+    <button class="btn btn-ghost" onclick="go(7)"><i class="ti ti-arrow-left"></i> Back</button>
+    <button class="btn btn-gold" onclick="buildSummary();window.print()"><i class="ti ti-printer"></i> Print / Export PDF</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════════
+const TABS = [
+  {icon:'ti-clipboard-list',label:'Project Info'},
+  {icon:'ti-map-pin',label:'Site Data'},
+  {icon:'ti-ruler',label:'Program'},
+  {icon:'ti-settings',label:'Technical'},
+  {icon:'ti-coins',label:'Cost Estimate'},
+  {icon:'ti-calendar-stats',label:'Timeline'},
+  {icon:'ti-alert-triangle',label:'Risks'},
+  {icon:'ti-checkup-list',label:'Recommendation'},
+  {icon:'ti-chart-bar',label:'Summary'},
+];
+let currentTab = 0;
+function renderTabs(){
+  const el = document.getElementById('tabsEl');
+  el.innerHTML = TABS.map((t,i)=>
+    `<div class="tab${i===currentTab?' active':''}" onclick="go(${i})">
+      <i class="ti ${t.icon}"></i>${t.label}
+      <span class="tab-num">${i+1}</span>
+    </div>`).join('');
+}
+function go(n){
+  if(n===8) buildSummary();
+  document.getElementById('p'+currentTab).classList.remove('active');
+  currentTab=n;
+  document.getElementById('p'+n).classList.add('active');
+  renderTabs();
+  document.querySelector('.tabs-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+  updateProgress();
+}
+renderTabs();
+
+// ═══════════════════════════════════════════════════════════════════
+// REFERENCE & DATE
+// ═══════════════════════════════════════════════════════════════════
+function updateRef(){
+  const d = document.getElementById('assessDate').value;
+  const name = (document.getElementById('projName').value||'').slice(0,4).toUpperCase().replace(/\s/g,'') || 'PROJ';
+  const yr = d ? new Date(d).getFullYear() : new Date().getFullYear();
+  const mo = d ? String(new Date(d).getMonth()+1).padStart(2,'0') : String(new Date().getMonth()+1).padStart(2,'0');
+  const ref = `ASO-FS-${yr}${mo}-${name}`;
+  document.getElementById('refNo').value = ref;
+  const dateStr = d ? new Date(d).toLocaleDateString('en-AE',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  document.getElementById('refLine').textContent = `REF: ${ref}  |  DATE: ${dateStr}`;
+}
+// Set today as default
+document.getElementById('assessDate').value = new Date().toISOString().split('T')[0];
+updateRef();
+
+// ═══════════════════════════════════════════════════════════════════
+// COUNTRY FLAG
+// ═══════════════════════════════════════════════════════════════════
+function updateCountryFlag(){
+  const sel = document.getElementById('country');
+  const opt = sel.options[sel.selectedIndex];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GFA CALCULATION
+// ═══════════════════════════════════════════════════════════════════
+function calcGFA(){
+  const nB = +v('nBasement')||0, aB = +v('aBasement')||0;
+  const aG = +v('aGround')||0;
+  const nP = +v('nPodium')||0, aP = +v('aPodium')||0;
+  const nT = +v('nTypical')||0, aT = +v('aTypical')||0;
+  const aPH = +v('aPenthouse')||0;
+  const above = aG + nP*aP + nT*aT + aPH;
+  const bsmt = nB*aB;
+  const total = above + bsmt;
+  const nua = total * ((+v('nuaRatio')||75)/100);
+  set('gfaAbove', fmt0(above));
+  set('gfaBsmt', fmt0(bsmt));
+  set('gfaTotal', fmt0(total));
+  set('nuaTotal', fmt0(nua));
+  calcCost();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FINISH LEVEL
+// ═══════════════════════════════════════════════════════════════════
+let finishLevel = 'standard';
+const flEls = {economy:'fl_eco',standard:'fl_std',premium:'fl_prm',luxury:'fl_lux'};
+function setFinish(level){
+  finishLevel = level;
+  Object.entries(flEls).forEach(([k,id])=>{
+    const el=document.getElementById(id);
+    el.style.borderColor = k===level ? 'var(--navy)' : 'var(--border)';
+    el.style.background = k===level ? '#eef1f8' : '';
+    el.querySelector('input').checked = k===level;
+  });
+  calcCost();
+}
+setFinish('standard');
+
+// ═══════════════════════════════════════════════════════════════════
+// RATES TABLE (per finish level & project type)
+// ═══════════════════════════════════════════════════════════════════
+const BASE_RATES = {
+  economy:{struct:280,facade:180,part:80,floor:90,doors:140,kit:4500,bath:1800,paint:45,elec:90,hvac:110,plumb:75,fire:55,lift:180000,ict:35,road:80,land:70,pool:2800,fence:450,prelim:7},
+  standard:{struct:380,facade:260,part:130,floor:160,doors:220,kit:8000,bath:3500,paint:65,elec:150,hvac:200,plumb:120,fire:85,lift:240000,ict:55,road:120,land:130,pool:4500,fence:700,prelim:8},
+  premium:{struct:520,facade:450,part:200,floor:280,doors:380,kit:15000,bath:7000,paint:90,elec:220,hvac:320,plumb:180,fire:120,lift:320000,ict:90,road:180,land:220,pool:7000,fence:1100,prelim:9},
+  luxury:{struct:750,facade:800,part:320,floor:500,doors:600,kit:30000,bath:15000,paint:140,elec:380,hvac:520,plumb:280,fire:170,lift:450000,ict:150,road:280,land:380,pool:12000,fence:2000,prelim:10},
+};
+const TYPE_MULT = {villa:1.05,compound:0.92,apartment:1.0,commercial:1.08,retail:1.15,mixed:1.12,hotel:1.45,industrial:0.58,institutional:1.18,infrastructure:0.75};
+
+function autoFillRates(){
+  const gfa = +v('gfaTotal')||0;
+  const nua = +v('nuaTotal')||0;
+  const land = +v('landArea')||0;
+  const nLifts = +v('nLifts')||1;
+  const pType = v('projType')||'apartment';
+  const mult = TYPE_MULT[pType]||1.0;
+  const R = BASE_RATES[finishLevel]||BASE_RATES.standard;
+
+  // Helper: set rate + qty
+  function sr(rid, rateId, qtyId, baseRate, qty){
+    document.getElementById(rateId).value = Math.round(baseRate*mult);
+    document.getElementById(qtyId).value = Math.round(qty);
+  }
+  sr('r_struct','r_struct','q_struct', R.struct, gfa);
+  sr('r_earth','r_earth','q_earth', R.struct*0.3, gfa*0.4);  // approx excavation vol
+  sr('r_found','r_found','q_found', R.struct*0.5, gfa*0.15);
+  set('r_pile', '0'); set('q_pile','0');
+  sr('r_facade','r_facade','q_facade', R.facade, gfa*0.45); // facade approx
+  sr('r_part','r_part','q_part', R.part, gfa);
+  sr('r_floor','r_floor','q_floor', R.floor, nua||gfa*0.75);
+  sr('r_doors','r_doors','q_doors', R.doors, gfa);
+  sr('r_kit','r_kit','q_kit', R.kit, +v('u1br')+(+v('u2br'))+(+v('u3br'))+(+v('u4br'))+(+v('uVilla'))||1);
+  sr('r_bath','r_bath','q_bath', R.bath, Math.max(1,(+v('u1br'))*1.5+(+v('u2br'))*2+(+v('u3br'))*3));
+  sr('r_paint','r_paint','q_paint', R.paint, gfa);
+  sr('r_elec','r_elec','q_elec', R.elec, gfa);
+  sr('r_hvac','r_hvac','q_hvac', R.hvac, gfa);
+  sr('r_plumb','r_plumb','q_plumb', R.plumb, gfa);
+  sr('r_fire','r_fire','q_fire', R.fire, gfa);
+  document.getElementById('r_lift').value = Math.round(R.lift*mult);
+  document.getElementById('q_lift').value = nLifts||Math.ceil(gfa/3000);
+  sr('r_ict','r_ict','q_ict', R.ict, gfa);
+  sr('r_road','r_road','q_road', R.road, land*0.4);
+  sr('r_land','r_land','q_land', R.land, land*0.2);
+  set('r_pool','0'); set('q_pool','0');
+  sr('r_fence','r_fence','q_fence', R.fence, Math.sqrt(land)*4);
+  document.getElementById('r_prelim').value = R.prelim;
+  calcCost();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COST CALCULATION
+// ═══════════════════════════════════════════════════════════════════
+function calcCost(){
+  const cur = v('currency')||'AED';
+  ['cur1','cur2','cur3','cur4'].forEach(id=>{ const e=document.getElementById(id); if(e) e.textContent=cur; });
+
+  const line = (rid,qid) => (+v(rid)||0)*(+v(qid)||0);
+  const prelim_base = ['struct','found','pile','facade','part','floor','doors','kit','bath','paint',
+                       'elec','hvac','plumb','fire','lift','ict','road','land','pool','fence'].reduce((s,k)=>s+line('r_'+k,'q_'+k),0);
+  const prelim_pct = (+v('r_prelim')||8)/100;
+  const prelim_amt = prelim_base * prelim_pct;
+
+  // All individual lines
+  const lines = {
+    earth:line('r_earth','q_earth'), found:line('r_found','q_found'), pile:line('r_pile','q_pile'), struct:line('r_struct','q_struct'),
+    facade:line('r_facade','q_facade'), part:line('r_part','q_part'), floor:line('r_floor','q_floor'), doors:line('r_doors','q_doors'),
+    kit:line('r_kit','q_kit'), bath:line('r_bath','q_bath'), paint:line('r_paint','q_paint'),
+    elec:line('r_elec','q_elec'), hvac:line('r_hvac','q_hvac'), plumb:line('r_plumb','q_plumb'),
+    fire:line('r_fire','q_fire'), lift:line('r_lift','q_lift'), ict:line('r_ict','q_ict'),
+    road:line('r_road','q_road'), land:line('r_land','q_land'), pool:line('r_pool','q_pool'), fence:line('r_fence','q_fence'),
+    prelim: prelim_amt
+  };
+
+  Object.entries(lines).forEach(([k,v])=>{
+    const el=document.getElementById('a_'+k);
+    if(el) el.textContent = v>0 ? fmtCur(v,cur) : '—';
+  });
+
+  const constSub = Object.values(lines).reduce((a,b)=>a+b,0);
+  set('subtotalConst', fmtCur(constSub,cur));
+
+  // Professional fees
+  const fees = {arch:+v('f_arch')||0, struct:+v('f_struct')||0, mep:+v('f_mep')||0, pm:+v('f_pm')||0, sup:+v('f_sup')||0, qs:+v('f_qs')||0, spec:+v('f_spec')||0};
+  let feesSub = 0;
+  Object.entries(fees).forEach(([k,pct])=>{
+    const amt = constSub * pct/100;
+    feesSub += amt;
+    const el=document.getElementById('a_f'+k);
+    if(el) el.textContent = fmtCur(amt,cur);
+  });
+  set('subtotalFees', fmtCur(feesSub,cur));
+
+  // Authority & other
+  const authFields = ['permit','noc','util','soil','survey','test','insure','mktg','finance'];
+  const authSub = authFields.reduce((s,k)=>{
+    const el=document.getElementById('a_'+k); return s+(el?+el.value||0:0);
+  },0);
+  set('subtotalAuth', fmtCur(authSub,cur));
+
+  // Contingency
+  const base3 = constSub + feesSub + authSub;
+  const contPct = (+v('contingencyPct')||10)/100;
+  const contAmt = base3 * contPct;
+  set('a_contingency', fmtCur(contAmt,cur));
+
+  const total = base3 + contAmt;
+  document.getElementById('totalBudget').textContent = fmtCur(total,cur);
+  const gfa = +v('gfaTotal')||0;
+  document.getElementById('ratePerSqm').textContent = gfa>0 ? `≈ ${fmtCur(total/gfa,cur)} / m² GFA` : '';
+
+  // KPI cards
+  set('kGFA', gfa>0 ? fmt0(gfa)+' m²' : '—');
+  set('kConst', constSub>0 ? fmtK(constSub,cur) : '—');
+  set('kFees', feesSub>0 ? fmtK(feesSub,cur) : '—');
+  set('kAuth', authSub>0 ? fmtK(authSub,cur) : '—');
+  set('kTotal', total>0 ? fmtK(total,cur) : '—');
+
+  // Cost bar
+  if(total>0){
+    const segs = [
+      {label:'Construction',val:constSub,color:'#1B2B4B'},
+      {label:'Prof. Fees',val:feesSub,color:'#C9973A'},
+      {label:'Authority',val:authSub,color:'#2D7D46'},
+      {label:'Contingency',val:contAmt,color:'#D97706'},
+    ];
+    document.getElementById('costBarEl').innerHTML = segs.map(s=>
+      `<div style="flex:${s.val};background:${s.color}" title="${s.label}: ${fmtCur(s.val,cur)}"></div>`
+    ).join('');
+    document.getElementById('costBarLeg').innerHTML = segs.map(s=>
+      `<div class="cb-item"><div class="cb-dot" style="background:${s.color}"></div>${s.label}: ${s.val>0?fmtCur(s.val,cur):'—'}</div>`
+    ).join('');
+  }
+  updateProgress();
+  return {constSub,feesSub,authSub,contAmt,total,cur};
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TIMELINE
+// ═══════════════════════════════════════════════════════════════════
+const PHASES = [
+  {label:'Concept Design', color:'#1B2B4B', defWks:3},
+  {label:'Schematic Design', color:'#2C3E6B', defWks:4},
+  {label:'Detailed Design & Documentation', color:'#C9973A', defWks:8},
+  {label:'Authority Submissions & Approvals', color:'#B5851F', defWks:10},
+  {label:'Tender & Contractor Procurement', color:'#2D7D46', defWks:5},
+  {label:'Construction', color:'#D97706', defWks:52},
+  {label:'Testing, Commissioning & Handover', color:'#DC2626', defWks:4},
+];
+function renderTimeline(){
+  const tbody = document.getElementById('tlBody');
+  tbody.innerHTML = PHASES.map((p,i)=>
+    `<tr>
+      <td><span class="ph-dot" style="background:${p.color}"></span>${p.label}</td>
+      <td><input class="tl-dur" type="number" id="ph${i}" value="${p.defWks}" oninput="calcTimeline()" min="1"></td>
+      <td><div class="bar-wrap"><div class="bar-seg" id="bar${i}" style="background:${p.color};width:0"></div></div></td>
+      <td><input class="fc" type="text" id="ph_rem${i}" style="font-size:12px;padding:5px 8px" placeholder="Notes…"></td>
+    </tr>`
+  ).join('');
+}
+renderTimeline();
+function calcTimeline(){
+  const total = PHASES.reduce((s,_,i)=>s+(+document.getElementById('ph'+i)?.value||0),0);
+  set('totalDur', total);
+  PHASES.forEach((_,i)=>{
+    const w = +document.getElementById('ph'+i)?.value||0;
+    const bar = document.getElementById('bar'+i);
+    if(bar) bar.style.width = total>0 ? (w/total*100)+'%' : '0';
+  });
+  const start = v('startDate');
+  if(start){
+    const end = new Date(start);
+    end.setDate(end.getDate() + total*7);
+    set('endDate', end.toLocaleDateString('en-AE',{day:'2-digit',month:'short',year:'numeric'}));
+  }
+}
+calcTimeline();
+
+// ═══════════════════════════════════════════════════════════════════
+// RISK REGISTER
+// ═══════════════════════════════════════════════════════════════════
+const RISK_DEFAULTS = [
+  {risk:'Ground conditions unknown / soft soil',cat:'Site',like:'Medium',impact:'High',mitigation:'Commission soil investigation before design'},
+  {risk:'Regulatory approvals delayed',cat:'Regulatory',like:'High',impact:'Medium',mitigation:'Early pre-submission meetings with authority'},
+  {risk:'Construction cost escalation',cat:'Financial',like:'Medium',impact:'High',mitigation:'10% contingency built into budget'},
+  {risk:'Key consultant / contractor unavailability',cat:'Resource',like:'Low',impact:'Medium',mitigation:'Maintain shortlist of pre-qualified firms'},
+  {risk:'Design brief changes mid-stage',cat:'Design',like:'High',impact:'Medium',mitigation:'Freeze brief before DD stage, manage via change control'},
+];
+let risks = [...RISK_DEFAULTS];
+function renderRisks(){
+  const levels = {Low:'risk-low',Medium:'risk-med',High:'risk-hi',Critical:'risk-crit'};
+  const getLvl = (l,i)=>{
+    const m={Low:1,Medium:2,High:3,Critical:4};
+    const score=(m[l]||1)*(m[i]||1);
+    return score<=2?'Low':score<=6?'Medium':score<=9?'High':'Critical';
+  };
+  document.getElementById('riskList').innerHTML = risks.map((r,idx)=>`
+    <div class="risk-row">
+      <div><strong style="color:var(--navy);font-size:12px">${r.risk}</strong><br><span style="font-size:11px;color:var(--muted)">${r.cat}</span></div>
+      <select class="fc" style="font-size:12px;padding:5px 8px" onchange="risks[${idx}].like=this.value;renderRisks()">
+        ${['Low','Medium','High','Critical'].map(o=>`<option${o===r.like?' selected':''}>${o}</option>`).join('')}
+      </select>
+      <select class="fc" style="font-size:12px;padding:5px 8px" onchange="risks[${idx}].impact=this.value;renderRisks()">
+        ${['Low','Medium','High','Critical'].map(o=>`<option${o===r.impact?' selected':''}>${o}</option>`).join('')}
+      </select>
+      <div><span class="risk-badge risk-${getLvl(r.like,r.impact).toLowerCase()}">${getLvl(r.like,r.impact)}</span><br><span style="font-size:11px;color:var(--muted)">${r.mitigation}</span></div>
+    </div>`).join('');
+}
+renderRisks();
+function addRisk(){
+  risks.push({risk:'New Risk',cat:'General',like:'Medium',impact:'Medium',mitigation:'To be determined'});
+  renderRisks();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RECOMMENDATION
+// ═══════════════════════════════════════════════════════════════════
+let recVal = '';
+function setRec(val, el){
+  recVal = val;
+  document.querySelectorAll('.rec-opt').forEach(o=>o.classList.remove('sel'));
+  if(el) el.classList.add('sel');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════════════════════════════════════
+function buildSummary(){
+  const cur = v('currency')||'AED';
+  const costs = calcCost();
+  const flag = document.getElementById('country').options[document.getElementById('country').selectedIndex]?.getAttribute('data-flag')||'';
+  const recLabels = {proceed:'✅ Proceed as Planned',modify:'⚠️ Proceed with Modifications',study:'🔍 Further Study Required',notfeas:'❌ Not Feasible as Proposed'};
+  document.getElementById('summaryContent').innerHTML = `
+    <div class="ref-box"><i class="ti ti-id-badge"></i> <strong>${v('refNo')||'ASO-FS-XXXX'}</strong> &nbsp;|&nbsp; ${v('assessDate')||new Date().toISOString().split('T')[0]} &nbsp;|&nbsp; Prepared by: ${v('preparedBy')||'—'}</div>
+    <div class="kpi-row">
+      <div class="kpi gold"><i class="ti ti-building"></i><div class="kpi-val">${v('projType')||'—'}</div><div class="kpi-lbl">Project Type</div></div>
+      <div class="kpi navy"><i class="ti ti-map-pin"></i><div class="kpi-val">${flag} ${v('city')||'—'}</div><div class="kpi-lbl">Location</div></div>
+      <div class="kpi green"><i class="ti ti-ruler-measure"></i><div class="kpi-val">${fmt0(+v('landArea')||0)} m²</div><div class="kpi-lbl">Land Area</div></div>
+      <div class="kpi gold"><i class="ti ti-layers"></i><div class="kpi-val">${fmt0(+v('gfaTotal')||0)} m²</div><div class="kpi-lbl">Total GFA</div></div>
+      <div class="kpi navy"><i class="ti ti-calculator"></i><div class="kpi-val">${fmtK(costs.total,cur)}</div><div class="kpi-lbl">Total Budget</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><i class="ti ti-building"></i> Project Overview</div>
+      <table class="sum-tbl">
+        <tr><td width="35%"><strong>Project Name</strong></td><td>${v('projName')||'—'}</td><td width="35%"><strong>Client</strong></td><td>${v('clientName')||'—'}</td></tr>
+        <tr><td><strong>Type</strong></td><td>${v('projType')||'—'}</td><td><strong>Country</strong></td><td>${flag} ${document.getElementById('country').options[document.getElementById('country').selectedIndex]?.text||'—'}</td></tr>
+        <tr><td><strong>Location</strong></td><td>${v('city')||'—'} — ${v('projAddress')||'—'}</td><td><strong>Finish Level</strong></td><td style="text-transform:capitalize">${finishLevel}</td></tr>
+        <tr><td><strong>Land Area</strong></td><td>${fmt0(+v('landArea')||0)} m²</td><td><strong>Plot Ratio / FAR</strong></td><td>${v('far')||'—'}</td></tr>
+        <tr><td><strong>GFA (Above Grade)</strong></td><td>${fmt0(+v('gfaAbove')||0)} m²</td><td><strong>GFA (Basement)</strong></td><td>${fmt0(+v('gfaBsmt')||0)} m²</td></tr>
+        <tr class="bold"><td><strong>Total GFA</strong></td><td>${fmt0(+v('gfaTotal')||0)} m²</td><td><strong>Net Usable Area</strong></td><td>${fmt0(+v('nuaTotal')||0)} m²</td></tr>
+        <tr><td><strong>Structural System</strong></td><td>${v('structSys')||'—'}</td><td><strong>Foundation</strong></td><td>${v('foundType')||'—'}</td></tr>
+        <tr><td><strong>Sustainability</strong></td><td>${v('sustainability')||'None'}</td><td><strong>Parking Spaces</strong></td><td>${v('parking')||'—'}</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hd"><i class="ti ti-coins"></i> Cost Summary</div>
+      <table class="sum-tbl">
+        <tr><td width="60%">A. Direct Construction Works</td><td class="r" style="text-align:right">${fmtCur(costs.constSub,cur)}</td></tr>
+        <tr><td>B. Professional Fees</td><td style="text-align:right">${fmtCur(costs.feesSub,cur)}</td></tr>
+        <tr><td>C. Authority, Government &amp; Other Costs</td><td style="text-align:right">${fmtCur(costs.authSub,cur)}</td></tr>
+        <tr><td>D. Contingency (${v('contingencyPct')||10}%)</td><td style="text-align:right">${fmtCur(costs.contAmt,cur)}</td></tr>
+        <tr class="bold"><td><strong>TOTAL PROJECT BUDGET ESTIMATE</strong></td><td style="text-align:right;font-size:16px">${fmtCur(costs.total,cur)}</td></tr>
+      </table>
+      ${+v('gfaTotal')>0?`<p style="font-size:12px;color:var(--muted);margin-top:8px">Blended rate: <strong>${fmtCur(costs.total/(+v('gfaTotal')),cur)} / m² GFA</strong></p>`:''}
+    </div>
+    <div class="card">
+      <div class="card-hd"><i class="ti ti-calendar-check"></i> Schedule Summary</div>
+      <table class="sum-tbl">
+        <tr><td>Total Project Duration</td><td>${v('totalDur')||'—'} weeks</td></tr>
+        <tr><td>Target Start Date</td><td>${v('startDate')||'—'}</td></tr>
+        <tr><td>Estimated Completion</td><td>${v('endDate')||'—'}</td></tr>
+      </table>
+    </div>
+    <div class="card" style="border-left:5px solid ${recVal==='proceed'?'var(--green)':recVal==='modify'?'var(--amber)':recVal==='notfeas'?'var(--red)':'var(--gold)'}">
+      <div class="card-hd"><i class="ti ti-checkup-list"></i> Consultant's Recommendation</div>
+      <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px">${recLabels[recVal]||'No verdict selected'}</div>
+      ${v('execSummary')?`<p style="font-size:13px;margin-bottom:10px">${v('execSummary')}</p>`:''}
+      ${v('conditions')?`<p style="font-size:12px;color:var(--muted)"><strong>Conditions:</strong> ${v('conditions')}</p>`:''}
+      <div class="divider"></div>
+      <div style="display:flex;gap:32px;font-size:12px">
+        <div><strong>Consultant:</strong> ${v('signName')||'—'}</div>
+        <div><strong>Title:</strong> ${v('signTitle')||'—'}</div>
+        <div><strong>License:</strong> ${v('signLicense')||'—'}</div>
+        <div><strong>Date:</strong> ${v('signDate')||'—'}</div>
+        <div><strong>Version:</strong> ${v('signVersion')||'Rev 0'}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════════════════
+function updateProgress(){
+  const filled = (ids) => ids.filter(id=>{ const e=document.getElementById(id); return e&&e.value&&e.value.trim(); }).length;
+  const checks = [
+    filled(['projName','projType','clientName','country']),
+    filled(['landArea','zoning']),
+    filled(['gfaTotal']),
+    filled(['structSys']),
+    document.getElementById('q_struct')?.value>0?2:0,
+    document.getElementById('ph0')?.value?2:0,
+    risks.length>0?2:0,
+    recVal?2:0,
+  ];
+  const total = checks.reduce((a,b)=>a+(b>0?1:0),0);
+  document.getElementById('progBar').style.width = Math.round((total/8)*100)+'%';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SAVE / LOAD / CLEAR
+// ═══════════════════════════════════════════════════════════════════
+function saveForm(){
+  const data = {};
+  document.querySelectorAll('[id]').forEach(el=>{
+    if(el.tagName==='INPUT'||el.tagName==='SELECT'||el.tagName==='TEXTAREA'){
+      data[el.id] = el.value;
+    }
+  });
+  data['_finishLevel']=finishLevel;
+  data['_recVal']=recVal;
+  localStorage.setItem('aso_feasibility',JSON.stringify(data));
+  showToast('Form saved to browser storage');
+}
+function loadSaved(){
+  try{
+    const data = JSON.parse(localStorage.getItem('aso_feasibility')||'{}');
+    Object.entries(data).forEach(([k,v])=>{
+      if(k.startsWith('_')) return;
+      const el=document.getElementById(k);
+      if(el&&(el.tagName==='INPUT'||el.tagName==='SELECT'||el.tagName==='TEXTAREA')) el.value=v;
+    });
+    if(data._finishLevel) setFinish(data._finishLevel);
+    if(data._recVal) setRec(data._recVal, document.getElementById('rec_'+data._recVal));
+    calcGFA(); calcCost(); calcTimeline(); updateRef();
+  }catch(e){}
+}
+function clearForm(){
+  if(!confirm('Clear all form data?')) return;
+  localStorage.removeItem('aso_feasibility');
+  location.reload();
+}
+function showToast(msg){
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:var(--sh2);animation:fadeIn .3s';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+loadSaved();
+
+// ═══════════════════════════════════════════════════════════════════
+// PILLS
+// ═══════════════════════════════════════════════════════════════════
+function togglePill(el){ el.classList.toggle('on'); }
+
+// ═══════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function v(id){ const e=document.getElementById(id); return e?e.value:''; }
+function set(id,val){ const e=document.getElementById(id); if(e) e.value=val; }
+function fmt0(n){ return n.toLocaleString('en-AE',{maximumFractionDigits:0}); }
+function fmtCur(n,cur){
+  if(!n||isNaN(n)) return '—';
+  return cur+' '+n.toLocaleString('en-AE',{maximumFractionDigits:0});
+}
+function fmtK(n,cur){
+  if(!n||isNaN(n)) return '—';
+  if(n>=1000000) return cur+' '+(n/1000000).toFixed(1)+'M';
+  if(n>=1000) return cur+' '+(n/1000).toFixed(0)+'K';
+  return fmtCur(n,cur);
+}
+</script>
+</body>
+</html>
