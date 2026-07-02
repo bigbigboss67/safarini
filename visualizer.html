@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Visualizer | Saffarini Client Tools</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --black:#0a0a0a;--gray-900:#1a1a1a;--gray-700:#444444;
+      --gray-600:#6b6b6b;--gray-400:#9e9e9e;--gray-200:#e5e5e5;--gray-100:#f5f5f5;
+      --white:#ffffff;--orange:#e87d1e;--orange-dark:#c46a10;--orange-lite:#fff3e8;
+      --radius-sm:6px;--radius-md:12px;--radius-lg:20px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.08);--shadow-md:0 4px 20px rgba(0,0,0,0.10);
+      --shadow-lg:0 12px 40px rgba(0,0,0,0.14);--transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-900);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+    a{text-decoration:none;color:inherit}
+
+    .navbar{background:rgba(255,255,255,0.97);border-bottom:1px solid var(--gray-200);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm);flex-shrink:0}
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .nav-logo{width:36px;height:36px;object-fit:contain;border-radius:6px}
+    .nav-brand-name{font-size:0.95rem;font-weight:800;color:var(--black)}
+    .nav-sep{color:var(--gray-400);margin:0 8px}
+    .nav-tool-name{font-size:0.9rem;font-weight:600;color:var(--orange)}
+    .nav-right{display:flex;align-items:center;gap:0.5rem}
+    .nav-btn{background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-700);padding:0.4rem 0.85rem;border-radius:var(--radius-sm);font-size:0.8rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:var(--transition);font-family:inherit}
+    .nav-btn:hover{background:var(--white);border-color:var(--gray-400)}
+    .nav-btn.primary{background:var(--black);color:var(--white);border-color:var(--black)}
+    .nav-btn.primary:hover{background:var(--orange);border-color:var(--orange)}
+    .back-link{display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;color:var(--gray-600);transition:var(--transition)}
+    .back-link:hover{color:var(--orange)}
+
+    .app-body{display:flex;flex:1;overflow:hidden}
+
+    /* 3D viewport */
+    .viewport{flex:1;background:linear-gradient(180deg,#cdd5e0 0%,#e8edf5 60%,#d0d8e8 100%);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .scene-container{perspective:1200px;width:700px;height:500px;position:relative}
+    .building{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(8deg) rotateY(-18deg);transition:transform 0.8s cubic-bezier(0.4,0,0.2,1)}
+
+    /* Building faces */
+    .b-face{position:absolute;backface-visibility:hidden}
+    .b-front{width:340px;height:380px;bottom:0;left:180px;background:var(--face-front,#e8ddd0);border:2px solid rgba(0,0,0,0.15)}
+    .b-side{width:180px;height:380px;bottom:0;left:0;background:var(--face-side,#c8b8a8);border:2px solid rgba(0,0,0,0.2);transform:skewY(14deg);transform-origin:right bottom}
+    .b-roof{width:340px;height:90px;top:0;left:180px;background:var(--face-roof,#a8988a);border:2px solid rgba(0,0,0,0.15);transform:skewY(-5deg);transform-origin:left top}
+    .b-roof-side{width:180px;height:70px;top:10px;left:0;background:var(--face-roof-side,#988878);transform:skewY(14deg) skewX(-5deg);transform-origin:right bottom}
+
+    /* Windows grid */
+    .windows-grid{position:absolute;display:grid;gap:8px;padding:20px}
+    .window-cell{background:rgba(200,220,255,0.7);border:1px solid rgba(100,150,220,0.4);border-radius:2px;box-shadow:inset 0 2px 8px rgba(255,255,255,0.5)}
+    .window-cell.balcony{background:rgba(180,200,240,0.6);border-bottom:3px solid rgba(100,120,180,0.5)}
+
+    /* Entrance */
+    .entrance{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:90px;background:rgba(20,20,20,0.8);border-radius:4px 4px 0 0;border:2px solid rgba(0,0,0,0.3)}
+    .entrance-arch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:30px;background:rgba(80,60,40,0.6);border-radius:30px 30px 0 0}
+
+    /* Ground / shadow */
+    .ground{position:absolute;bottom:-20px;left:0;right:0;height:40px;background:linear-gradient(180deg,rgba(0,0,0,0.15),transparent);filter:blur(8px)}
+    .building-shadow{position:absolute;bottom:-15px;left:120px;width:420px;height:30px;background:rgba(0,0,0,0.2);filter:blur(12px);border-radius:50%}
+
+    /* Sky elements */
+    .sky-cloud{position:absolute;background:rgba(255,255,255,0.8);border-radius:50px;filter:blur(4px)}
+    .sun{position:absolute;top:30px;right:80px;width:60px;height:60px;background:radial-gradient(circle,#fff9e0,#ffe066);border-radius:50%;box-shadow:0 0 40px rgba(255,220,80,0.4)}
+
+    /* Controls overlay */
+    .controls-overlay{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:0.5rem;background:rgba(255,255,255,0.9);padding:0.6rem 1rem;border-radius:99px;box-shadow:var(--shadow-md);border:1px solid var(--gray-200)}
+    .ctrl-btn{background:none;border:none;cursor:pointer;color:var(--gray-700);font-size:1.1rem;padding:0.2rem 0.4rem;transition:var(--transition);border-radius:4px}
+    .ctrl-btn:hover{color:var(--orange);background:var(--orange-lite)}
+
+    .view-label{position:absolute;top:1rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.55);color:var(--white);padding:0.3rem 1rem;border-radius:99px;font-size:0.75rem;font-weight:500}
+
+    /* Project selector panel */
+    .projects-panel{width:280px;background:var(--white);border-left:1px solid var(--gray-200);display:flex;flex-direction:column;overflow:hidden}
+    .panel-header{padding:1rem 1.25rem;border-bottom:1px solid var(--gray-200);flex-shrink:0}
+    .panel-title{font-size:0.7rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem}
+    .panel-search{width:100%;padding:0.5rem 0.75rem;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.82rem;font-family:inherit;outline:none}
+    .panel-search:focus{border-color:var(--orange)}
+    .project-list{flex:1;overflow-y:auto}
+    .proj-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.25rem;border-bottom:1px solid var(--gray-200);cursor:pointer;transition:var(--transition)}
+    .proj-item:hover{background:var(--orange-lite)}
+    .proj-item.active{background:var(--orange-lite);border-left:3px solid var(--orange)}
+    .proj-thumb{width:48px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0}
+    .proj-info{flex:1;min-width:0}
+    .proj-name{font-size:0.82rem;font-weight:600;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .proj-type{font-size:0.72rem;color:var(--gray-600)}
+    .proj-floors{font-size:0.7rem;font-weight:600;color:var(--orange);background:var(--orange-lite);padding:0.15rem 0.4rem;border-radius:3px;white-space:nowrap;flex-shrink:0}
+
+    /* Customizer panel at bottom */
+    .customizer{background:var(--white);border-top:1px solid var(--gray-200);padding:0.75rem 1.25rem;display:flex;gap:1.5rem;align-items:center;flex-shrink:0}
+    .cust-group{display:flex;flex-direction:column;gap:0.3rem}
+    .cust-label{font-size:0.68rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em}
+    .color-row{display:flex;gap:0.3rem}
+    .color-dot{width:20px;height:20px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:var(--transition)}
+    .color-dot:hover{transform:scale(1.2)}
+    .color-dot.active{border-color:var(--black)}
+    .cust-sep{width:1px;background:var(--gray-200);margin:0 0.5rem}
+
+    /* Stats */
+    .stats-row{display:flex;gap:2rem;align-items:center;margin-left:auto}
+    .stat-chip{font-size:0.75rem;color:var(--gray-600);display:flex;align-items:center;gap:4px}
+    .stat-chip strong{color:var(--black);font-weight:700}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini" class="nav-logo" />
+    <span class="nav-brand-name">Saffarini</span>
+    <span class="nav-sep">/</span>
+    <span class="nav-tool-name"><i class="ti ti-3d-cube-sphere"></i> 3D Visualizer</span>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="back-link"><i class="ti ti-arrow-left"></i> Back to Portal</a>
+    <button class="nav-btn" onclick="resetView()"><i class="ti ti-refresh"></i> Reset View</button>
+    <button class="nav-btn primary" onclick="captureView()"><i class="ti ti-camera"></i> Screenshot</button>
+  </div>
+</nav>
+
+<div class="app-body">
+
+  <!-- 3D Viewport -->
+  <div class="viewport" id="viewport">
+    <!-- Sky decorations -->
+    <div class="sky-cloud" style="width:120px;height:35px;top:40px;left:10%"></div>
+    <div class="sky-cloud" style="width:80px;height:25px;top:60px;left:18%"></div>
+    <div class="sky-cloud" style="width:150px;height:40px;top:50px;right:15%"></div>
+    <div class="sun"></div>
+
+    <div class="scene-container" id="scene-container">
+      <div class="building" id="building">
+        <div class="b-face b-roof-side" id="b-roof-side"></div>
+        <div class="b-face b-roof" id="b-roof">
+          <!-- Roof details -->
+          <div style="position:absolute;top:10px;left:20px;right:20px;height:2px;background:rgba(0,0,0,0.1)"></div>
+        </div>
+        <div class="b-face b-side" id="b-side">
+          <!-- Side windows -->
+          <div style="position:absolute;top:40px;left:20px;right:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="height:35px;background:rgba(200,220,255,0.7);border:1px solid rgba(100,150,220,0.4);border-radius:2px"></div>
+            <div style="height:35px;background:rgba(200,220,255,0.7);border:1px solid rgba(100,150,220,0.4);border-radius:2px"></div>
+            <div style="height:35px;background:rgba(200,220,255,0.7);border:1px solid rgba(100,150,220,0.4);border-radius:2px"></div>
+            <div style="height:35px;background:rgba(200,220,255,0.7);border:1px solid rgba(100,150,220,0.4);border-radius:2px"></div>
+          </div>
+        </div>
+        <div class="b-face b-front" id="b-front">
+          <!-- Windows grid -->
+          <div class="windows-grid" id="windows-grid" style="top:20px;left:20px;right:20px;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,1fr)">
+          </div>
+          <!-- Entrance -->
+          <div class="entrance">
+            <div class="entrance-arch"></div>
+          </div>
+          <!-- Floor lines -->
+          <div id="floor-lines"></div>
+        </div>
+      </div>
+      <div class="building-shadow"></div>
+    </div>
+
+    <div class="view-label" id="view-label">Princess Tower — 101 Floors, Dubai Marina</div>
+
+    <div class="controls-overlay">
+      <button class="ctrl-btn" onclick="rotateY(-15)" title="Rotate Left"><i class="ti ti-arrow-left"></i></button>
+      <button class="ctrl-btn" onclick="rotateX(-10)" title="Tilt Up"><i class="ti ti-arrow-up"></i></button>
+      <button class="ctrl-btn" onclick="rotateX(10)" title="Tilt Down"><i class="ti ti-arrow-down"></i></button>
+      <button class="ctrl-btn" onclick="rotateY(15)" title="Rotate Right"><i class="ti ti-arrow-right"></i></button>
+      <span style="color:var(--gray-400);margin:0 4px">|</span>
+      <button class="ctrl-btn" onclick="zoomScene(1.1)" title="Zoom In"><i class="ti ti-zoom-in"></i></button>
+      <button class="ctrl-btn" onclick="zoomScene(0.9)" title="Zoom Out"><i class="ti ti-zoom-out"></i></button>
+    </div>
+  </div>
+
+  <!-- Projects panel -->
+  <div class="projects-panel">
+    <div class="panel-header">
+      <div class="panel-title">Projects</div>
+      <input class="panel-search" type="text" placeholder="Search projects..." oninput="filterProjects(this.value)" />
+    </div>
+    <div class="project-list" id="project-list"></div>
+  </div>
+
+</div>
+
+<!-- Customizer bar -->
+<div class="customizer">
+  <div class="cust-group">
+    <div class="cust-label">Facade Color</div>
+    <div class="color-row" id="facade-colors"></div>
+  </div>
+  <div class="cust-sep"></div>
+  <div class="cust-group">
+    <div class="cust-label">Rooftop</div>
+    <div class="color-row" id="roof-colors"></div>
+  </div>
+  <div class="cust-sep"></div>
+  <div class="cust-group">
+    <div class="cust-label">Side Wall</div>
+    <div class="color-row" id="side-colors"></div>
+  </div>
+  <div class="cust-sep"></div>
+  <div class="cust-group">
+    <div class="cust-label">Time of Day</div>
+    <div class="color-row">
+      <button class="ctrl-btn" onclick="setTime('day')" title="Day" style="font-size:0.8rem;padding:3px 8px;border:1px solid var(--gray-200);border-radius:4px;background:var(--orange-lite);color:var(--orange)"><i class="ti ti-sun"></i></button>
+      <button class="ctrl-btn" onclick="setTime('dusk')" title="Dusk" style="font-size:0.8rem;padding:3px 8px;border:1px solid var(--gray-200);border-radius:4px"><i class="ti ti-sunset"></i></button>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-chip"><i class="ti ti-building"></i> Floors: <strong id="stat-floors">101</strong></div>
+    <div class="stat-chip"><i class="ti ti-ruler-measure"></i> Height: <strong id="stat-height">414m</strong></div>
+    <div class="stat-chip"><i class="ti ti-map-pin"></i> Location: <strong id="stat-loc">Dubai Marina</strong></div>
+  </div>
+</div>
+
+<script>
+const PROJECTS = [
+  {name:'Princess Tower',type:'Residential',floors:101,height:'414m',loc:'Dubai Marina',img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=100&q=70',facadeColor:'#e8ddd0',roofColor:'#a89880',sideColor:'#c8b8a8'},
+  {name:'The Index Tower',type:'Mixed Use',floors:80,height:'328m',loc:'DIFC',img:'https://images.unsplash.com/photo-1517732306149-e8f829eb588a?w=100&q=70',facadeColor:'#c8d8e8',roofColor:'#8898a8',sideColor:'#a8b8c8'},
+  {name:'JW Marriott Marquis',type:'Hospitality',floors:72,height:'355m',loc:'Business Bay',img:'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=100&q=70',facadeColor:'#d8c8a8',roofColor:'#887858',sideColor:'#b8a888'},
+  {name:'Cayan Tower',type:'Residential',floors:73,height:'306m',loc:'Dubai Marina',img:'https://images.unsplash.com/photo-1534103362078-d07e750bd0c4?w=100&q=70',facadeColor:'#e8e0d8',roofColor:'#989088',sideColor:'#c8c0b8'},
+  {name:'Opus Dubai',type:'Mixed Use',floors:21,height:'120m',loc:'Business Bay',img:'https://images.unsplash.com/photo-1571039905747-e2e0cbf5b05a?w=100&q=70',facadeColor:'#e0e8f0',roofColor:'#8090a0',sideColor:'#c0c8d0'},
+  {name:'Bay Gate Towers',type:'Commercial',floors:45,height:'220m',loc:'Business Bay',img:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=100&q=70',facadeColor:'#d8e8d8',roofColor:'#788878',sideColor:'#b8c8b8'},
+  {name:'Jumeirah Living WTC',type:'Residential',floors:62,height:'282m',loc:'Downtown',img:'https://images.unsplash.com/photo-1597088399667-5f3f1e5a6aee?w=100&q=70',facadeColor:'#f0e8d8',roofColor:'#a09080',sideColor:'#d0c8b8'},
+  {name:'Raffles Residences',type:'Hospitality',floors:19,height:'90m',loc:'DIFC',img:'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=100&q=70',facadeColor:'#f0ddc8',roofColor:'#a08060',sideColor:'#d0b898'},
+];
+
+const FACADE_COLORS = ['#e8ddd0','#c8d8e8','#d8c8a8','#e8e8e8','#d4e8d4','#f0e0e0'];
+const ROOF_COLORS = ['#a89880','#8898a8','#887858','#888888','#789878','#a08080'];
+const SIDE_COLORS = ['#c8b8a8','#a8b8c8','#b8a888','#b8b8b8','#a8b8a8','#c8a8a8'];
+
+let currentProject = PROJECTS[0];
+let rotX = 8, rotY = -18, scaleV = 1;
+let currentFacade = FACADE_COLORS[0];
+let currentRoof = ROOF_COLORS[0];
+let currentSide = SIDE_COLORS[0];
+
+function buildWindows() {
+  const grid = document.getElementById('windows-grid');
+  grid.innerHTML = '';
+  const rows = Math.min(8, Math.floor(currentProject.floors / 12) + 3);
+  const cols = 4;
+  grid.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+  grid.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
+  grid.style.height = (rows * 40 + (rows - 1) * 8) + 'px';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const w = document.createElement('div');
+      w.style.cssText = 'height:32px;background:rgba(200,220,255,0.75);border:1px solid rgba(100,150,220,0.35);border-radius:2px';
+      if (r % 3 === 0) w.style.borderBottom = '3px solid rgba(100,120,180,0.4)';
+      grid.appendChild(w);
+    }
+  }
+  // Floor lines
+  const fl = document.getElementById('floor-lines');
+  fl.innerHTML = '';
+  for (let i = 1; i < Math.min(6, currentProject.floors / 15); i++) {
+    const line = document.createElement('div');
+    line.style.cssText = 'position:absolute;left:0;right:0;height:1px;background:rgba(0,0,0,0.08);top:' + (i * 60) + 'px';
+    fl.appendChild(line);
+  }
+}
+
+function loadProject(p) {
+  currentProject = p;
+  currentFacade = p.facadeColor;
+  currentRoof = p.roofColor;
+  currentSide = p.sideColor;
+  applyColors();
+  buildWindows();
+  document.getElementById('view-label').textContent = p.name + ' — ' + p.floors + ' Floors, ' + p.loc;
+  document.getElementById('stat-floors').textContent = p.floors;
+  document.getElementById('stat-height').textContent = p.height;
+  document.getElementById('stat-loc').textContent = p.loc;
+  document.querySelectorAll('.proj-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.proj-item').forEach(el => {
+    if (el.dataset.name === p.name) el.classList.add('active');
+  });
+  syncColorDots();
+}
+
+function applyColors() {
+  document.getElementById('b-front').style.background = currentFacade;
+  document.getElementById('b-roof').style.background = currentRoof;
+  document.getElementById('b-roof-side').style.background = adjustColor(currentRoof, -15);
+  document.getElementById('b-side').style.background = currentSide;
+}
+
+function adjustColor(hex, amount) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.max(0, Math.min(255, (n >> 16) + amount));
+  const g = Math.max(0, Math.min(255, ((n >> 8) & 0xff) + amount));
+  const b = Math.max(0, Math.min(255, (n & 0xff) + amount));
+  return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+}
+
+function buildProjectList() {
+  const list = document.getElementById('project-list');
+  list.innerHTML = '';
+  PROJECTS.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'proj-item' + (p === currentProject ? ' active' : '');
+    el.dataset.name = p.name;
+    el.innerHTML = '<img class="proj-thumb" src="' + p.img + '" alt="' + p.name + '" /><div class="proj-info"><div class="proj-name">' + p.name + '</div><div class="proj-type">' + p.type + ' · ' + p.loc + '</div></div><span class="proj-floors">' + p.floors + 'F</span>';
+    el.onclick = () => loadProject(p);
+    list.appendChild(el);
+  });
+}
+
+function filterProjects(q) {
+  const items = document.querySelectorAll('.proj-item');
+  items.forEach(el => {
+    el.style.display = el.dataset.name.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function buildColorDots(containerId, colors, current, applyFn, key) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  colors.forEach(c => {
+    const dot = document.createElement('div');
+    dot.className = 'color-dot' + (current === c ? ' active' : '');
+    dot.style.background = c;
+    dot.style.border = '2px solid ' + (c === current ? 'var(--black)' : c);
+    dot.onclick = () => { applyFn(c); syncColorDots(); };
+    el.appendChild(dot);
+  });
+}
+
+function syncColorDots() {
+  buildColorDots('facade-colors', FACADE_COLORS, currentFacade, c => { currentFacade = c; applyColors(); }, 'facade');
+  buildColorDots('roof-colors', ROOF_COLORS, currentRoof, c => { currentRoof = c; applyColors(); }, 'roof');
+  buildColorDots('side-colors', SIDE_COLORS, currentSide, c => { currentSide = c; applyColors(); }, 'side');
+}
+
+function rotateY(deg) { rotY += deg; updateTransform(); }
+function rotateX(deg) { rotX = Math.max(-30, Math.min(30, rotX + deg)); updateTransform(); }
+function zoomScene(factor) { scaleV = Math.max(0.5, Math.min(2, scaleV * factor)); updateTransform(); }
+function updateTransform() {
+  document.getElementById('building').style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale(' + scaleV + ')';
+}
+function resetView() { rotX = 8; rotY = -18; scaleV = 1; updateTransform(); }
+
+function setTime(t) {
+  const vp = document.getElementById('viewport');
+  if (t === 'day') {
+    vp.style.background = 'linear-gradient(180deg,#cdd5e0 0%,#e8edf5 60%,#d0d8e8 100%)';
+    document.querySelector('.sun').style.display = '';
+  } else {
+    vp.style.background = 'linear-gradient(180deg,#e8a870 0%,#f0c890 40%,#c8a070 100%)';
+    document.querySelector('.sun').style.display = 'none';
+  }
+}
+
+function captureView() {
+  alert('Screenshot captured! In a production environment, this would save the 3D view as a PNG image.');
+}
+
+// Drag to rotate
+let isDragging = false, dragLast = null;
+document.getElementById('viewport').addEventListener('mousedown', e => { isDragging = true; dragLast = {x: e.clientX, y: e.clientY}; });
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - dragLast.x, dy = e.clientY - dragLast.y;
+  rotY += dx * 0.3;
+  rotX = Math.max(-30, Math.min(30, rotX - dy * 0.2));
+  updateTransform();
+  dragLast = {x: e.clientX, y: e.clientY};
+});
+document.addEventListener('mouseup', () => isDragging = false);
+
+// Init
+buildProjectList();
+syncColorDots();
+buildWindows();
+applyColors();
+</script>
+</body>
+</html>

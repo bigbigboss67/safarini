@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Studio | Saffarini Client Tools</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --black:#0a0a0a;--gray-900:#1a1a1a;--gray-700:#444444;
+      --gray-600:#6b6b6b;--gray-400:#9e9e9e;--gray-200:#e5e5e5;--gray-100:#f5f5f5;
+      --white:#ffffff;--orange:#e87d1e;--orange-dark:#c46a10;--orange-lite:#fff3e8;
+      --radius-sm:6px;--radius-md:12px;--radius-lg:20px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.08);--shadow-md:0 4px 20px rgba(0,0,0,0.10);
+      --shadow-lg:0 12px 40px rgba(0,0,0,0.14);--transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-900);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+    a{text-decoration:none;color:inherit}
+
+    .navbar{background:rgba(255,255,255,0.97);border-bottom:1px solid var(--gray-200);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm);flex-shrink:0;z-index:100}
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .nav-logo{width:36px;height:36px;object-fit:contain;border-radius:6px}
+    .nav-brand-name{font-size:0.95rem;font-weight:800;color:var(--black)}
+    .nav-sep{color:var(--gray-400);margin:0 8px}
+    .nav-tool-name{font-size:0.9rem;font-weight:600;color:var(--orange)}
+    .nav-right{display:flex;align-items:center;gap:0.5rem}
+    .nav-btn{background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-700);padding:0.4rem 0.85rem;border-radius:var(--radius-sm);font-size:0.8rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:var(--transition);font-family:inherit}
+    .nav-btn:hover{background:var(--white);border-color:var(--gray-400)}
+    .nav-btn.primary{background:var(--black);color:var(--white);border-color:var(--black)}
+    .nav-btn.primary:hover{background:var(--orange);border-color:var(--orange)}
+    .back-link{display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;color:var(--gray-600);transition:var(--transition)}
+    .back-link:hover{color:var(--orange)}
+
+    .app-body{display:flex;flex:1;overflow:hidden}
+
+    /* Room viewer */
+    .room-viewer{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--gray-100);position:relative;overflow:hidden}
+    .room-3d{width:560px;height:380px;position:relative;perspective:900px}
+    .room-scene{width:100%;height:100%;position:relative;transform-style:preserve-3d}
+
+    /* Room faces */
+    .room-face{position:absolute;border:1px solid rgba(0,0,0,0.1);transition:background 0.4s ease,background-image 0.4s ease}
+    .face-floor{
+      width:380px;height:260px;
+      bottom:0;left:90px;
+      transform:rotateX(55deg) translateY(30px);
+      transform-origin:bottom center;
+      cursor:pointer;
+    }
+    .face-back{
+      width:380px;height:200px;
+      top:30px;left:90px;
+      cursor:pointer;
+    }
+    .face-left{
+      width:120px;height:200px;
+      top:30px;left:0;
+      transform:skewY(-30deg);
+      transform-origin:top right;
+      cursor:pointer;
+    }
+    .face-ceiling{
+      width:380px;height:120px;
+      top:0;left:90px;
+      transform:skewY(-2deg);
+      cursor:pointer;
+      opacity:0.85;
+    }
+
+    .room-face.selected-face{outline:3px solid var(--orange);outline-offset:2px;filter:brightness(1.05)}
+    .room-label{position:absolute;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:0.25rem 0.6rem;font-size:0.7rem;font-weight:600;color:var(--gray-600);pointer-events:none;box-shadow:var(--shadow-sm)}
+
+    /* Furniture overlay */
+    .furniture-overlay{position:absolute;inset:0;pointer-events:none}
+    .room-furniture{position:absolute;opacity:0.9}
+
+    /* View controls */
+    .view-controls{position:absolute;top:1rem;right:1rem;display:flex;flex-direction:column;gap:0.4rem}
+    .view-btn{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:0.4rem 0.6rem;font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:500;color:var(--gray-700);transition:var(--transition);display:flex;align-items:center;gap:4px}
+    .view-btn:hover,.view-btn.active{background:var(--orange);color:var(--white);border-color:var(--orange)}
+
+    .selected-label{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--black);color:var(--white);padding:0.35rem 1rem;border-radius:99px;font-size:0.78rem;font-weight:500}
+
+    /* Right panel */
+    .right-panel{width:300px;background:var(--white);border-left:1px solid var(--gray-200);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+    .panel-section{padding:1.25rem;border-bottom:1px solid var(--gray-200)}
+    .panel-title{font-size:0.7rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+
+    /* Surface tabs */
+    .surface-tabs{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.75rem}
+    .surf-tab{padding:0.4rem 0.75rem;border:1px solid var(--gray-200);border-radius:99px;font-size:0.75rem;font-weight:500;cursor:pointer;transition:var(--transition);background:var(--gray-100);color:var(--gray-700)}
+    .surf-tab.active{background:var(--black);color:var(--white);border-color:var(--black)}
+    .surf-tab:hover:not(.active){border-color:var(--orange);color:var(--orange);background:var(--orange-lite)}
+
+    /* Material grid */
+    .material-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem}
+    .material-card{border:2px solid var(--gray-200);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:var(--transition)}
+    .material-card:hover{border-color:var(--orange);transform:scale(1.03)}
+    .material-card.active{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-lite)}
+    .material-thumb{width:100%;height:50px;background-size:cover;background-position:center}
+    .material-name{font-size:0.65rem;font-weight:600;color:var(--gray-700);padding:0.25rem;text-align:center;background:var(--white)}
+
+    /* Color palette */
+    .color-grid{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.75rem}
+    .color-chip{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:var(--transition)}
+    .color-chip:hover{transform:scale(1.15)}
+    .color-chip.active{border-color:var(--black);transform:scale(1.15)}
+    .custom-color-row{display:flex;align-items:center;gap:0.5rem}
+    .custom-color-label{font-size:0.75rem;color:var(--gray-600)}
+
+    /* Style presets */
+    .preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+    .preset-card{border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:0.6rem;cursor:pointer;transition:var(--transition);text-align:center}
+    .preset-card:hover{border-color:var(--orange);background:var(--orange-lite)}
+    .preset-card.active{border-color:var(--orange);background:var(--orange-lite)}
+    .preset-img{width:100%;height:40px;border-radius:4px;margin-bottom:0.4rem;object-fit:cover}
+    .preset-name{font-size:0.72rem;font-weight:600;color:var(--gray-700)}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini" class="nav-logo" />
+    <span class="nav-brand-name">Saffarini</span>
+    <span class="nav-sep">/</span>
+    <span class="nav-tool-name"><i class="ti ti-palette"></i> Design Studio</span>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="back-link"><i class="ti ti-arrow-left"></i> Back to Portal</a>
+    <button class="nav-btn" onclick="resetAll()"><i class="ti ti-refresh"></i> Reset</button>
+    <button class="nav-btn" onclick="applyPreset('modern')"><i class="ti ti-wand"></i> Auto-Style</button>
+    <button class="nav-btn primary" onclick="saveDesign()"><i class="ti ti-download"></i> Save Design</button>
+  </div>
+</nav>
+
+<div class="app-body">
+
+  <!-- Room viewer -->
+  <div class="room-viewer">
+    <div class="room-3d">
+      <div class="room-scene">
+        <!-- Back wall -->
+        <div class="room-face face-back" id="face-back" onclick="selectSurface('wall')" title="Click to style wall"></div>
+        <!-- Left wall -->
+        <div class="room-face face-left" id="face-left" onclick="selectSurface('wall')" title="Click to style wall"></div>
+        <!-- Ceiling -->
+        <div class="room-face face-ceiling" id="face-ceiling" onclick="selectSurface('ceiling')" title="Click to style ceiling"></div>
+        <!-- Floor -->
+        <div class="room-face face-floor" id="face-floor" onclick="selectSurface('floor')" title="Click to style floor"></div>
+      </div>
+    </div>
+
+    <div class="view-controls">
+      <button class="view-btn active" onclick="setView('living')"><i class="ti ti-sofa"></i> Living</button>
+      <button class="view-btn" onclick="setView('bedroom')"><i class="ti ti-bed"></i> Bedroom</button>
+      <button class="view-btn" onclick="setView('kitchen')"><i class="ti ti-tools-kitchen-2"></i> Kitchen</button>
+    </div>
+
+    <div class="selected-label" id="sel-label">Click a surface to style it</div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="right-panel">
+
+    <!-- Style Presets -->
+    <div class="panel-section">
+      <div class="panel-title">Style Presets</div>
+      <div class="preset-grid">
+        <div class="preset-card active" id="preset-modern" onclick="applyPreset('modern')">
+          <img class="preset-img" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&q=70" alt="Modern" />
+          <div class="preset-name">Modern</div>
+        </div>
+        <div class="preset-card" id="preset-classic" onclick="applyPreset('classic')">
+          <img class="preset-img" src="https://images.unsplash.com/photo-1615529328331-f8917597711f?w=200&q=70" alt="Classic" />
+          <div class="preset-name">Classic</div>
+        </div>
+        <div class="preset-card" id="preset-arabic" onclick="applyPreset('arabic')">
+          <img class="preset-img" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&q=70" alt="Arabic" />
+          <div class="preset-name">Arabic</div>
+        </div>
+        <div class="preset-card" id="preset-minimal" onclick="applyPreset('minimal')">
+          <img class="preset-img" src="https://images.unsplash.com/photo-1617806118233-18e1de247200?w=200&q=70" alt="Minimal" />
+          <div class="preset-name">Minimal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Surface selector -->
+    <div class="panel-section">
+      <div class="panel-title">Surface</div>
+      <div class="surface-tabs">
+        <div class="surf-tab active" id="tab-wall" onclick="selectSurface('wall')"><i class="ti ti-wall"></i> Wall</div>
+        <div class="surf-tab" id="tab-floor" onclick="selectSurface('floor')"><i class="ti ti-layout-bottombar"></i> Floor</div>
+        <div class="surf-tab" id="tab-ceiling" onclick="selectSurface('ceiling')"><i class="ti ti-layout-navbar"></i> Ceiling</div>
+      </div>
+
+      <!-- Materials -->
+      <div class="panel-title" style="margin-top:0.5rem">Material</div>
+      <div class="material-grid" id="material-grid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- Color palette -->
+    <div class="panel-section">
+      <div class="panel-title">Color</div>
+      <div class="color-grid" id="color-grid">
+        <!-- filled by JS -->
+      </div>
+      <div class="custom-color-row">
+        <span class="custom-color-label">Custom:</span>
+        <input type="color" id="custom-color" style="width:32px;height:28px;border:1px solid var(--gray-200);border-radius:4px;cursor:pointer;padding:2px" onchange="applyCustomColor(this.value)" />
+      </div>
+    </div>
+
+    <!-- Summary card -->
+    <div class="panel-section">
+      <div class="panel-title">Current Design</div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.82rem">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--gray-600)">Wall</span><strong id="sum-wall">-</strong></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--gray-600)">Floor</span><strong id="sum-floor">-</strong></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--gray-600)">Ceiling</span><strong id="sum-ceiling">-</strong></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--gray-600)">Style</span><strong id="sum-style">Modern</strong></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const MATERIALS = {
+  wall: [
+    {name:'Smooth White',color:'#f8f8f6',tex:''},
+    {name:'Concrete',color:'#a8a8a8',tex:'repeating-linear-gradient(90deg,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1px,transparent 1px,transparent 40px)'},
+    {name:'Exposed Brick',color:'#b5603f',tex:'repeating-linear-gradient(0deg,rgba(0,0,0,0.15) 0px,rgba(0,0,0,0.15) 1px,transparent 1px,transparent 16px),repeating-linear-gradient(90deg,rgba(0,0,0,0.1) 0px,rgba(0,0,0,0.1) 1px,transparent 1px,transparent 32px)'},
+    {name:'Marble White',color:'#ede8e0',tex:''},
+    {name:'Stone',color:'#8d7b68',tex:''},
+    {name:'Cream',color:'#f5ead4',tex:''},
+  ],
+  floor: [
+    {name:'Light Oak',color:'#c8a96e',tex:'repeating-linear-gradient(90deg,rgba(0,0,0,0.07) 0,rgba(0,0,0,0.07) 1px,transparent 1px,transparent 18px)'},
+    {name:'Dark Walnut',color:'#6b3f22',tex:'repeating-linear-gradient(90deg,rgba(0,0,0,0.1) 0,rgba(0,0,0,0.1) 1px,transparent 1px,transparent 16px)'},
+    {name:'White Marble',color:'#f0ede8',tex:'repeating-linear-gradient(45deg,rgba(0,0,0,0.04) 0,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 30px)'},
+    {name:'Grey Tile',color:'#b0b0b0',tex:'repeating-linear-gradient(0deg,rgba(0,0,0,0.1) 0,rgba(0,0,0,0.1) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(0,0,0,0.1) 0,rgba(0,0,0,0.1) 1px,transparent 1px,transparent 30px)'},
+    {name:'Terracotta',color:'#c47c5a',tex:'repeating-linear-gradient(0deg,rgba(0,0,0,0.08) 0,rgba(0,0,0,0.08) 1px,transparent 1px,transparent 22px),repeating-linear-gradient(90deg,rgba(0,0,0,0.08) 0,rgba(0,0,0,0.08) 1px,transparent 1px,transparent 22px)'},
+    {name:'Polished Black',color:'#1a1a1a',tex:''},
+  ],
+  ceiling: [
+    {name:'Pure White',color:'#ffffff',tex:''},
+    {name:'Warm White',color:'#fefaf4',tex:''},
+    {name:'Light Grey',color:'#e8e8e8',tex:''},
+    {name:'Cream',color:'#f5ead4',tex:''},
+    {name:'Sky Blue',color:'#c8dff0',tex:''},
+    {name:'Plaster',color:'#f0ece4',tex:'repeating-linear-gradient(45deg,rgba(0,0,0,0.02) 0,rgba(0,0,0,0.02) 1px,transparent 1px,transparent 20px)'},
+  ]
+};
+
+const COLORS = {
+  wall: ['#f8f8f6','#e8ddd0','#d4c5b0','#c4b89a','#a8a8a8','#b5603f','#8d7b68','#f5ead4','#dce8d8','#d8e8f0','#e8d8f0','#f0d8d8'],
+  floor: ['#c8a96e','#a87d4e','#6b3f22','#f0ede8','#b0b0b0','#c47c5a','#1a1a1a','#e8c89e','#786450','#ddd0c0'],
+  ceiling: ['#ffffff','#fefaf4','#f5f0e8','#e8e8e8','#f5ead4','#c8dff0','#d8f0d8','#ede8e0']
+};
+
+const PRESETS = {
+  modern: {wall:'#f8f8f6',floor:'#c8a96e',ceiling:'#ffffff'},
+  classic: {wall:'#f5ead4',floor:'#a87d4e',ceiling:'#fefaf4'},
+  arabic: {wall:'#e8ddd0',floor:'#c47c5a',ceiling:'#f5ead4'},
+  minimal: {wall:'#e8e8e8',floor:'#1a1a1a',ceiling:'#ffffff'}
+};
+
+let currentSurface = 'wall';
+let design = {wall:{color:'#f8f8f6',material:'Smooth White',tex:''},floor:{color:'#c8a96e',material:'Light Oak',tex:'repeating-linear-gradient(90deg,rgba(0,0,0,0.07) 0,rgba(0,0,0,0.07) 1px,transparent 1px,transparent 18px)'},ceiling:{color:'#ffffff',material:'Pure White',tex:''}};
+
+function selectSurface(s) {
+  currentSurface = s;
+  document.querySelectorAll('.surf-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + s)?.classList.add('active');
+  // Highlight face
+  document.querySelectorAll('.room-face').forEach(f => f.classList.remove('selected-face'));
+  if (s === 'wall') {
+    document.getElementById('face-back').classList.add('selected-face');
+    document.getElementById('face-left').classList.add('selected-face');
+  } else if (s === 'floor') {
+    document.getElementById('face-floor').classList.add('selected-face');
+  } else {
+    document.getElementById('face-ceiling').classList.add('selected-face');
+  }
+  document.getElementById('sel-label').textContent = 'Editing: ' + s.charAt(0).toUpperCase() + s.slice(1);
+  renderMaterials();
+  renderColors();
+}
+
+function renderMaterials() {
+  const grid = document.getElementById('material-grid');
+  const mats = MATERIALS[currentSurface];
+  grid.innerHTML = '';
+  mats.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'material-card' + (design[currentSurface].material === m.name ? ' active' : '');
+    const th = document.createElement('div');
+    th.className = 'material-thumb';
+    th.style.background = m.tex ? m.color : m.color;
+    th.style.backgroundImage = m.tex || '';
+    th.style.backgroundColor = m.color;
+    card.appendChild(th);
+    const nm = document.createElement('div');
+    nm.className = 'material-name';
+    nm.textContent = m.name;
+    card.appendChild(nm);
+    card.onclick = () => applyMaterial(m);
+    grid.appendChild(card);
+  });
+}
+
+function renderColors() {
+  const grid = document.getElementById('color-grid');
+  grid.innerHTML = '';
+  (COLORS[currentSurface] || COLORS.wall).forEach(c => {
+    const chip = document.createElement('div');
+    chip.className = 'color-chip' + (design[currentSurface].color === c ? ' active' : '');
+    chip.style.background = c;
+    chip.style.border = '2px solid ' + (c === '#ffffff' || c === '#f8f8f6' ? '#e0e0e0' : c);
+    chip.onclick = () => { applyColor(c); };
+    grid.appendChild(chip);
+  });
+}
+
+function applyMaterial(m) {
+  design[currentSurface].color = m.color;
+  design[currentSurface].material = m.name;
+  design[currentSurface].tex = m.tex;
+  applyToRoom();
+  renderMaterials();
+  renderColors();
+  updateSummary();
+}
+
+function applyColor(c) {
+  design[currentSurface].color = c;
+  applyToRoom();
+  renderColors();
+  updateSummary();
+}
+
+function applyCustomColor(c) {
+  design[currentSurface].color = c;
+  design[currentSurface].material = 'Custom';
+  design[currentSurface].tex = '';
+  applyToRoom();
+  updateSummary();
+}
+
+function applyToRoom() {
+  const d = design;
+  const wallStyle = 'background-color:' + d.wall.color + ';' + (d.wall.tex ? 'background-image:' + d.wall.tex + ';' : '');
+  document.getElementById('face-back').style.cssText += wallStyle;
+  document.getElementById('face-left').style.cssText += wallStyle;
+  document.getElementById('face-floor').style.backgroundColor = d.floor.color;
+  if (d.floor.tex) document.getElementById('face-floor').style.backgroundImage = d.floor.tex;
+  document.getElementById('face-ceiling').style.backgroundColor = d.ceiling.color;
+  if (d.ceiling.tex) document.getElementById('face-ceiling').style.backgroundImage = d.ceiling.tex;
+}
+
+function applyPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+  design.wall.color = p.wall; design.wall.material = name.charAt(0).toUpperCase()+name.slice(1)+' Wall'; design.wall.tex = '';
+  design.floor.color = p.floor; design.floor.material = name.charAt(0).toUpperCase()+name.slice(1)+' Floor'; design.floor.tex = '';
+  design.ceiling.color = p.ceiling; design.ceiling.material = 'Preset Ceiling'; design.ceiling.tex = '';
+  document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('preset-' + name)?.classList.add('active');
+  applyToRoom();
+  renderMaterials();
+  renderColors();
+  updateSummary();
+  document.getElementById('sum-style').textContent = name.charAt(0).toUpperCase()+name.slice(1);
+}
+
+function setView(room) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  event.target.closest('.view-btn').classList.add('active');
+}
+
+function resetAll() {
+  design = {
+    wall:{color:'#f8f8f6',material:'Smooth White',tex:''},
+    floor:{color:'#c8a96e',material:'Light Oak',tex:'repeating-linear-gradient(90deg,rgba(0,0,0,0.07) 0,rgba(0,0,0,0.07) 1px,transparent 1px,transparent 18px)'},
+    ceiling:{color:'#ffffff',material:'Pure White',tex:''}
+  };
+  applyToRoom();
+  renderMaterials();
+  renderColors();
+  updateSummary();
+}
+
+function updateSummary() {
+  document.getElementById('sum-wall').textContent = design.wall.material;
+  document.getElementById('sum-floor').textContent = design.floor.material;
+  document.getElementById('sum-ceiling').textContent = design.ceiling.material;
+}
+
+function saveDesign() {
+  const summary = 'Saffarini Design Studio\n\nWall: ' + design.wall.material + ' (' + design.wall.color + ')\nFloor: ' + design.floor.material + ' (' + design.floor.color + ')\nCeiling: ' + design.ceiling.material + ' (' + design.ceiling.color + ')';
+  const blob = new Blob([summary], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'saffarini-design.txt';
+  a.click();
+}
+
+// Init
+selectSurface('wall');
+applyPreset('modern');
+</script>
+</body>
+</html>

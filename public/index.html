@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saffarini | Premium Engineering & Development</title>
+  <meta name="description" content="Eng. Adnan Saffarini – 137+ landmark projects across Dubai. Premium engineering, architecture and real estate development." />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black:#0a0a0a;--gray-900:#1a1a1a;--gray-800:#2d2d2d;--gray-700:#444444;
+      --gray-600:#6b6b6b;--gray-400:#9e9e9e;--gray-200:#e5e5e5;--gray-100:#f5f5f5;
+      --white:#ffffff;--orange:#e87d1e;--orange-dark:#c46a10;--orange-lite:#fff3e8;
+      --radius-sm:6px;--radius-md:12px;--radius-lg:20px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.08);--shadow-md:0 4px 20px rgba(0,0,0,0.10);
+      --shadow-lg:0 12px 40px rgba(0,0,0,0.14);--transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--white);color:var(--gray-900);line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-200);padding:0 2rem;height:72px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm)}
+    .nav-brand{display:flex;align-items:center;gap:12px}
+    .nav-logo{width:48px;height:48px;object-fit:contain;aspect-ratio:1/1;flex-shrink:0;border-radius:8px}
+    .nav-brand-text{display:flex;flex-direction:column}
+    .nav-brand-name{font-size:1.1rem;font-weight:800;color:var(--black);letter-spacing:-0.02em;line-height:1.1}
+    .nav-brand-sub{font-size:0.7rem;font-weight:400;color:var(--gray-600);letter-spacing:0.06em;text-transform:uppercase}
+    .nav-links{display:flex;align-items:center;gap:0.25rem;list-style:none}
+    .nav-links a{font-size:0.85rem;font-weight:500;color:var(--gray-700);padding:0.5rem 0.9rem;border-radius:var(--radius-sm);transition:var(--transition);display:flex;align-items:center;gap:6px}
+    .nav-links a:hover,.nav-links a.active{color:var(--orange);background:var(--orange-lite)}
+    .nav-cta{background:var(--black)!important;color:var(--white)!important;border-radius:var(--radius-sm);padding:0.5rem 1.25rem!important;font-weight:600!important}
+    .nav-cta:hover{background:var(--orange)!important}
+    .nav-hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--gray-900);font-size:1.5rem}
+
+    .hero{min-height:100vh;background:linear-gradient(135deg,var(--gray-100) 0%,var(--white) 60%,var(--orange-lite) 100%);display:flex;align-items:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-120px;right:-120px;width:600px;height:600px;background:radial-gradient(circle,rgba(232,125,30,0.08) 0%,transparent 70%);border-radius:50%}
+    .hero-inner{max-width:1280px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--orange-lite);border:1px solid rgba(232,125,30,0.25);color:var(--orange);font-size:0.78rem;font-weight:600;padding:0.4rem 0.9rem;border-radius:99px;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.5rem}
+    .hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,4vw,3.8rem);font-weight:800;color:var(--black);line-height:1.15;letter-spacing:-0.02em;margin-bottom:1.5rem}
+    .hero-title span{color:var(--orange)}
+    .hero-desc{font-size:1.05rem;color:var(--gray-600);line-height:1.75;margin-bottom:2.5rem;max-width:520px}
+    .hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+    .btn-primary{background:var(--black);color:var(--white);padding:0.85rem 2rem;border-radius:var(--radius-sm);font-weight:600;font-size:0.9rem;display:inline-flex;align-items:center;gap:8px;transition:var(--transition);cursor:pointer;border:none}
+    .btn-primary:hover{background:var(--orange);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .btn-secondary{background:transparent;color:var(--black);padding:0.85rem 2rem;border-radius:var(--radius-sm);font-weight:600;font-size:0.9rem;border:2px solid var(--gray-200);display:inline-flex;align-items:center;gap:8px;transition:var(--transition);cursor:pointer}
+    .btn-secondary:hover{border-color:var(--orange);color:var(--orange)}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
+    .hero-stat{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-sm)}
+    .hero-stat-num{font-size:2rem;font-weight:800;color:var(--black);line-height:1}
+    .hero-stat-num span{color:var(--orange)}
+    .hero-stat-label{font-size:0.75rem;color:var(--gray-600);margin-top:0.3rem;font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+    .hero-visual{position:relative}
+    .hero-img-wrap{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/3;background:var(--gray-100)}
+    .hero-img-wrap img{width:100%;height:100%;object-fit:cover}
+    .hero-badge{position:absolute;bottom:-1rem;left:-1.5rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:1rem 1.5rem;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:12px}
+    .hero-badge-icon{width:40px;height:40px;background:var(--orange-lite);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:1.25rem}
+    .hero-badge-text{font-size:0.78rem;color:var(--gray-600)}
+    .hero-badge-text strong{display:block;font-size:1rem;color:var(--black)}
+
+    .stats-strip{background:var(--black);padding:3rem 2rem}
+    .stats-strip-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+    .stat-item{text-align:center}
+    .stat-num{font-size:2.8rem;font-weight:900;color:var(--white);line-height:1;font-family:'Playfair Display',serif}
+    .stat-num em{color:var(--orange);font-style:normal}
+    .stat-label{font-size:0.78rem;color:var(--gray-400);margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.08em}
+
+    .section{padding:5rem 2rem}
+    .section-inner{max-width:1280px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:3.5rem}
+    .section-tag{display:inline-flex;align-items:center;gap:6px;background:var(--orange-lite);color:var(--orange);font-size:0.75rem;font-weight:600;padding:0.35rem 0.85rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+    .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:800;color:var(--black);letter-spacing:-0.02em;line-height:1.2}
+    .section-sub{font-size:1rem;color:var(--gray-600);margin-top:0.75rem;max-width:600px;margin-left:auto;margin-right:auto}
+    .divider{width:60px;height:4px;background:var(--orange);border-radius:2px;margin:1rem auto 0}
+
+    .map-section{background:var(--gray-100)}
+    .map-controls{display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+    .map-filter-btn{background:var(--white);color:var(--gray-700);border:1px solid var(--gray-200);border-radius:99px;padding:0.45rem 1.2rem;font-size:0.82rem;font-weight:500;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+    .map-filter-btn:hover,.map-filter-btn.active{background:var(--black);color:var(--white);border-color:var(--black)}
+    .map-filter-btn.complete.active{background:#16a34a;border-color:#16a34a}
+    .map-filter-btn.underdev.active{background:var(--orange);border-color:var(--orange)}
+    .map-filter-btn.planned.active{background:#0284c7;border-color:#0284c7}
+    #safarini-map{width:100%;height:560px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200)}
+    .leaflet-popup-content-wrapper{border-radius:var(--radius-md)!important;box-shadow:var(--shadow-lg)!important;padding:0!important;overflow:hidden}
+    .leaflet-popup-content{margin:0!important;width:240px!important}
+    .leaflet-popup-tip-container{display:none!important}
+    .map-popup{font-family:'Inter',sans-serif}
+    .map-popup-img{width:100%;height:130px;object-fit:cover;background:var(--gray-200)}
+    .map-popup-body{padding:0.9rem 1rem}
+    .map-popup-status{display:inline-flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;padding:0.25rem 0.6rem;border-radius:99px;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em}
+    .status-complete{background:#dcfce7;color:#16a34a}
+    .status-underdev{background:#fff3e8;color:var(--orange)}
+    .status-planned{background:#e0f2fe;color:#0284c7}
+    .map-popup-name{font-size:0.95rem;font-weight:700;color:var(--black);line-height:1.2;margin-bottom:0.3rem}
+    .map-popup-loc{font-size:0.78rem;color:var(--gray-600);display:flex;align-items:center;gap:4px}
+    .map-legend{display:flex;gap:1.5rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--gray-700)}
+    .legend-dot{width:12px;height:12px;border-radius:50%}
+
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    .project-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;transition:var(--transition);cursor:pointer}
+    .project-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--orange)}
+    .project-card-img{width:100%;height:200px;object-fit:cover;background:var(--gray-100);display:block}
+    .project-card-body{padding:1.25rem}
+    .project-card-status{display:inline-flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600;border-radius:99px;padding:0.2rem 0.6rem;margin-bottom:0.5rem;text-transform:uppercase}
+    .project-card-name{font-size:1rem;font-weight:700;color:var(--black);margin-bottom:0.25rem}
+    .project-card-loc{font-size:0.8rem;color:var(--gray-600);display:flex;align-items:center;gap:4px}
+    .projects-show-more{text-align:center;margin-top:2.5rem}
+
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+    .feature-card{padding:2rem;border-radius:var(--radius-md);border:1px solid var(--gray-200);background:var(--white);transition:var(--transition)}
+    .feature-card:hover{box-shadow:var(--shadow-md);border-color:var(--orange)}
+    .feature-icon{width:52px;height:52px;background:var(--orange-lite);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:1.5rem;margin-bottom:1.25rem}
+    .feature-title{font-size:1rem;font-weight:700;margin-bottom:0.5rem}
+    .feature-desc{font-size:0.85rem;color:var(--gray-600);line-height:1.6}
+
+    .little-safarini{background:linear-gradient(135deg,var(--black) 0%,#1e1e1e 100%);color:var(--white)}
+    .little-safarini .section-title{color:var(--white)}
+    .little-safarini .section-sub{color:var(--gray-400)}
+    .little-safarini .section-tag{background:rgba(232,125,30,0.15);color:var(--orange)}
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.25rem}
+    .tool-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-md);padding:1.75rem;transition:var(--transition);cursor:pointer;text-align:center}
+    .tool-card:hover{background:rgba(232,125,30,0.15);border-color:var(--orange);transform:translateY(-3px)}
+    .tool-icon{width:56px;height:56px;background:rgba(232,125,30,0.15);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:1.75rem;margin:0 auto 1rem}
+    .tool-name{font-size:1rem;font-weight:700;margin-bottom:0.4rem}
+    .tool-desc{font-size:0.82rem;color:var(--gray-400);line-height:1.5}
+
+    .footer{background:var(--black);color:var(--white);padding:4rem 2rem 2rem}
+    .footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+    .footer-brand{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+    .footer-logo{width:44px;height:44px;object-fit:contain;aspect-ratio:1/1;border-radius:8px}
+    .footer-brand-name{font-size:1.1rem;font-weight:800;color:var(--white)}
+    .footer-desc{font-size:0.85rem;color:var(--gray-400);line-height:1.7;margin-bottom:1.5rem}
+    .footer-socials{display:flex;gap:0.75rem}
+    .footer-social{width:36px;height:36px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:1rem;transition:var(--transition)}
+    .footer-social:hover{background:var(--orange);border-color:var(--orange);color:var(--white)}
+    .footer-col-title{font-size:0.8rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1.25rem}
+    .footer-links{list-style:none}
+    .footer-links li{margin-bottom:0.65rem}
+    .footer-links a{font-size:0.85rem;color:var(--gray-400);transition:var(--transition);display:flex;align-items:center;gap:6px}
+    .footer-links a:hover{color:var(--orange)}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.75rem;margin-top:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;max-width:1280px;margin-left:auto;margin-right:auto}
+    .footer-bottom p{font-size:0.8rem;color:var(--gray-600)}
+
+    #ai-avatar-btn{position:fixed;bottom:2rem;right:2rem;z-index:2000;width:60px;height:60px;background:var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--white);font-size:1.6rem;box-shadow:0 4px 24px rgba(0,0,0,0.25);cursor:pointer;border:none;transition:var(--transition)}
+    #ai-avatar-btn:hover{background:var(--orange);transform:scale(1.08)}
+    #ai-chat-panel{position:fixed;bottom:6rem;right:2rem;z-index:1999;width:360px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);display:none;flex-direction:column;overflow:hidden;max-height:540px}
+    #ai-chat-panel.open{display:flex}
+    .chat-header{background:var(--black);color:var(--white);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px}
+    .chat-avatar-logo{width:40px;height:40px;border-radius:50%;object-fit:contain;background:var(--white);padding:4px;flex-shrink:0}
+    .chat-header-info{flex:1}
+    .chat-header-name{font-weight:700;font-size:0.95rem}
+    .chat-header-status{font-size:0.72rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:4px}
+    .chat-online-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block}
+    .chat-close{background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:1.1rem;padding:4px}
+    .chat-close:hover{color:var(--white)}
+    .chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:var(--gray-100)}
+    .chat-bubble{max-width:85%;padding:0.65rem 0.9rem;border-radius:var(--radius-md);font-size:0.85rem;line-height:1.5}
+    .chat-bubble.bot{background:var(--white);color:var(--gray-900);border:1px solid var(--gray-200);align-self:flex-start;border-bottom-left-radius:4px}
+    .chat-bubble.user{background:var(--black);color:var(--white);align-self:flex-end;border-bottom-right-radius:4px}
+    .chat-quick-replies{display:flex;flex-wrap:wrap;gap:0.5rem;padding:0 1rem 0.75rem;background:var(--gray-100)}
+    .quick-reply{background:var(--white);border:1px solid var(--gray-200);border-radius:99px;padding:0.35rem 0.8rem;font-size:0.75rem;cursor:pointer;transition:var(--transition);color:var(--gray-700)}
+    .quick-reply:hover{background:var(--black);color:var(--white);border-color:var(--black)}
+    .chat-input-row{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;border-top:1px solid var(--gray-200);background:var(--white)}
+    #chat-input{flex:1;border:1px solid var(--gray-200);border-radius:99px;padding:0.55rem 1rem;font-size:0.85rem;outline:none;font-family:'Inter',sans-serif;color:var(--gray-900)}
+    #chat-input:focus{border-color:var(--orange)}
+    #chat-send{width:36px;height:36px;background:var(--black);color:var(--white);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:var(--transition);flex-shrink:0}
+    #chat-send:hover{background:var(--orange)}
+
+    .bg-gray{background:var(--gray-100)}
+    .bg-white{background:var(--white)}
+
+    @media(max-width:1024px){
+      .hero-inner{grid-template-columns:1fr}
+      .hero-visual{display:none}
+      .features-grid{grid-template-columns:repeat(2,1fr)}
+      .footer-inner{grid-template-columns:1fr 1fr}
+      .stats-strip-inner{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .nav-hamburger{display:block}
+      .features-grid{grid-template-columns:1fr}
+      .footer-inner{grid-template-columns:1fr}
+      .stats-strip-inner{grid-template-columns:repeat(2,1fr)}
+      #ai-chat-panel{width:calc(100vw - 2rem);right:1rem}
+      .hero-stats{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini Logo" class="nav-logo" />
+    <div class="nav-brand-text">
+      <span class="nav-brand-name">Saffarini</span>
+      <span class="nav-brand-sub">Engineering &amp; Development</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" class="active"><i class="ti ti-home"></i> Home</a></li>
+    <li><a href="#projects"><i class="ti ti-building-skyscraper"></i> Projects</a></li>
+    <li><a href="#map"><i class="ti ti-map-2"></i> Map</a></li>
+    <li><a href="#little-safarini"><i class="ti ti-tools"></i> Little Safarini</a></li>
+    <li><a href="app.html"><i class="ti ti-app-window"></i> Portal</a></li>
+    <li><a href="login.html" class="nav-cta"><i class="ti ti-login"></i> Login</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow"><i class="ti ti-award"></i> UAE's Premier Engineering Firm</div>
+      <h1 class="hero-title">Building <span>Dubai's</span><br />Iconic Skyline</h1>
+      <p class="hero-desc">Eng. Adnan Saffarini has shaped Dubai's landmark architecture for over 30 years — delivering 137+ world-class residential, commercial and hospitality projects across the UAE.</p>
+      <div class="hero-actions">
+        <a href="#map" class="btn-primary"><i class="ti ti-map-2"></i> Explore All Projects</a>
+        <a href="#little-safarini" class="btn-secondary"><i class="ti ti-tools"></i> Design Tools</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">137<span>+</span></div>
+          <div class="hero-stat-label">Completed Projects</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">30<span>+</span></div>
+          <div class="hero-stat-label">Years Experience</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">15<span>+</span></div>
+          <div class="hero-stat-label">Dubai Districts</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-img-wrap">
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80" alt="Dubai Skyline" loading="lazy" />
+      </div>
+      <div class="hero-badge">
+        <div class="hero-badge-icon"><i class="ti ti-building-skyscraper"></i></div>
+        <div class="hero-badge-text"><strong>Princess Tower</strong>World's Tallest Residential, 2012</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div class="stat-item"><div class="stat-num">137<em>+</em></div><div class="stat-label">Total Projects</div></div>
+    <div class="stat-item"><div class="stat-num">80<em>+</em></div><div class="stat-label">Completed Towers</div></div>
+    <div class="stat-item"><div class="stat-num">50<em>K+</em></div><div class="stat-label">Units Delivered</div></div>
+    <div class="stat-item"><div class="stat-num">30<em>+</em></div><div class="stat-label">Years in Dubai</div></div>
+  </div>
+</div>
+
+<section class="section map-section" id="map">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag"><i class="ti ti-map-pin"></i> Interactive Map</div>
+      <h2 class="section-title">All 137 Saffarini Projects on the Map</h2>
+      <p class="section-sub">Click any pin to view project details, status, and location across Dubai and the UAE.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="map-controls">
+      <button class="map-filter-btn active" onclick="filterMap('all',this)"><i class="ti ti-layout-grid"></i> All Projects</button>
+      <button class="map-filter-btn complete" onclick="filterMap('complete',this)"><i class="ti ti-check"></i> Completed</button>
+      <button class="map-filter-btn underdev" onclick="filterMap('underdev',this)"><i class="ti ti-crane"></i> Under Development</button>
+      <button class="map-filter-btn planned" onclick="filterMap('planned',this)"><i class="ti ti-clock"></i> Planned</button>
+    </div>
+    <div id="safarini-map"></div>
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div> Completed</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div> Under Development</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div> Planned</div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-white" id="projects">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag"><i class="ti ti-building-skyscraper"></i> Portfolio</div>
+      <h2 class="section-title">Landmark Projects</h2>
+      <p class="section-sub">A selection of Saffarini's most iconic completed and in-progress developments.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="projects-grid" id="projects-grid"></div>
+    <div class="projects-show-more">
+      <button class="btn-primary" id="show-more-btn" onclick="showMoreProjects()"><i class="ti ti-chevron-down"></i> Show More Projects</button>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-gray">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag"><i class="ti ti-star"></i> Why Saffarini</div>
+      <h2 class="section-title">Engineering Excellence,<br />Delivered Every Time</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-award"></i></div>
+        <div class="feature-title">Proven Track Record</div>
+        <div class="feature-desc">137+ successfully delivered projects spanning residential towers, hotels, and mixed-use communities across Dubai and the UAE.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-building-skyscraper"></i></div>
+        <div class="feature-title">Iconic Structures</div>
+        <div class="feature-desc">Designers of Princess Tower — once the world's tallest residential building — and dozens of Dubai Marina landmarks.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-users"></i></div>
+        <div class="feature-title">Client-Centric Approach</div>
+        <div class="feature-desc">Deep collaboration with developers, investors and residents ensures every project meets the highest quality and delivery standards.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-map-2"></i></div>
+        <div class="feature-title">Dubai-Wide Presence</div>
+        <div class="feature-desc">Projects spanning 15+ districts: Dubai Marina, JLT, Business Bay, Downtown, Silicon Oasis, Sports City, and more.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-clock"></i></div>
+        <div class="feature-title">30+ Years Experience</div>
+        <div class="feature-desc">Founded by Eng. Adnan Saffarini, the firm brings three decades of UAE engineering expertise and regulatory insight.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-home-2"></i></div>
+        <div class="feature-title">Full-Service Solutions</div>
+        <div class="feature-desc">From feasibility studies and structural engineering to interior design coordination and handover support.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section little-safarini" id="little-safarini">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag"><i class="ti ti-sparkles"></i> Client Tools</div>
+      <h2 class="section-title">Little Safarini</h2>
+      <p class="section-sub">Powerful design and planning tools crafted exclusively for Saffarini clients and partners.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card" onclick="location.href='floor-planner.html'">
+        <div class="tool-icon"><i class="ti ti-layout-2"></i></div>
+        <div class="tool-name">Floor Plan Designer</div>
+        <div class="tool-desc">Drag-and-drop room layout tool to plan your space precisely before build.</div>
+      </div>
+      <div class="tool-card" onclick="location.href='design-studio.html'">
+        <div class="tool-icon"><i class="ti ti-palette"></i></div>
+        <div class="tool-name">Design Studio</div>
+        <div class="tool-desc">Visualize material finishes, color palettes and interior styles in real time.</div>
+      </div>
+      <div class="tool-card" onclick="location.href='visualizer.html'">
+        <div class="tool-icon"><i class="ti ti-3d-cube-sphere"></i></div>
+        <div class="tool-name">3D Visualizer</div>
+        <div class="tool-desc">Explore your future home in immersive 3D before a single brick is laid.</div>
+      </div>
+      <div class="tool-card" onclick="location.href='feasibility-study.html'">
+        <div class="tool-icon"><i class="ti ti-chart-bar"></i></div>
+        <div class="tool-name">Feasibility Study</div>
+        <div class="tool-desc">Generate instant project feasibility reports with cost and ROI projections.</div>
+      </div>
+      <div class="tool-card" onclick="location.href='showcase.html'">
+        <div class="tool-icon"><i class="ti ti-photo"></i></div>
+        <div class="tool-name">Project Showcase</div>
+        <div class="tool-desc">Browse the full gallery of Saffarini-engineered landmark buildings.</div>
+      </div>
+      <div class="tool-card" onclick="document.getElementById('ai-avatar-btn').click()">
+        <div class="tool-icon"><i class="ti ti-robot"></i></div>
+        <div class="tool-name">AI Consultant</div>
+        <div class="tool-desc">Ask our AI assistant any question about Saffarini projects, pricing, and process.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini" class="footer-logo" />
+        <div class="footer-brand-name">Saffarini</div>
+      </div>
+      <p class="footer-desc">Engineering excellence and iconic real estate development across Dubai and the UAE since 1990. Delivering landmark residential, commercial and hospitality projects.</p>
+      <div class="footer-socials">
+        <a href="https://www.saffarinidxb.com" class="footer-social" target="_blank"><i class="ti ti-world"></i></a>
+        <a href="#" class="footer-social"><i class="ti ti-brand-linkedin"></i></a>
+        <a href="#" class="footer-social"><i class="ti ti-brand-instagram"></i></a>
+        <a href="#" class="footer-social"><i class="ti ti-brand-whatsapp"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Projects</div>
+      <ul class="footer-links">
+        <li><a href="#projects"><i class="ti ti-chevron-right"></i> All Projects</a></li>
+        <li><a href="#map"><i class="ti ti-chevron-right"></i> Project Map</a></li>
+        <li><a href="showcase.html"><i class="ti ti-chevron-right"></i> Showcase</a></li>
+        <li><a href="#"><i class="ti ti-chevron-right"></i> Dubai Marina</a></li>
+        <li><a href="#"><i class="ti ti-chevron-right"></i> Downtown Dubai</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="floor-planner.html"><i class="ti ti-chevron-right"></i> Floor Planning</a></li>
+        <li><a href="design-studio.html"><i class="ti ti-chevron-right"></i> Design Studio</a></li>
+        <li><a href="feasibility-study.html"><i class="ti ti-chevron-right"></i> Feasibility Study</a></li>
+        <li><a href="visualizer.html"><i class="ti ti-chevron-right"></i> 3D Visualizer</a></li>
+        <li><a href="app.html"><i class="ti ti-chevron-right"></i> Client Portal</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="https://www.saffarinidxb.com" target="_blank"><i class="ti ti-world"></i> saffarinidxb.com</a></li>
+        <li><a href="#"><i class="ti ti-phone"></i> +971 4 XXX XXXX</a></li>
+        <li><a href="mailto:info@saffarinidxb.com"><i class="ti ti-mail"></i> info@saffarinidxb.com</a></li>
+        <li><a href="#"><i class="ti ti-map-pin"></i> Dubai, UAE</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 Eng. Adnan Saffarini Engineering Consultancy. All rights reserved.</p>
+    <p><a href="login.html" style="color:var(--gray-400);margin-right:1rem;">Client Login</a><a href="app.html" style="color:var(--gray-400);">Portal</a></p>
+  </div>
+</footer>
+
+<button id="ai-avatar-btn" onclick="toggleChat()" aria-label="Open AI Assistant"><i class="ti ti-robot"></i></button>
+
+<div id="ai-chat-panel">
+  <div class="chat-header">
+    <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini" class="chat-avatar-logo" />
+    <div class="chat-header-info">
+      <div class="chat-header-name">Safarini AI Assistant</div>
+      <div class="chat-header-status"><span class="chat-online-dot"></span> Online – Ready to help</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-quick-replies" id="quick-replies">
+    <button class="quick-reply" onclick="sendQuick('How many projects does Saffarini have?')">How many projects?</button>
+    <button class="quick-reply" onclick="sendQuick('Tell me about Princess Tower')">Princess Tower</button>
+    <button class="quick-reply" onclick="sendQuick('What services does Saffarini offer?')">Services</button>
+    <button class="quick-reply" onclick="sendQuick('How can I contact Saffarini?')">Contact</button>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chat-input" placeholder="Ask about Saffarini..." onkeydown="if(event.key==='Enter')sendChat()" />
+    <button id="chat-send" onclick="sendChat()"><i class="ti ti-send"></i></button>
+  </div>
+</div>
+
+<script>
+const PROJECTS=[
+  {name:"Princess Tower",area:"Dubai Marina",lat:25.0803,lng:55.1404,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"World's tallest residential building (2012). 101 floors."},
+  {name:"Elite Residence",area:"Dubai Marina",lat:25.0795,lng:55.1398,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Luxury residential tower in Dubai Marina."},
+  {name:"Escan Marina",area:"Dubai Marina",lat:25.0782,lng:55.1412,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Prominent residential tower in the Marina."},
+  {name:"Marina View Towers",area:"Dubai Marina",lat:25.0770,lng:55.1390,status:"complete",img:"https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?w=400&q=70",desc:"Twin residential towers with panoramic marina views."},
+  {name:"Al Fairooz Tower",area:"Dubai Marina",lat:25.0788,lng:55.1385,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Dubai Marina."},
+  {name:"Torch Tower",area:"Dubai Marina",lat:25.0776,lng:55.1408,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Iconic flame-shaped residential skyscraper."},
+  {name:"Sulafa Tower",area:"Dubai Marina",lat:25.0798,lng:55.1380,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Residential tower with marina frontage."},
+  {name:"Ocean Heights",area:"Dubai Marina",lat:25.0752,lng:55.1372,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Iconic skyscraper in Dubai Marina."},
+  {name:"Dorra Bay",area:"Dubai Marina",lat:25.0760,lng:55.1380,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Residential tower in Dubai Marina."},
+  {name:"Trident Grand Residence",area:"Dubai Marina",lat:25.0790,lng:55.1415,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Luxury serviced apartments, Dubai Marina."},
+  {name:"Jewels Towers",area:"Dubai Marina",lat:25.0775,lng:55.1400,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Twin residential towers with marina views."},
+  {name:"Marina Diamond",area:"Dubai Marina",lat:25.0815,lng:55.1425,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential cluster in Dubai Marina."},
+  {name:"Aurora Tower",area:"Dubai Marina",lat:25.0820,lng:55.1430,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Dubai Marina."},
+  {name:"Preatoni Tower",area:"JLT Cluster L",lat:25.0702,lng:55.1380,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential tower in JLT Cluster L."},
+  {name:"Al Waleed Paradise",area:"JLT Cluster R",lat:25.0686,lng:55.1374,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in JLT Cluster R."},
+  {name:"Lake City Tower",area:"JLT Cluster D",lat:25.0715,lng:55.1360,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Residential tower in JLT Cluster D."},
+  {name:"Lake View Tower",area:"JLT",lat:25.0695,lng:55.1355,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Residential tower with JLT lake views."},
+  {name:"Goldcrest Views",area:"JLT",lat:25.0722,lng:55.1385,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in JLT."},
+  {name:"Goldcrest Views 2",area:"JLT",lat:25.0718,lng:55.1390,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Second residential tower in JLT."},
+  {name:"Armada Tower",area:"JLT",lat:25.0705,lng:55.1362,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Mixed-use tower in JLT."},
+  {name:"Bonnington Tower",area:"JLT",lat:25.0708,lng:55.1378,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Hotel apartment tower in JLT."},
+  {name:"Saba Tower 1",area:"JLT",lat:25.0728,lng:55.1396,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Mixed-use tower in JLT."},
+  {name:"Saba Tower 2",area:"JLT",lat:25.0731,lng:55.1400,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Second mixed-use tower in JLT."},
+  {name:"Saba Tower 3",area:"JLT",lat:25.0734,lng:55.1404,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Third mixed-use tower in JLT."},
+  {name:"Icon Tower",area:"JLT",lat:25.0724,lng:55.1392,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Office tower in JLT."},
+  {name:"Mazaya Business Avenue AA1",area:"JLT",lat:25.0712,lng:55.1360,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Commercial tower in JLT."},
+  {name:"Mazaya Business Avenue BB2",area:"JLT",lat:25.0716,lng:55.1365,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Second commercial tower in JLT."},
+  {name:"Dubai Gate 1",area:"JLT",lat:25.0695,lng:55.1356,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Residential tower in JLT."},
+  {name:"Laguna Tower",area:"JLT",lat:25.0688,lng:55.1350,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Residential tower in JLT."},
+  {name:"Swiss Tower",area:"JLT",lat:25.0752,lng:55.1422,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Office and residential tower in JLT."},
+  {name:"Movenpick Hotel JLT",area:"JLT",lat:25.0748,lng:55.1418,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"5-star hotel in JLT."},
+  {name:"Green Lakes Towers",area:"JLT",lat:25.0762,lng:55.1432,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential cluster in JLT."},
+  {name:"La Fontana",area:"JLT",lat:25.0698,lng:55.1372,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Mixed-use tower in JLT."},
+  {name:"Al Seef Tower",area:"JLT",lat:25.0740,lng:55.1410,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Mixed-use tower in JLT."},
+  {name:"MBK Tower",area:"Business Bay",lat:25.1862,lng:55.2580,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Premium commercial and residential tower in Business Bay."},
+  {name:"Damac Maison Distinction",area:"Business Bay",lat:25.1875,lng:55.2595,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Hotel apartment tower in Business Bay."},
+  {name:"Park Central",area:"Business Bay",lat:25.1855,lng:55.2570,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential tower in Business Bay."},
+  {name:"Noora Tower",area:"Business Bay",lat:25.1870,lng:55.2560,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Office and residential tower in Business Bay."},
+  {name:"Vision Tower",area:"Business Bay",lat:25.1880,lng:55.2610,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Premium residential tower in Business Bay."},
+  {name:"Waterfall Tower",area:"Business Bay",lat:25.1895,lng:55.2625,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential tower in Business Bay."},
+  {name:"Churchill Residency",area:"Business Bay",lat:25.1905,lng:55.2638,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Business Bay."},
+  {name:"Paramount Tower Hotel",area:"Business Bay",lat:25.1912,lng:55.2652,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Branded hotel and residences in Business Bay."},
+  {name:"Mag 318",area:"Business Bay",lat:25.1850,lng:55.2545,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Boutique residential tower in Business Bay."},
+  {name:"The Wings",area:"Business Bay",lat:25.1918,lng:55.2668,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Twin tower development in Business Bay."},
+  {name:"Capital Bay Tower A",area:"Business Bay",lat:25.1922,lng:55.2672,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Commercial tower in Business Bay."},
+  {name:"SIT Tower",area:"Dubai Silicon Oasis",lat:25.1195,lng:55.3790,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Landmark commercial tower in Dubai Silicon Oasis."},
+  {name:"Arabian Gate",area:"Dubai Silicon Oasis",lat:25.1230,lng:55.3810,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Mixed-use residential development in DSO."},
+  {name:"Silicon Central",area:"Dubai Silicon Oasis",lat:25.1215,lng:55.3820,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Community complex in Dubai Silicon Oasis."},
+  {name:"Champions Tower 1",area:"Dubai Sports City",lat:25.0378,lng:55.2248,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Dubai Sports City."},
+  {name:"Champions Tower 2",area:"Dubai Sports City",lat:25.0370,lng:55.2255,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Second residential tower in Dubai Sports City."},
+  {name:"Champions Tower 3",area:"Dubai Sports City",lat:25.0362,lng:55.2262,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Third residential tower in Sports City."},
+  {name:"Lagoon Views",area:"Dubai Sports City",lat:25.0358,lng:55.2235,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential complex in Dubai Sports City."},
+  {name:"Moza Residence",area:"Dubai Sports City",lat:25.0345,lng:55.2225,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential tower in Dubai Sports City."},
+  {name:"Olympic Park 1",area:"Dubai Sports City",lat:25.0390,lng:55.2268,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential cluster in Sports City."},
+  {name:"Dhow Palace Hotel",area:"Bur Dubai",lat:25.2628,lng:55.2945,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Heritage-inspired hotel in historic Bur Dubai."},
+  {name:"Landmark Hotel",area:"Bur Dubai",lat:25.2615,lng:55.2960,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Hospitality development in Bur Dubai."},
+  {name:"Carlton Downtown Hotel",area:"Trade Centre",lat:25.2270,lng:55.2880,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Luxury hotel in the Trade Centre district."},
+  {name:"Residence Inn by Marriott",area:"Trade Centre",lat:25.2260,lng:55.2895,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Extended-stay hotel by Marriott, Trade Centre."},
+  {name:"The Tower Plaza Hotel",area:"Trade Centre",lat:25.2280,lng:55.2865,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Business hotel in Trade Centre."},
+  {name:"BMJ One",area:"Jumeirah Garden City",lat:25.2192,lng:55.2835,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Commercial and residential complex."},
+  {name:"Index Tower",area:"DIFC",lat:25.2112,lng:55.2810,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Mixed-use tower in DIFC."},
+  {name:"Ritz Carlton DIFC",area:"DIFC",lat:25.2105,lng:55.2795,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"5-star hotel in DIFC."},
+  {name:"Park Place Tower",area:"DIFC",lat:25.2098,lng:55.2788,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Office tower in DIFC."},
+  {name:"Damac Park Towers",area:"DIFC",lat:25.2120,lng:55.2820,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Twin towers adjacent to DIFC."},
+  {name:"Downtown Heights Tower",area:"Downtown Dubai",lat:25.1965,lng:55.2762,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential skyscraper in Downtown Dubai."},
+  {name:"The Lofts",area:"Downtown Dubai",lat:25.1988,lng:55.2758,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Downtown Dubai."},
+  {name:"South Ridge Towers",area:"Downtown Dubai",lat:25.1980,lng:55.2770,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Twin residential towers in Downtown."},
+  {name:"Dana Tower",area:"JVC",lat:25.0512,lng:55.2095,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential tower in Jumeirah Village Circle."},
+  {name:"Bloom Heights",area:"JVC",lat:25.0498,lng:55.2115,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential twin towers in JVC."},
+  {name:"Verona Residence",area:"JVC",lat:25.0518,lng:55.2102,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Residential apartments in JVC."},
+  {name:"Crystal Residence",area:"JVC",lat:25.0532,lng:55.2112,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential complex in JVC."},
+  {name:"Palazzo Versace Residences",area:"Al Jaddaf",lat:25.2248,lng:55.3252,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Iconic luxury branded residences."},
+  {name:"Dubai Wharf",area:"Culture Village",lat:25.2282,lng:55.3085,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Mixed-use waterfront development."},
+  {name:"City Centre Residences",area:"Culture Village",lat:25.2298,lng:55.3092,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Waterfront residences in Culture Village."},
+  {name:"Oceana Residences",area:"Palm Jumeirah",lat:25.1108,lng:55.1392,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Beachfront residences on Palm Jumeirah."},
+  {name:"Royal Atlantis Residences",area:"Palm Jumeirah",lat:25.1188,lng:55.1198,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Ultra-luxury residences on Palm Jumeirah."},
+  {name:"Jumeirah Zabeel Saray",area:"Palm Jumeirah",lat:25.1180,lng:55.1230,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"5-star luxury hotel on Palm Jumeirah."},
+  {name:"Saheel Villas",area:"Arabian Ranches",lat:25.0448,lng:55.2685,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Villa community in Arabian Ranches."},
+  {name:"Al Safa Tower",area:"Sheikh Zayed Road",lat:25.1822,lng:55.2590,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Office and residential tower on SZR."},
+  {name:"Al Thuraya Tower",area:"Dubai Media City",lat:25.0968,lng:55.1582,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Office tower in Dubai Media City."},
+  {name:"First Central Hotel Suites",area:"Barsha Heights",lat:25.0940,lng:55.1780,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Hotel apartment tower in TECOM."},
+  {name:"Skycourts Tower A",area:"DubaiLand",lat:25.0810,lng:55.3828,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Residential tower in Dubailand."},
+  {name:"Skycourts Tower B",area:"DubaiLand",lat:25.0815,lng:55.3835,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Second residential tower in Dubailand."},
+  {name:"Rukan Tower",area:"DubaiLand",lat:25.0895,lng:55.3915,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential tower in DubaiLand."},
+  {name:"Sabah 1 Tower",area:"Al Nahda",lat:25.2938,lng:55.3722,status:"complete",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Residential tower in Al Nahda, Dubai."},
+  {name:"Sabah 2 Tower",area:"Al Nahda",lat:25.2945,lng:55.3732,status:"complete",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Second residential tower in Al Nahda."},
+  {name:"Murjan Tower",area:"Ajman",lat:25.3968,lng:55.4358,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Beachfront residential tower in Ajman."},
+  {name:"Horizons B2 Tower",area:"Ajman",lat:25.3978,lng:55.4368,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Residential tower in Ajman Corniche."},
+  {name:"Mermaid Beach Residence",area:"Ajman",lat:25.3958,lng:55.4348,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Beachfront residence in Ajman."},
+  {name:"Etihad Towers",area:"Abu Dhabi",lat:24.4621,lng:54.3241,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Iconic tower complex in Abu Dhabi."},
+  {name:"Al Bateen Residence",area:"Abu Dhabi",lat:24.4598,lng:54.3318,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Luxury residential complex in Abu Dhabi."},
+  {name:"Shams Abu Dhabi Tower",area:"Abu Dhabi",lat:24.4832,lng:54.3492,status:"complete",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Residential tower in Shams Abu Dhabi."},
+  {name:"Oud Residences",area:"Oud Metha",lat:25.2318,lng:55.3042,status:"complete",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential development in Oud Metha."},
+  {name:"Al Sahra Desert Resort",area:"Dubailand",lat:25.0578,lng:55.4012,status:"complete",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Desert resort and spa development."},
+  {name:"Golf Promenade",area:"AKOYA",lat:24.9968,lng:55.2678,status:"complete",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Golf community apartments in AKOYA."},
+  {name:"Sofitel Residences Downtown",area:"Downtown Dubai",lat:25.1975,lng:55.2748,status:"underdev",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Luxury branded residences in Downtown Dubai."},
+  {name:"Al Shera'a",area:"Al Jaddaf",lat:25.2232,lng:55.3238,status:"underdev",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Mixed-use development in Al Jaddaf."},
+  {name:"Sea Coral",area:"Dubai Islands",lat:25.3042,lng:55.3158,status:"underdev",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Waterfront residential development on Dubai Islands."},
+  {name:"Pearl Residences",area:"Dubai Islands",lat:25.3035,lng:55.3172,status:"underdev",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Luxury island residences on Dubai Islands."},
+  {name:"Elo 1",area:"Damac Hills 2",lat:24.9710,lng:55.2595,status:"underdev",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Modern apartment complex in Damac Hills 2."},
+  {name:"Elo 2",area:"Damac Hills 2",lat:24.9720,lng:55.2605,status:"underdev",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Second residential phase in Damac Hills 2."},
+  {name:"Barari Gardens",area:"Majan, DubaiLand",lat:25.0892,lng:55.3900,status:"underdev",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Eco-residential garden community."},
+  {name:"Barari Gardens 2",area:"Majan, DubaiLand",lat:25.0885,lng:55.3912,status:"underdev",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Second phase of garden community development."},
+  {name:"Rose Mirage 1",area:"Dubai South",lat:24.8968,lng:55.1618,status:"underdev",img:"https://images.unsplash.com/photo-1525438160292-a4a860951216?w=400&q=70",desc:"Residential apartments in Dubai South."},
+  {name:"Rose Mirage 2",area:"Dubai South",lat:24.8978,lng:55.1628,status:"underdev",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Second residential phase in Dubai South."},
+  {name:"Rapunzel",area:"Living Legends",lat:25.0638,lng:55.3298,status:"underdev",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Unique themed residential complex."},
+  {name:"14 Townhouses",area:"JVC",lat:25.0525,lng:55.2108,status:"underdev",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Contemporary townhouse development in JVC."},
+  {name:"Acube Electra",area:"JVC",lat:25.0502,lng:55.2082,status:"underdev",img:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=70",desc:"Boutique apartment project in JVC."},
+  {name:"Untitled Plot A1",area:"Mohammed Bin Rashid City",lat:25.1748,lng:55.2892,status:"underdev",img:"https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70",desc:"Under development in MBR City."},
+  {name:"Untitled Plot A2",area:"Mohammed Bin Rashid City",lat:25.1758,lng:55.2905,status:"underdev",img:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70",desc:"Under development in MBR City."},
+  {name:"Future Development B1",area:"Jumeirah",lat:25.2082,lng:55.2508,status:"planned",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=400&q=70",desc:"Planned development in Jumeirah."},
+  {name:"Future Development B2",area:"Dubai South",lat:24.9012,lng:55.1638,status:"planned",img:"https://images.unsplash.com/photo-1616684000067-36952fde56ec?w=400&q=70",desc:"Planned residential development in Dubai South."}
+];
+
+let map,allMarkers=[],currentFilter='all';
+function getStatusClass(s){return s==='complete'?'status-complete':s==='underdev'?'status-underdev':'status-planned'}
+function getStatusLabel(s){return s==='complete'?'Completed':s==='underdev'?'Under Development':'Planned'}
+function getPinColor(s){return s==='complete'?'#16a34a':s==='underdev'?'#e87d1e':'#0284c7'}
+
+function createPin(s){
+  return L.divIcon({
+    html:'<div style="width:13px;height:13px;border-radius:50%;background:'+getPinColor(s)+';border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.35);"></div>',
+    className:'',iconSize:[13,13],iconAnchor:[6,6],popupAnchor:[0,-9]
+  });
+}
+function buildPopup(p){
+  return '<div class="map-popup">'
+    +'<img class="map-popup-img" src="'+p.img+'" alt="'+p.name+'" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70\'" />'
+    +'<div class="map-popup-body">'
+    +'<span class="map-popup-status '+getStatusClass(p.status)+'">'+getStatusLabel(p.status)+'</span>'
+    +'<div class="map-popup-name">'+p.name+'</div>'
+    +'<div class="map-popup-loc"><i class="ti ti-map-pin" style="font-size:0.78rem;color:#e87d1e"></i> '+p.area+'</div>'
+    +(p.desc?'<p style="font-size:0.75rem;color:#666;margin-top:0.4rem;line-height:1.4;">'+p.desc+'</p>':'')
+    +'</div></div>';
+}
+
+window.addEventListener('load',function(){
+  map=L.map('safarini-map',{center:[25.0742,55.2162],zoom:11});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OSM &copy; CARTO',maxZoom:19
+  }).addTo(map);
+  PROJECTS.forEach(function(p){
+    var m=L.marker([p.lat,p.lng],{icon:createPin(p.status)}).bindPopup(buildPopup(p),{maxWidth:250});
+    m.projectStatus=p.status;
+    m.addTo(map);
+    allMarkers.push(m);
+  });
+});
+
+function filterMap(f,btn){
+  document.querySelectorAll('.map-filter-btn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  allMarkers.forEach(function(m){
+    if(f==='all'||m.projectStatus===f){if(!map.hasLayer(m))m.addTo(map);}
+    else{if(map.hasLayer(m))map.removeLayer(m);}
+  });
+}
+
+var projectsShown=9;
+function renderProjects(){
+  var grid=document.getElementById('projects-grid');
+  var slice=PROJECTS.slice(0,projectsShown);
+  grid.innerHTML=slice.map(function(p){
+    return '<div class="project-card">'
+      +'<img class="project-card-img" src="'+p.img+'" alt="'+p.name+'" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=70\'" />'
+      +'<div class="project-card-body">'
+      +'<span class="project-card-status '+getStatusClass(p.status)+'">'+getStatusLabel(p.status)+'</span>'
+      +'<div class="project-card-name">'+p.name+'</div>'
+      +'<div class="project-card-loc"><i class="ti ti-map-pin" style="color:var(--orange);font-size:0.8rem;"></i> '+p.area+'</div>'
+      +'</div></div>';
+  }).join('');
+  var btn=document.getElementById('show-more-btn');
+  btn.style.display=projectsShown>=PROJECTS.length?'none':'inline-flex';
+}
+function showMoreProjects(){projectsShown=Math.min(projectsShown+9,PROJECTS.length);renderProjects();}
+document.addEventListener('DOMContentLoaded',renderProjects);
+
+var KB={
+  greetings:['hello','hi','hey','salam'],
+  princess:['princess','world tallest','tallest'],
+  projects:['how many','projects','total','137','portfolio'],
+  services:['service','offer','what do','feasibility','design','engineering'],
+  contact:['contact','phone','email','address','website','reach'],
+  locations:['where','location','district','area','marina','jlt','business bay'],
+  status:['under development','complete','ongoing','upcoming','new'],
+  price:['price','cost','how much','rate','fee']
+};
+var RESP={
+  greetings:"Hello! Welcome to Saffarini. I'm your AI consultant, ready to answer questions about our 137+ iconic UAE projects and engineering services. How can I help?",
+  princess:"<strong>Princess Tower</strong> is Saffarini's most iconic project — once the world's tallest residential building (2012). Located in Dubai Marina at 101 floors, it remains a defining Marina landmark.",
+  projects:"Saffarini has a portfolio of <strong>137+ projects</strong> across Dubai and the UAE — residential towers, hotels, mixed-use communities, and commercial buildings across 15+ districts.",
+  services:"Saffarini offers: <br>• Structural Engineering<br>• Architecture & Design<br>• Feasibility Studies<br>• 3D Visualization<br>• Floor Plan Design<br>• Client Portal<br>• Construction Supervision<br><br>Try <strong>Little Safarini</strong> client tools above!",
+  contact:"Reach Saffarini at:<br>• Website: <a href='https://www.saffarinidxb.com' target='_blank'>saffarinidxb.com</a><br>• Email: info@saffarinidxb.com<br>• Location: Dubai, UAE",
+  locations:"Saffarini projects span <strong>15+ districts</strong>: Dubai Marina, JLT, Business Bay, Downtown, DIFC, Silicon Oasis, Sports City, Bur Dubai, Trade Centre, JVC, Al Jaddaf, Dubai Islands, and more. Explore all on the interactive map above.",
+  status:"Saffarini portfolio: <strong>~100 Completed</strong> projects + <strong>~30 Under Development</strong> (Sea Coral, Elo 1&2, Barari Gardens, Al Shera'a, Sofitel Residences Downtown) + a few <strong>Planned</strong> for future.",
+  price:"For pricing inquiries, contact the team at <a href='https://www.saffarinidxb.com' target='_blank'>saffarinidxb.com</a>. Pricing depends on project scope, type and location.",
+  default:"Thank you! Explore our interactive map above for all 137 projects, or visit <a href='https://www.saffarinidxb.com' target='_blank'>saffarinidxb.com</a>. Ask me about projects, services, locations, or contact details."
+};
+function getResponse(msg){
+  var m=msg.toLowerCase();
+  if(KB.greetings.some(function(k){return m.includes(k)}))return RESP.greetings;
+  if(KB.princess.some(function(k){return m.includes(k)}))return RESP.princess;
+  if(KB.projects.some(function(k){return m.includes(k)}))return RESP.projects;
+  if(KB.services.some(function(k){return m.includes(k)}))return RESP.services;
+  if(KB.contact.some(function(k){return m.includes(k)}))return RESP.contact;
+  if(KB.locations.some(function(k){return m.includes(k)}))return RESP.locations;
+  if(KB.status.some(function(k){return m.includes(k)}))return RESP.status;
+  if(KB.price.some(function(k){return m.includes(k)}))return RESP.price;
+  return RESP.default;
+}
+
+var chatOpen=false,chatInitialized=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  var panel=document.getElementById('ai-chat-panel');
+  var btn=document.getElementById('ai-avatar-btn');
+  if(chatOpen){
+    panel.classList.add('open');
+    btn.innerHTML='<i class="ti ti-x"></i>';
+    if(!chatInitialized){chatInitialized=true;addBotMessage("Hello! I'm the <strong>Saffarini AI Assistant</strong>. Ask me anything about our 137+ Dubai projects, engineering services, or how to get in touch.");}
+  }else{
+    panel.classList.remove('open');
+    btn.innerHTML='<i class="ti ti-robot"></i>';
+  }
+}
+function addBotMessage(t){var m=document.getElementById('chat-messages');var d=document.createElement('div');d.className='chat-bubble bot';d.innerHTML=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function addUserMessage(t){var m=document.getElementById('chat-messages');var d=document.createElement('div');d.className='chat-bubble user';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function sendChat(){var inp=document.getElementById('chat-input');var msg=inp.value.trim();if(!msg)return;inp.value='';addUserMessage(msg);document.getElementById('quick-replies').style.display='none';setTimeout(function(){addBotMessage(getResponse(msg));},600);}
+function sendQuick(msg){addUserMessage(msg);document.getElementById('quick-replies').style.display='none';setTimeout(function(){addBotMessage(getResponse(msg));},600);}
+</script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Portal | Saffarini</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --black:#0a0a0a;--gray-900:#1a1a1a;--gray-700:#444444;
+      --gray-600:#6b6b6b;--gray-400:#9e9e9e;--gray-200:#e5e5e5;--gray-100:#f5f5f5;
+      --white:#ffffff;--orange:#e87d1e;--orange-dark:#c46a10;--orange-lite:#fff3e8;
+      --green:#22c55e;--green-lite:#f0fdf4;--amber:#f59e0b;--amber-lite:#fffbeb;
+      --blue:#3b82f6;--blue-lite:#eff6ff;--purple:#8b5cf6;--purple-lite:#f5f3ff;
+      --radius-sm:6px;--radius-md:12px;--radius-lg:20px;
+      --shadow-sm:0 1px 4px rgba(0,0,0,0.08);--shadow-md:0 4px 20px rgba(0,0,0,0.10);
+      --transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+      --sidebar-w:220px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-900);height:100vh;display:flex;overflow:hidden}
+    a{text-decoration:none;color:inherit}
+
+    /* Sidebar */
+    .sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--gray-200);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+    .sidebar-brand{padding:1.1rem 1.25rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:10px}
+    .sidebar-logo{width:32px;height:32px;object-fit:contain;border-radius:6px}
+    .sidebar-brand-name{font-size:0.88rem;font-weight:800;color:var(--black)}
+    .sidebar-brand-sub{font-size:0.65rem;color:var(--gray-400)}
+    .sidebar-nav{flex:1;padding:0.75rem 0;overflow-y:auto}
+    .sidebar-section{padding:0.25rem 1.25rem 0.25rem;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-top:0.5rem}
+    .sidebar-link{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.82rem;font-weight:500;color:var(--gray-700);cursor:pointer;transition:var(--transition);border-radius:0;position:relative}
+    .sidebar-link:hover{background:var(--gray-100);color:var(--black)}
+    .sidebar-link.active{color:var(--orange);background:var(--orange-lite);font-weight:600}
+    .sidebar-link.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);border-radius:0 2px 2px 0}
+    .sidebar-link i{font-size:1rem;flex-shrink:0}
+    .sidebar-badge{margin-left:auto;background:var(--orange);color:var(--white);font-size:0.62rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:99px}
+    .sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--gray-200)}
+    .user-card{display:flex;align-items:center;gap:0.6rem}
+    .user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--orange-lite);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--orange);flex-shrink:0}
+    .user-name{font-size:0.8rem;font-weight:600;color:var(--black)}
+    .user-role{font-size:0.68rem;color:var(--gray-600)}
+
+    /* Main content */
+    .main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .topbar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .page-title{font-size:1rem;font-weight:700;color:var(--black)}
+    .page-sub{font-size:0.75rem;color:var(--gray-600);margin-top:1px}
+    .topbar-right{display:flex;align-items:center;gap:0.75rem}
+    .icon-btn{background:none;border:none;cursor:pointer;color:var(--gray-600);font-size:1.1rem;padding:0.4rem;border-radius:var(--radius-sm);transition:var(--transition);position:relative}
+    .icon-btn:hover{color:var(--black);background:var(--gray-100)}
+    .notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:2px solid var(--white)}
+    .back-btn{display:inline-flex;align-items:center;gap:5px;font-size:0.8rem;color:var(--gray-600);cursor:pointer;transition:var(--transition)}
+    .back-btn:hover{color:var(--orange)}
+    .content{flex:1;overflow-y:auto;padding:1.5rem}
+
+    /* Summary cards */
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+    .sum-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:1.1rem 1.2rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+    .sum-card::after{content:'';position:absolute;inset:0 0 0 auto;width:4px}
+    .sum-card.orange::after{background:var(--orange)}
+    .sum-card.green::after{background:var(--green)}
+    .sum-card.blue::after{background:var(--blue)}
+    .sum-card.amber::after{background:var(--amber)}
+    .sum-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);margin-bottom:0.4rem}
+    .sum-value{font-size:1.7rem;font-weight:800;color:var(--black);line-height:1}
+    .sum-delta{font-size:0.72rem;margin-top:0.35rem;display:flex;align-items:center;gap:3px}
+    .sum-delta.up{color:var(--green)}
+    .sum-delta.down{color:var(--orange)}
+    .sum-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:2rem;opacity:0.1}
+
+    /* Two column layout */
+    .two-col{display:grid;grid-template-columns:1fr 340px;gap:1.25rem}
+
+    /* Card */
+    .card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-sm);margin-bottom:1.25rem}
+    .card:last-child{margin-bottom:0}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)}
+    .card-title{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-700);display:flex;align-items:center;gap:6px}
+    .card-title i{color:var(--orange)}
+    .card-action{font-size:0.75rem;color:var(--orange);cursor:pointer;font-weight:500}
+
+    /* Project row */
+    .proj-row{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid var(--gray-200)}
+    .proj-row:last-child{border-bottom:none}
+    .proj-thumb{width:44px;height:36px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0}
+    .proj-info{flex:1;min-width:0}
+    .proj-name{font-size:0.82rem;font-weight:600;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .proj-meta{font-size:0.7rem;color:var(--gray-600)}
+    .status-pill{font-size:0.68rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:99px;white-space:nowrap;flex-shrink:0}
+    .status-pill.green{background:var(--green-lite);color:var(--green)}
+    .status-pill.amber{background:var(--amber-lite);color:var(--amber)}
+    .status-pill.blue{background:var(--blue-lite);color:var(--blue)}
+    .status-pill.orange{background:var(--orange-lite);color:var(--orange)}
+    .status-pill.purple{background:var(--purple-lite);color:var(--purple)}
+
+    /* Progress bar */
+    .prog-row{margin-bottom:0.75rem}
+    .prog-header{display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.3rem}
+    .prog-label{font-weight:500;color:var(--gray-700)}
+    .prog-pct{font-weight:700;color:var(--black)}
+    .prog-bar{height:7px;background:var(--gray-200);border-radius:99px;overflow:hidden}
+    .prog-fill{height:100%;border-radius:99px;transition:width 0.7s}
+    .prog-fill.orange{background:var(--orange)}
+    .prog-fill.green{background:var(--green)}
+    .prog-fill.blue{background:var(--blue)}
+    .prog-fill.amber{background:var(--amber)}
+
+    /* Documents */
+    .doc-item{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 0;border-bottom:1px solid var(--gray-200)}
+    .doc-item:last-child{border-bottom:none}
+    .doc-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .doc-icon.pdf{background:#fee2e2;color:#ef4444}
+    .doc-icon.dwg{background:var(--blue-lite);color:var(--blue)}
+    .doc-icon.xlsx{background:var(--green-lite);color:var(--green)}
+    .doc-icon.docx{background:var(--purple-lite);color:var(--purple)}
+    .doc-name{font-size:0.8rem;font-weight:600;color:var(--black);flex:1}
+    .doc-meta{font-size:0.7rem;color:var(--gray-600)}
+    .doc-size{font-size:0.68rem;color:var(--gray-400)}
+
+    /* Timeline */
+    .tl{list-style:none}
+    .tl-item{display:flex;gap:0.6rem;padding-bottom:0.9rem;position:relative}
+    .tl-item:not(:last-child)::before{content:'';position:absolute;left:9px;top:18px;bottom:0;width:2px;background:var(--gray-200)}
+    .tl-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0;margin-top:2px}
+    .tl-dot.done{background:var(--green);color:var(--white)}
+    .tl-dot.now{background:var(--orange);color:var(--white)}
+    .tl-dot.soon{background:var(--gray-200);color:var(--gray-600)}
+    .tl-text{font-size:0.78rem;font-weight:500;color:var(--black)}
+    .tl-date{font-size:0.68rem;color:var(--gray-400)}
+
+    /* Message feed */
+    .msg-item{display:flex;gap:0.65rem;padding:0.65rem 0;border-bottom:1px solid var(--gray-200)}
+    .msg-item:last-child{border-bottom:none}
+    .msg-av{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0}
+    .msg-sender{font-size:0.78rem;font-weight:600;color:var(--black)}
+    .msg-text{font-size:0.75rem;color:var(--gray-600);margin-top:1px}
+    .msg-time{font-size:0.66rem;color:var(--gray-400);margin-top:2px}
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <img src="https://www.saffarinidxb.com/Images/Logo.png" alt="Saffarini" class="sidebar-logo" />
+    <div>
+      <div class="sidebar-brand-name">Saffarini</div>
+      <div class="sidebar-brand-sub">Client Portal</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-link active" onclick="setPage('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="sidebar-link" onclick="setPage('projects')"><i class="ti ti-building-skyscraper"></i> My Projects <span class="sidebar-badge">3</span></div>
+    <div class="sidebar-section">Project</div>
+    <div class="sidebar-link" onclick="setPage('timeline')"><i class="ti ti-timeline"></i> Timeline</div>
+    <div class="sidebar-link" onclick="setPage('documents')"><i class="ti ti-file-stack"></i> Documents <span class="sidebar-badge">5</span></div>
+    <div class="sidebar-link" onclick="setPage('budget')"><i class="ti ti-report-money"></i> Budget</div>
+    <div class="sidebar-section">Tools</div>
+    <div class="sidebar-link" onclick="location.href='floor-planner.html'"><i class="ti ti-vector-triangle"></i> Floor Planner</div>
+    <div class="sidebar-link" onclick="location.href='design-studio.html'"><i class="ti ti-palette"></i> Design Studio</div>
+    <div class="sidebar-link" onclick="location.href='visualizer.html'"><i class="ti ti-3d-cube-sphere"></i> 3D Visualizer</div>
+    <div class="sidebar-link" onclick="location.href='feasibility-study.html'"><i class="ti ti-chart-bar"></i> Feasibility</div>
+    <div class="sidebar-section">Support</div>
+    <div class="sidebar-link" onclick="setPage('messages')"><i class="ti ti-message-circle"></i> Messages <span class="sidebar-badge">2</span></div>
+    <div class="sidebar-link" onclick="location.href='index.html'"><i class="ti ti-home"></i> Back to Home</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JA</div>
+      <div>
+        <div class="user-name">James Al-Ahmad</div>
+        <div class="user-role">Client Account</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main-area">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub" id="page-sub">Welcome back, James. Here's what's happening today.</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="Notifications"><i class="ti ti-bell"></i><div class="notif-dot"></div></button>
+      <button class="icon-btn" title="Help"><i class="ti ti-question-mark"></i></button>
+      <a href="index.html" class="back-btn"><i class="ti ti-arrow-left"></i> Portal Home</a>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+    <!-- Pages rendered by JS -->
+  </div>
+</div>
+
+<script>
+const PAGES = {
+  dashboard: {
+    title: 'Dashboard',
+    sub: 'Welcome back, James. Here\'s what\'s happening today.',
+    render: renderDashboard
+  },
+  projects: { title:'My Projects', sub:'All active projects under your account', render: renderProjects },
+  timeline: { title:'Project Timeline', sub:'Construction milestones and schedule', render: renderTimeline },
+  documents: { title:'Documents', sub:'Drawings, reports and contracts', render: renderDocuments },
+  budget: { title:'Budget Overview', sub:'Cost tracker and payment schedule', render: renderBudget },
+  messages: { title:'Messages', sub:'Communications from your project team', render: renderMessages },
+};
+
+const PROJECTS_DATA = [
+  {name:'Skyline Residences — Tower A',type:'Residential',floors:52,img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=200&q=70',status:'green',statusLabel:'On Track',progress:68,value:'AED 340M',phase:'Superstructure'},
+  {name:'Marina Bay Villas Phase 2',type:'Residential',floors:3,img:'https://images.unsplash.com/photo-1549989476-69a92fa57c36?w=200&q=70',status:'amber',statusLabel:'Delayed',progress:34,value:'AED 82M',phase:'Foundation'},
+  {name:'DIFC Commercial Tower',type:'Commercial',floors:42,img:'https://images.unsplash.com/photo-1517732306149-e8f829eb588a?w=200&q=70',status:'blue',statusLabel:'Design',progress:12,value:'AED 220M',phase:'Schematic Design'},
+];
+
+const DOCS = [
+  {type:'pdf',name:'Structural Drawings — Rev 3',meta:'Tower A · 45 pages',size:'12.4 MB',date:'28 Jun 2026'},
+  {type:'dwg',name:'Floor Plans — Level 20-35',meta:'Tower A · AutoCAD',size:'8.7 MB',date:'25 Jun 2026'},
+  {type:'xlsx',name:'Cost Report — Q2 2026',meta:'All Projects',size:'2.1 MB',date:'20 Jun 2026'},
+  {type:'pdf',name:'Progress Report — June',meta:'Tower A',size:'5.8 MB',date:'15 Jun 2026'},
+  {type:'docx',name:'Contract Variation Order #4',meta:'Marina Bay Villas',size:'980 KB',date:'10 Jun 2026'},
+];
+
+const MSGS = [
+  {name:'Ahmed Al-Rashidi',role:'Project Manager',avatar:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&q=70',text:'The concrete pour for Level 28 is scheduled for Saturday 8am.',time:'2h ago'},
+  {name:'Sara Mahmoud',role:'Design Lead',avatar:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=70',text:'Interior material samples are ready for your review. Can we schedule a call?',time:'Yesterday'},
+  {name:'Khalid Al-Farsi',role:'Site Engineer',avatar:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&q=70',text:'Foundation inspection complete — all columns passed DM audit.',time:'2 days ago'},
+];
+
+const MILESTONES = [
+  {text:'Design Approval obtained',date:'Mar 2025',dot:'done'},
+  {text:'Foundation & Basement complete',date:'Sep 2025',dot:'done'},
+  {text:'Superstructure — Level 28 reached',date:'Jun 2026',dot:'now'},
+  {text:'Superstructure — Top out (L52)',date:'Jan 2027',dot:'soon'},
+  {text:'MEP Rough-in complete',date:'May 2027',dot:'soon'},
+  {text:'Finishing & Fit-Out',date:'Oct 2027',dot:'soon'},
+  {text:'Handover & Snagging',date:'Jan 2028',dot:'soon'},
+];
+
+function setPage(id) {
+  const page = PAGES[id];
+  if (!page) return;
+  document.getElementById('page-title').textContent = page.title;
+  document.getElementById('page-sub').textContent = page.sub;
+  document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(el => {
+    if (el.textContent.trim().startsWith(page.title.trim()) || (id === 'dashboard' && el.textContent.includes('Dashboard'))) {
+      el.classList.add('active');
+    }
+  });
+  page.render();
+}
+
+function renderDashboard() {
+  document.getElementById('content').innerHTML = `
+    <div class="summary-grid">
+      <div class="sum-card orange"><div class="sum-label">Active Projects</div><div class="sum-value">3</div><div class="sum-delta up"><i class="ti ti-trending-up"></i> +1 this year</div><i class="ti ti-building-skyscraper sum-icon"></i></div>
+      <div class="sum-card green"><div class="sum-label">On-Time Deliveries</div><div class="sum-value">91%</div><div class="sum-delta up"><i class="ti ti-trending-up"></i> +3% vs last yr</div><i class="ti ti-check sum-icon"></i></div>
+      <div class="sum-card blue"><div class="sum-label">Total Portfolio</div><div class="sum-value">AED 642M</div><div class="sum-delta up"><i class="ti ti-trending-up"></i> All projects</div><i class="ti ti-coin sum-icon"></i></div>
+      <div class="sum-card amber"><div class="sum-label">Open Action Items</div><div class="sum-value">7</div><div class="sum-delta down"><i class="ti ti-alert-triangle"></i> 2 urgent</div><i class="ti ti-list-check sum-icon"></i></div>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-building-skyscraper"></i> Active Projects</div><span class="card-action" onclick="setPage('projects')">View All</span></div>
+          ${PROJECTS_DATA.map(p => `<div class="proj-row">
+            <img class="proj-thumb" src="${p.img}" alt="${p.name}" />
+            <div class="proj-info"><div class="proj-name">${p.name}</div><div class="proj-meta">${p.type} · ${p.phase}</div></div>
+            <span class="status-pill ${p.status}">${p.statusLabel}</span>
+          </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-chart-line"></i> Construction Progress</div></div>
+          ${PROJECTS_DATA.map(p => `<div class="prog-row"><div class="prog-header"><span class="prog-label">${p.name.split('—')[0].trim()}</span><span class="prog-pct">${p.progress}%</span></div><div class="prog-bar"><div class="prog-fill ${p.status}" style="width:${p.progress}%"></div></div></div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-timeline"></i> Upcoming Milestones</div></div>
+          <ul class="tl">${MILESTONES.slice(2,6).map(m => `<li class="tl-item"><div class="tl-dot ${m.dot}"><i class="ti ${m.dot==='done'?'ti-check':m.dot==='now'?'ti-tool':'ti-clock'}"></i></div><div><div class="tl-text">${m.text}</div><div class="tl-date">${m.date}</div></div></li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="ti ti-message-circle"></i> Recent Messages</div><span class="card-action" onclick="setPage('messages')">See All</span></div>
+          ${MSGS.map(m => `<div class="msg-item"><img class="msg-av" src="${m.avatar}" alt="${m.name}" /><div><div class="msg-sender">${m.name} <span style="color:var(--gray-400);font-weight:400">&middot; ${m.role}</span></div><div class="msg-text">${m.text.slice(0,70)}...</div><div class="msg-time">${m.time}</div></div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderProjects() {
+  document.getElementById('content').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem">
+      ${PROJECTS_DATA.map(p => `<div class="card" style="cursor:pointer" onclick="setPage('dashboard')">
+        <img src="${p.img}" alt="${p.name}" style="width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:0.75rem" />
+        <div class="proj-name" style="font-size:0.9rem;margin-bottom:0.3rem">${p.name}</div>
+        <div class="proj-meta" style="margin-bottom:0.75rem">${p.type} &middot; ${p.floors} Floors &middot; ${p.phase}</div>
+        <div class="prog-row"><div class="prog-header"><span class="prog-label">Progress</span><span class="prog-pct">${p.progress}%</span></div><div class="prog-bar"><div class="prog-fill ${p.status}" style="width:${p.progress}%"></div></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-200)">
+          <span style="font-size:0.82rem;font-weight:700;color:var(--black)">${p.value}</span>
+          <span class="status-pill ${p.status}">${p.statusLabel}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+  `;
+}
+
+function renderTimeline() {
+  document.getElementById('content').innerHTML = `<div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-timeline"></i> Project Timeline — Skyline Residences Tower A</div></div>
+    <ul class="tl">${MILESTONES.map(m => `<li class="tl-item"><div class="tl-dot ${m.dot}"><i class="ti ${m.dot==='done'?'ti-check':m.dot==='now'?'ti-tool':'ti-clock'}"></i></div><div><div class="tl-text">${m.text}</div><div class="tl-date">${m.date}</div></div></li>`).join('')}</ul>
+  </div>`;
+}
+
+function renderDocuments() {
+  const icons = {pdf:'ti-file-type-pdf',dwg:'ti-vector-bezier-2',xlsx:'ti-table',docx:'ti-file-word'};
+  document.getElementById('content').innerHTML = `<div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-file-stack"></i> Documents (${DOCS.length})</div><span class="card-action">Upload</span></div>
+    ${DOCS.map(d => `<div class="doc-item"><div class="doc-icon ${d.type}"><i class="ti ${icons[d.type]}"></i></div><div style="flex:1"><div class="doc-name">${d.name}</div><div class="doc-meta">${d.meta} · ${d.date}</div></div><div class="doc-size">${d.size}</div><button style="background:none;border:none;cursor:pointer;color:var(--gray-600);margin-left:0.5rem;font-size:1rem"><i class="ti ti-download"></i></button></div>`).join('')}
+  </div>`;
+}
+
+function renderBudget() {
+  document.getElementById('content').innerHTML = `
+    <div class="summary-grid">
+      <div class="sum-card orange"><div class="sum-label">Contract Value</div><div class="sum-value">AED 340M</div><i class="ti ti-coin sum-icon"></i></div>
+      <div class="sum-card green"><div class="sum-label">Invoiced to Date</div><div class="sum-value">AED 218M</div><div class="sum-delta up">64.1% of contract</div><i class="ti ti-receipt sum-icon"></i></div>
+      <div class="sum-card blue"><div class="sum-label">Paid</div><div class="sum-value">AED 195M</div><div class="sum-delta up">57.4% of contract</div><i class="ti ti-check sum-icon"></i></div>
+      <div class="sum-card amber"><div class="sum-label">Variations Pending</div><div class="sum-value">AED 4.2M</div><div class="sum-delta down">2 open items</div><i class="ti ti-alert-circle sum-icon"></i></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><i class="ti ti-chart-pie"></i> Cost Breakdown</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        ${[['Structure & Civil','42%','green',42],['MEP Services','24%','blue',24],['Finishing & Fit-Out','18%','orange',18],['Enabling Works','6%','amber',6],['Prelims & Overheads','10%','purple',10]].map(r => `<div class="prog-row"><div class="prog-header"><span class="prog-label">${r[0]}</span><span class="prog-pct">${r[1]}</span></div><div class="prog-bar"><div class="prog-fill ${r[2]}" style="width:${r[3]}%"></div></div></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderMessages() {
+  document.getElementById('content').innerHTML = `<div class="card" style="max-width:680px"><div class="card-header"><div class="card-title"><i class="ti ti-message-circle"></i> Messages</div></div>
+    ${MSGS.map(m => `<div class="msg-item"><img class="msg-av" src="${m.avatar}" alt="${m.name}" /><div style="flex:1"><div class="msg-sender">${m.name} <span style="color:var(--gray-400);font-weight:400">&middot; ${m.role}</span></div><div class="msg-text" style="font-size:0.8rem;line-height:1.5">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`).join('')}
+    <div style="margin-top:1rem;display:flex;gap:0.5rem">
+      <input style="flex:1;padding:0.6rem 0.9rem;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.85rem;font-family:inherit;outline:none" placeholder="Type a message..." onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--gray-200)'" />
+      <button style="background:var(--orange);color:var(--white);border:none;padding:0.6rem 1rem;border-radius:var(--radius-sm);cursor:pointer;font-size:0.85rem"><i class="ti ti-send"></i></button>
+    </div>
+  </div>`;
+}
+
+// Init
+renderDashboard();
+</script>
+</body>
+</html>
